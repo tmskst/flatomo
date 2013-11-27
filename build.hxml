@@ -1,0 +1,11 @@
+-debug
+-cp src
+-cp demo/src
+-main Bootstrap
+-swf bin/flatomo.swf
+-swf-version 11.8 
+-swf-header 480:720:30:333333
+
+# libraries
+-cp lib/starling/hxclasses/
+-swf-lib lib/starling/starling.swc

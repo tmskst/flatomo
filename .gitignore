@@ -1,0 +1,6 @@
+bak/
+bin/
+obj/
+res/
+
+*.hxproj
