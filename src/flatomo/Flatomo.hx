@@ -24,7 +24,7 @@ class Flatomo {
 	
 	public static function create(container:flash.display.DisplayObjectContainer):starling.display.DisplayObject {
 		var flatomo = new Flatomo();
-		flatomo.scanChildren(container);
+		flatomo.scanChildren(container, flatomo.root);
 		return flatomo.root;
 	}
 	
@@ -38,27 +38,29 @@ class Flatomo {
 	
 	/* ---------------------- */
 	
-	private function scan(object:flash.display.DisplayObject):Void {
+	private function scan(object:flash.display.DisplayObject, container:starling.display.DisplayObjectContainer):Void {
 		if (isAnimation(object)) {
 			var movie = cast(object, flash.display.MovieClip);
-			parseAnimation(movie);
+			parseAnimation(movie, container);
 		}
 		else if (isTexture(object)) {
-			parseTexture(object);
+			parseTexture(object, container);
 		}
 		else {
 			// Textureでないオブジェクトは全てDisplayObjectContainerです
-			scanChildren(cast(object, flash.display.DisplayObjectContainer));
+			scanChildren(cast(object, flash.display.DisplayObjectContainer), container);
 		}
 	}
 	
-	private function scanChildren(parent:flash.display.DisplayObjectContainer):Void {
+	private function scanChildren(parent:flash.display.DisplayObjectContainer, container:starling.display.DisplayObjectContainer):Void {
+		var current = cast(Flatomo.copy(parent, new starling.display.Sprite()), starling.display.Sprite);
+		container.addChild(current);
 		for (i in 0...parent.numChildren) {
-			scan(parent.getChildAt(i));
+			scan(parent.getChildAt(i), current);
 		}
 	}
 	
-	private function parseTexture(source:flash.display.DisplayObject):Void {
+	private function parseTexture(source:flash.display.DisplayObject, container:starling.display.DisplayObjectContainer):Void {
 		var object:starling.display.DisplayObject;
 		
 		if (Std.is(source, flash.text.TextField)) {
@@ -71,26 +73,9 @@ class Flatomo {
 			var bitmapData = Blitter.toBitmapData(source);
 			object = new Image(Texture.fromBitmapData(bitmapData));
 		}
+		object = Flatomo.copy(source, object);
 		
-		object.transformationMatrix = source.transform.matrix;
-		object.blendMode = switch (source.blendMode) {
-			case flash.display.BlendMode.ADD : 
-				starling.display.BlendMode.ADD;
-			case flash.display.BlendMode.ERASE : 
-				starling.display.BlendMode.ERASE;
-			case flash.display.BlendMode.MULTIPLY :
-				starling.display.BlendMode.MULTIPLY;
-			case flash.display.BlendMode.SCREEN :
-				starling.display.BlendMode.SCREEN;
-			default :
-				starling.display.BlendMode.NORMAL;
-		}
-		
-		var coords = source.localToGlobal(new Point(0, 0));
-		object.x = coords.x;
-		object.y = coords.y;
-		
-		root.addChild(object);
+		container.addChild(object);
 	}
 	
 	private function parseTextField(source:flash.text.TextField):starling.text.TextField {
@@ -107,7 +92,7 @@ class Flatomo {
 		return new Button(upState, "", downState);
 	}
 	
-	private function parseAnimation(movie:flash.display.MovieClip):Void {
+	private function parseAnimation(movie:flash.display.MovieClip, container:starling.display.DisplayObjectContainer):Void {
 		var textures:Vector<Texture> = new Vector<Texture>();
 		var bounds:Rectangle = new Rectangle();
 		for (frame in 1...(movie.totalFrames + 1)) {
@@ -121,7 +106,7 @@ class Flatomo {
 		}
 		var m:starling.display.MovieClip = new starling.display.MovieClip(textures, 30);
 		m.transformationMatrix = movie.transform.matrix;
-		root.addChild(m);
+		container.addChild(m);
 		Starling.juggler.add(m);
 	}
 	
@@ -146,6 +131,23 @@ class Flatomo {
 			if (Std.is(child, flash.display.SimpleButton))	return false;
 		}
 		return true;
+	}
+	
+	private static function copy(source:flash.display.DisplayObject, object:starling.display.DisplayObject):starling.display.DisplayObject {
+		object.transformationMatrix = source.transform.matrix;
+		object.blendMode = switch (source.blendMode) {
+			case flash.display.BlendMode.ADD : 
+				starling.display.BlendMode.ADD;
+			case flash.display.BlendMode.ERASE : 
+				starling.display.BlendMode.ERASE;
+			case flash.display.BlendMode.MULTIPLY :
+				starling.display.BlendMode.MULTIPLY;
+			case flash.display.BlendMode.SCREEN :
+				starling.display.BlendMode.SCREEN;
+			default :
+				starling.display.BlendMode.AUTO;
+		}
+		return object;
 	}
 	
 }
