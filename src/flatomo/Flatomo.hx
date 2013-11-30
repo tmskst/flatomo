@@ -5,6 +5,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.Vector;
 import starling.core.Starling;
+import starling.display.BlendMode;
 import starling.display.Button;
 import starling.display.Image;
 import starling.text.TextField;
@@ -21,19 +22,19 @@ import TextField;
 
 class Flatomo {
 	
-	public static function create(root:flash.display.DisplayObject):starling.display.DisplayObject {
+	public static function create(container:flash.display.DisplayObjectContainer):starling.display.DisplayObject {
 		var flatomo = new Flatomo();
-		flatomo.scan(root);
-		return flatomo.current;
+		flatomo.scanChildren(container);
+		return flatomo.root;
 	}
 	
 	/* ---------------------- */
 	
 	private function new() {
-		this.current = new starling.display.Sprite();
+		this.root = new starling.display.Sprite();
 	}
 	
-	private var current:starling.display.Sprite;
+	private var root:starling.display.Sprite;
 	
 	/* ---------------------- */
 	
@@ -72,10 +73,24 @@ class Flatomo {
 		}
 		
 		object.transformationMatrix = source.transform.matrix;
-		var coords = source.localToGlobal(new Point(0, 0));
-		object.x = coords.x; object.y = coords.y;
+		object.blendMode = switch (source.blendMode) {
+			case flash.display.BlendMode.ADD : 
+				starling.display.BlendMode.ADD;
+			case flash.display.BlendMode.ERASE : 
+				starling.display.BlendMode.ERASE;
+			case flash.display.BlendMode.MULTIPLY :
+				starling.display.BlendMode.MULTIPLY;
+			case flash.display.BlendMode.SCREEN :
+				starling.display.BlendMode.SCREEN;
+			default :
+				starling.display.BlendMode.NORMAL;
+		}
 		
-		current.addChild(object);
+		var coords = source.localToGlobal(new Point(0, 0));
+		object.x = coords.x;
+		object.y = coords.y;
+		
+		root.addChild(object);
 	}
 	
 	private function parseTextField(source:flash.text.TextField):starling.text.TextField {
@@ -106,7 +121,7 @@ class Flatomo {
 		}
 		var m:starling.display.MovieClip = new starling.display.MovieClip(textures, 30);
 		m.transformationMatrix = movie.transform.matrix;
-		current.addChild(m);
+		root.addChild(m);
 		Starling.juggler.add(m);
 	}
 	
