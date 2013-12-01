@@ -1,6 +1,6 @@
 bak/
 bin/
 obj/
-res/
+/res/
 
 *.hxproj
