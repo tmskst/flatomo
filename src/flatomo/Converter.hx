@@ -1,18 +1,26 @@
 package flatomo;
 import flash.geom.Rectangle;
+import starling.textures.Texture;
 
 class Converter {
 	
 	public static function createTextField(source:flash.text.TextField):starling.text.TextField {
 		var bounds:Rectangle = source.getBounds(source);
-		var width:Int = Std.int(bounds.width);
-		var height:Int = Std.int(bounds.height);
-		return new starling.text.TextField(width, height, source.text);
+		
+		return new starling.text.TextField(
+			Std.int(bounds.width),
+			Std.int(bounds.height),
+			source.text,
+			source.defaultTextFormat.font,
+			source.defaultTextFormat.size,
+			source.textColor,
+			source.defaultTextFormat.bold
+		);
 	}
 	
 	public static function createButton(source:flash.display.SimpleButton):starling.display.Button {
-		var upState = starling.textures.Texture.fromBitmapData(Blitter.toBitmapData(source.upState));
-		var downState = starling.textures.Texture.fromBitmapData(Blitter.toBitmapData(source.downState));
+		var upState = Texture.fromBitmapData(Blitter.toBitmapData(source.upState));
+		var downState = Texture.fromBitmapData(Blitter.toBitmapData(source.downState));
 		return new starling.display.Button(upState, "", downState);
 	}
 	
@@ -60,26 +68,20 @@ class Converter {
 	/* Filters */
 	
 	private static function blurFilter(source:flash.filters.BlurFilter) {
-		return new starling.filters.BlurFilter(
-			source.blurX, source.blurY, source.quality
-		);
+		return new starling.filters.BlurFilter(source.blurX, source.blurY, source.quality);
 	}
 	
 	private static function dropShadowFilter(source:flash.filters.DropShadowFilter) {
-		return starling.filters.BlurFilter.createDropShadow(
-			source.distance, source.angle, source.color, source.alpha, source.blurX, source.quality
-		);
+		return starling.filters.BlurFilter.createDropShadow(source.distance, source.angle, source.color, source.alpha, source.blurX, source.quality);
 	}
 	
 	private static function glowFilter(source:flash.filters.GlowFilter) {
-		return starling.filters.BlurFilter.createGlow(
-			source.color, source.alpha, source.blurX, source.quality
-		);
+		return starling.filters.BlurFilter.createGlow(source.color, source.alpha, source.blurX, source.quality);
 	}
 	
 	private static function displacementMapFilter(source:flash.filters.DisplacementMapFilter) {
 		return new starling.filters.DisplacementMapFilter(
-			starling.textures.Texture.fromBitmapData(source.mapBitmap),
+			Texture.fromBitmapData(source.mapBitmap),
 			source.mapPoint, source.componentX, source.componentY, source.scaleX, source.scaleY
 		);
 	}
