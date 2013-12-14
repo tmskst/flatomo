@@ -4,3 +4,7 @@ obj/
 /res/
 
 *.hxproj
+/.idea
+/flatomo.iml
+
+/out
