@@ -1,7 +1,5 @@
-bak/
 bin/
 obj/
-/res/
 
 *.hxproj
 /.idea
