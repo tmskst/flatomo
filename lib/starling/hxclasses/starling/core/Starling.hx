@@ -41,6 +41,5 @@ extern class Starling extends starling.events.EventDispatcher {
 	static var context(default,never) : flash.display3D.Context3D;
 	static var current(default,never) : Starling;
 	static var handleLostContext : Bool;
-	static var juggler(default,never) : starling.animation.Juggler;
 	static var multitouchEnabled : Bool;
 }

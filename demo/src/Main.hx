@@ -4,6 +4,7 @@ import flash.events.Event;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+import flatomo.Creator;
 import flatomo.Flatomo;
 import starling.display.Sprite;
 
@@ -22,7 +23,9 @@ class Main extends Sprite {
 	}
 	
 	private function deploy(event:Event):Void {
-		var symbol:Dynamic = Type.createInstance(Type.resolveClass("BorderTest"), []);
+		var symbol:Dynamic = Type.createInstance(Type.resolveClass("Test"), []);
+		
+		Flatomo.start();
 		
 		var object = Flatomo.create(symbol);
 		this.addChild(object);

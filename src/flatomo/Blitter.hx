@@ -6,10 +6,12 @@ import flash.geom.Rectangle;
 
 class Blitter {
 	
+	// 表示オブジェクトをビットマップに変換
 	public static function toBitmap(source:DisplayObject, ?bounds:Rectangle = null):Bitmap {
 		return new Bitmap(toBitmapData(source, bounds));
 	}
 	
+	// 表示オブジェクトをビットマップデータに変換
 	public static function toBitmapData(source:DisplayObject, ?bounds:Rectangle = null):BitmapData {
 		if (bounds == null) {
 			bounds = source.getBounds(source);
