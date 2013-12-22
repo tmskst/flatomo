@@ -1,6 +1,6 @@
 package flatomo;
 
 typedef Element = {
-	var name:String;
+	var name:LibraryPath;
 	var layout:Layout;
 }

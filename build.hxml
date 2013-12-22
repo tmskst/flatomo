@@ -1,4 +1,5 @@
 -debug
+-cp common/src
 -cp manager/src
 -cp manager/demo/src
 -main Bootstrap
@@ -12,6 +13,7 @@
 
 --next
 
+-cp common/src
 -cp extension/src
 -main flatomo.extension.Panel
 -swf bin/Panel.swf
@@ -19,6 +21,7 @@
 --next
 
 -D js-classic
+-cp common/src
 -cp extension/src
 -cp extension/lib/jsfl/hxclasses
 -main flatomo.extension.Script

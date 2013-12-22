@@ -13,7 +13,7 @@ class ContainerCreator {
 		
 		for (keyFrame in KEYFRAMES) {
 			if (Std.is(source, flash.display.MovieClip)) {
-				cast(source, flash.display.MovieClip).gotoAndStop(keyFrame.start);
+				cast(source, flash.display.MovieClip).gotoAndStop(keyFrame.begin);
 			}
 			
 			for (element in keyFrame.elements) {

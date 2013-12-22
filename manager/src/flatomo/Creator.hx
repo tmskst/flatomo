@@ -17,8 +17,8 @@ class Creator {
 		}
 		if (ContainerCreator.isAlliedTo(source)) {
 			var KEYFRAMES:Array<KeyFrame> = [
-				{ start: 1, end:  8, elements: [ { name: "a", layout: { x:  1, y: 1 }} ] },
-				{ start: 9, end: 20, elements: [  ] }
+				{ begin: 1, end:  8, elements: [ { name: "a", layout: { x:  1, y: 1 }} ] },
+				{ begin: 9, end: 20, elements: [  ] }
 			];
 			var container = ContainerCreator.create(cast(source, flash.display.DisplayObjectContainer), KEYFRAMES);
 			Flatomo.juggler.add(container);

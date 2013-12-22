@@ -38,7 +38,7 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 	
 	public function goto(frame:Int):Void {
 		var frames:Array<KeyFrame> = keyFrames.filter(
-			function (f:KeyFrame) { return f.start <= frame && frame <= f.end; }
+			function (f:KeyFrame) { return f.begin <= frame && frame <= f.end; }
 		);
 		
 		for (element in elements) {
