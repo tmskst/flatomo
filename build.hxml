@@ -9,3 +9,18 @@
 # libraries
 -cp manager/lib/starling/hxclasses/
 -swf-lib manager/lib/starling/starling.swc
+
+--next
+
+-cp extension/src
+-main flatomo.extension.Panel
+-swf bin/Panel.swf
+
+--next
+
+-D js-classic
+-cp extension/src
+-cp extension/lib/jsfl/hxclasses
+-main flatomo.extension.Script
+-js bin/flatomo.jsfl
+
