@@ -140,8 +140,14 @@ class FlatomoTools {
 						for (element in frame.elements) {
 							if (Std.is(element, Instance)) {
 								var instance:Instance = cast(element, Instance);
+								var path:LibraryPath;
+								if (instance.libraryItem.linkageExportForAS) {
+									path = PREFIX_LINKAGED_ELEMENT + instance.libraryItem.linkageClassName;
+								} else {
+									path = instance.libraryItem.name;
+								}
 								
-								var data:FlatomoElement = { libraryPath: instance.libraryItem.name };
+								var data:FlatomoElement = { libraryPath: path };
 								var raw_data:String = Serializer.run(data);
 								instance.setPersistentData(FIELD_NAME_ELEMENT, "string", raw_data);
 								instance.setPublishPersistentData(FIELD_NAME_ELEMENT, "_EMBED_SWF_", true);
