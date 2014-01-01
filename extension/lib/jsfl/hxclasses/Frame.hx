@@ -60,7 +60,7 @@ extern class Frame {
 	public var duration(default, default):Int;
 	
 	// 読み取り専用。Element オブジェクトの配列です（Element オブジェクトを参照してください）。
-	public var elements(default, default):Element;
+	public var elements(default, default):Array<Element>;
 	
 	// カスタムイージング曲線からフレームのイージング情報を取得するかどうかを指定するブール値。
 	public var hasCustomEase(default, default):Bool;

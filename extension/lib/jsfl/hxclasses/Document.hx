@@ -361,6 +361,9 @@ extern class Document {
 
 	// 指定したドキュメントの対象となる Flash Player のバージョンを設定します。
 	public function setPlayerVersion(version:String):Bool;
+	
+	// ドキュメント全体に関して永続データのパブリッシュを有効または無効にします。
+	public function setPublishDocumentData(format:String, publish:Dynamic):Void;
 
 	// 指定したプリミティブ Rectangle オブジェクトのプロパティ値を指定します。
 	public function setRectangleObjectProperty(propertyName:String, value:Dynamic):Void;
