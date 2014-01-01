@@ -2,7 +2,7 @@ package flatomo;
 
 class SectionTools {
 	
-	public static function toCodes(source:Array<Section>):Map<Int, ControlCode> {
+	public static function toControlCodes(source:Array<Section>):Map<Int, ControlCode> {
 		var codes:Map<Int, ControlCode> = new Map<Int, ControlCode>();
 		
 		for (section in source) {

@@ -11,21 +11,19 @@ class Animation extends MovieClip {
 	public function new(textures:Vector<Texture>, sections:Array<Section>) {
 		// Flatomo.juggler を使うのでFPSの指定はできない。
 		super(textures, 1.00);
-		// TODO: ライブラリ項目が持つ制御コードだから、本来マップは1つで十分。仮実装。
-		this.codes = sections.toCodes();
+		this.codes = sections.toControlCodes();
 	}
 	
 	private var codes:Map<Int, ControlCode>;
 	
 	public override function advanceTime(time:Float):Void {
-		var nextFrame:Int = this.currentFrame + 1;
-		if (codes.exists(nextFrame)) {
-			var code:ControlCode = codes.get(nextFrame);
-			switch (code) {
+		if (codes.exists(currentFrame)) {
+			switch (codes.get(currentFrame)) {
 				case ControlCode.Stop : 
 					this.pause();
+					return;
 				case ControlCode.Goto(frame) :
-					this.currentFrame = frame - 1;
+					this.currentFrame = frame;
 			}
 		}
 		super.advanceTime(time);

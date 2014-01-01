@@ -6,6 +6,10 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flatomo.Creator;
 import flatomo.Flatomo;
+import flatomo.LibraryPath;
+import haxe.ds.StringMap.StringMap;
+import haxe.Unserializer;
+import starling.display.DisplayObject;
 import starling.display.Sprite;
 
 class Main extends Sprite {
@@ -23,11 +27,8 @@ class Main extends Sprite {
 	}
 	
 	private function deploy(event:Event):Void {
-		var symbol:Dynamic = Type.createInstance(Type.resolveClass("Test"), []);
-		
-		Flatomo.start();
-		
-		var object = Flatomo.create(symbol);
+		Flatomo.start(Type.createInstance(Type.resolveClass("Config"), []));
+		var object:DisplayObject = Flatomo.create(Type.createInstance(Type.resolveClass("TestMovie"), []));
 		this.addChild(object);
 	}
 	

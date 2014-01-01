@@ -7,12 +7,10 @@ import starling.textures.Texture;
 class AnimationCreator {
 	
 	public static function isAlliedTo(target:flash.display.DisplayObject):Bool {
-		var metaData:Dynamic = untyped target.metaData;
-		return	(
-				Std.is(target, flash.display.MovieClip) && 
-				(metaData != null && Reflect.hasField(metaData, "anime")) &&
-				(Reflect.getProperty(metaData, "anime") == "TRUE")
-		);
+		if (!Std.is(target, flash.display.MovieClip)) { return false; }
+		
+		var item:FlatomoItem = FlatomoTools.fetchItem(target);
+		return item != null && item.animation;
 	}
 	
 	// flash.display.MovieClip とセクション情報を元にアニメーションを作成します
@@ -34,6 +32,7 @@ class AnimationCreator {
 		
 		var animation:Animation = new Animation(textures, sections);
 		animation.transformationMatrix = source.transform.matrix;
+		animation.name = source.name;
 		
 		return animation;
 	}

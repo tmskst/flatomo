@@ -27,3 +27,11 @@
 -main flatomo.extension.Script
 -js bin/flatomo.jsfl
 
+--next 
+
+-D js-classic
+-cp common/src
+-cp extension/src
+-cp extension/lib/jsfl/hxclasses
+-main flatomo.extension.ConfigCreator
+-js bin/ConfigCreator.jsfl

@@ -1,16 +1,21 @@
 package flatomo;
 import flash.events.Event;
 import flash.Lib;
+import haxe.ds.StringMap;
+import haxe.Unserializer;
 import starling.animation.Juggler;
 import starling.display.DisplayObject;
 
 class Flatomo {
 	
-	public static function start():Void {
-		if (isStarted) {
-			return;
-		}
-		flatomo = new Flatomo();
+	public static function start(config:flash.display.DisplayObjectContainer):Void {
+		if (isStarted) { return; }
+		
+		Flatomo.isStarted = true;
+		Flatomo.juggler = new Juggler();
+		Flatomo.library = FlatomoTools.fetchLibrary(config);
+		trace(library);
+		Flatomo.flatomo = new Flatomo();
 	}
 	
 	public static function create(source:flash.display.DisplayObject):DisplayObject {
@@ -18,8 +23,6 @@ class Flatomo {
 	}
 	
 	private function new() {
-		Flatomo.isStarted = true;
-		Flatomo.juggler = new Juggler();
 		Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, onEnterFrame);
 	}
 	
@@ -31,6 +34,6 @@ class Flatomo {
 	private static var isStarted:Bool = false;
 	
 	public static var juggler(default, null):Juggler = null;
-	
+	public static var library(default, null):StringMap<FlatomoItem> = null;
 	
 }

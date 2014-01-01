@@ -1,58 +1,59 @@
 package flatomo;
+
 import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 
 using Lambda;
+using flatomo.SectionTools;
 
 class Container extends DisplayObjectContainer implements IAnimatable {
 	
-	public function new(keyFrames:Array<KeyFrame>, elements:Map<String, DisplayObject>) {
+	public function new(displayObjects:Array<DisplayObject>, map:Map<Int, Array<Layout>>, sections:Array<Section>) {
 		super();
+		this.map = map;
+		this.codes = sections.toControlCodes();
 		this.currentFrame = 1;
-		this.totalFrames = 1;
+		this.isPlaying = true;
 		
-		this.keyFrames = keyFrames;
-		for (keyFrame in keyFrames) {
-			totalFrames = Std.int(Math.max(totalFrames, keyFrame.end));
+		for (object in displayObjects) {
+			this.addChild(object);
 		}
-		
-		this.elements = elements;
-		for (element in elements) {
-			this.addChild(element);
-		}
-		
-		goto(currentFrame);
 	}
 	
-	private var keyFrames:Array<KeyFrame>;
-	private var elements:Map<String, DisplayObject>;
+	private var map:Map<Int, Array<Layout>>;
+	private var codes:Map<Int, ControlCode>;
 	
-	private var currentFrame:Int;
-	private var totalFrames:Int;
+	public var currentFrame(default, null):Int;
+	public var isPlaying(default, null):Bool;
 	
 	public function advanceTime(time:Float):Void {
-		currentFrame = if (currentFrame == totalFrames) 1 else currentFrame + 1;
-		goto(currentFrame);
-	}
-	
-	public function goto(frame:Int):Void {
-		var frames:Array<KeyFrame> = keyFrames.filter(
-			function (f:KeyFrame) { return f.begin <= frame && frame <= f.end; }
-		);
+		if (!isPlaying) { return; }
 		
-		for (element in elements) {
-			element.visible = false;
-		}
-		
-		for (keyFrame in frames) {
-			for (element in keyFrame.elements) {
-				var obj:DisplayObject = elements.get(element.name);
-				obj.x = element.layout.x;
-				obj.y = element.layout.y;
-				obj.visible = true;
+		if (codes.exists(currentFrame)) {
+			switch (codes.get(currentFrame)) {
+				case ControlCode.Goto(frame) :
+					this.currentFrame = frame;
+				case ControlCode.Stop : 
+					this.isPlaying = false;
+					return;
 			}
+		} else {
+			this.currentFrame = currentFrame + 1;
 		}
+		
+		for (index in 0...numChildren) {
+			this.getChildAt(index).visible = false;
+		}
+		
+		var layouts:Array<Layout> = map.get(currentFrame);
+		for (layout in layouts) {
+			var child:DisplayObject = this.getChildByName(layout.instanceName);
+			child.visible = true;
+			child.x = layout.x;
+			child.y = layout.y;
+		}
+		
 	}
 	
 }

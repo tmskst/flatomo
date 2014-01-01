@@ -10,17 +10,14 @@ class Creator {
 		if (source == null) throw "NULL";
 		
 		if (AnimationCreator.isAlliedTo(source)) {
-			var sections = [ { name: "", kind: SectionKind.Loop, begin: 1, end: 30 } ];
+			var sections:Array<Section> = FlatomoTools.fetchItem(source).sections;
 			var animation = AnimationCreator.create(cast(source, flash.display.MovieClip), sections);
 			Flatomo.juggler.add(animation);
 			return animation;
 		}
 		if (ContainerCreator.isAlliedTo(source)) {
-			var KEYFRAMES:Array<KeyFrame> = [
-				{ begin: 1, end:  8, elements: [ { name: "a", layout: { x:  1, y: 1 }} ] },
-				{ begin: 9, end: 20, elements: [  ] }
-			];
-			var container = ContainerCreator.create(cast(source, flash.display.DisplayObjectContainer), KEYFRAMES);
+			var sections:Array<Section> = FlatomoTools.fetchItem(source).sections;
+			var container = ContainerCreator.create(cast(source, flash.display.DisplayObjectContainer), sections);
 			Flatomo.juggler.add(container);
 			return container;
 		}
