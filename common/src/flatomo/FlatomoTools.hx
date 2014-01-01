@@ -14,7 +14,11 @@ class FlatomoTools {
 	
 	#if flash
 	
-	// 対象（Element）のメタデータからFlatomoElementを取り出します
+	/**
+	 * 対象（Element）のメタデータからFlatomoElementを取り出す
+	 * @param	element 対象
+	 * @return 対象から取り出したFlatomoElement
+	 */
 	public static function fetchElement(element:flash.display.DisplayObject):FlatomoElement {
 		var metaData:Dynamic = untyped element.metaData;
 		if (metaData == null) {
@@ -28,12 +32,20 @@ class FlatomoTools {
 		return Unserializer.run(raw_data);
 	}
 	
-	// 対象（Instance)をインスタンス化するために使用されたライブラリパスを取り出します
+	/**
+	 * 対象（Instance)をインスタンス化するために使用されたライブラリパスを取り出す
+	 * @param	instance 対象
+	 * @return 対象をインスタンス化するために使用されたライブラリパス
+	 */
 	public static function fetchLibraryPath(instance:flash.display.DisplayObject):LibraryPath {
 		return fetchElement(instance).libraryPath;
 	}
 	
-	// 対象（Instance）をインスタンス化するために使用されたライブラリアイテムと関連付けられたFlatomoItemを取り出します
+	/**
+	 * 対象（Instance）をインスタンス化するために使用されたライブラリアイテムと関連付けられたFlatomoItemを取り出す。
+	 * @param	source 対象
+	 * @return 対象から取り出されたFlatomoItem
+	 */
 	public static function fetchItem(source:flash.display.DisplayObject):FlatomoItem {
 		var libraryPath:LibraryPath;
 		if (untyped source.metaData == null) {
@@ -50,6 +62,11 @@ class FlatomoTools {
 		return Flatomo.library.get(libraryPath);
 	}
 	
+	/**
+	 * FlatomoExtensionで生成された設定オブジェクトからライブラリを構築する。
+	 * @param	source 設定オブジェクト
+	 * @return 生成されたライブラリ
+	 */
 	@:allow(flatomo.Flatomo)
 	private static function fetchLibrary(source:flash.display.DisplayObjectContainer):StringMap<FlatomoItem> {
 		var config:flash.display.DisplayObject = source.getChildByName(INSTANCE_NAME_CONFIG);
@@ -68,6 +85,10 @@ class FlatomoTools {
 	
 	#if js
 	
+	/**
+	 * ライブラリを設定オブジェクトに格納する。
+	 * @param	data ライブラリ
+	 */
 	public static function setLibrary(data:StringMap<FlatomoItem>):Void {
 		var flash:Flash = untyped fl;
 		flash.getDocumentDOM().setPublishDocumentData("_EMBED_SWF_", true);
@@ -98,6 +119,11 @@ class FlatomoTools {
 		return flatomo_library;
 	}
 	
+	/**
+	 * ライムラインを元にセクション情報を抽出します。
+	 * @param	timeline 元となるタイムライン
+	 * @return 生成されたセクション情報
+	 */
 	public static function fetchSections(timeline:Timeline):Array<Section> {
 		var layers:Array<Layer> = timeline.layers.filter(
 			function(layer:Layer):Bool { return layer.name == "FlatomoControlLayer"; }
@@ -131,6 +157,7 @@ class FlatomoTools {
 		return sections;
 	}
 	
+	// TODO : 不適切な構造です。
 	public static function setElement(items:Array<Item>):Void {
 		for (item in items) {
 			if (!StringTools.startsWith(item.name, "Flatomo") && Std.is(item, SymbolItem)) {

@@ -2,10 +2,15 @@ package flatomo;
 
 class SectionTools {
 	
-	public static function toControlCodes(source:Array<Section>):Map<Int, ControlCode> {
+	/**
+	 * セクション情報を制御コードに変換する。
+	 * @param	source 変換するセクション情報。
+	 * @return 生成された制御コード。
+	 */
+	public static function toControlCodes(sections:Array<Section>):Map</*Frame*/Int, ControlCode> {
 		var codes:Map<Int, ControlCode> = new Map<Int, ControlCode>();
 		
-		for (section in source) {
+		for (section in sections) {
 			switch(section.kind) {
 				case SectionKind.Loop : 
 					codes.set(section.end, ControlCode.Goto(section.begin));

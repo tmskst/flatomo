@@ -1,15 +1,30 @@
 package flatomo;
 import starling.display.DisplayObject;
 
-using Lambda;
-
+/**
+ * コンテナの生成手段を提供する。
+ */
+@:allow(flatomo.Creator)
 class ContainerCreator {
 	
-	public static function isAlliedTo(source:flash.display.DisplayObject):Bool {
+	/**
+	 * 対象がコンテナかどうかを判定する。
+	 * @param	source 判定の対象。
+	 * @return 対象がコンテナなら真。
+	 */
+	private static function isAlliedTo(source:flash.display.DisplayObject):Bool {
 		return Std.is(source, flash.display.DisplayObjectContainer);
 	}
 	
-	public static function create(source:flash.display.DisplayObjectContainer, sections:Array<Section>):Container {
+	/**
+	 * flash.display.DisplayObjectContainer とセクション情報を元にコンテナを作成する。
+	 * @param	source コンテナの元となる表示オブジェクトコンテナ。
+	 * @param	sections コンテナの再生ヘッドを制御するセクション情報。
+	 * @return 生成されたコンテナ。
+	 */
+	private static function create(source:flash.display.DisplayObjectContainer, sections:Array<Section>):Container {
+		// TODO : 現在、flash.display.Sprite と flash.display.Loader に対応していません。
+		
 		var movie:flash.display.MovieClip = cast(source, flash.display.MovieClip);
 		var map = new Map<Int, Array<Layout>>();
 		var displayObjects = new Array<DisplayObject>();

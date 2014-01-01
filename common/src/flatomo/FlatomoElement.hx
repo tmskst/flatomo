@@ -1,7 +1,9 @@
 package flatomo;
 
-// Elementオブジェクトが持つメタデータ
+/**
+ * Element(JSFL)のメタデータプロパティに保存されるメタデータの形式。
+ */
 typedef FlatomoElement = {
-	// instance.libraryItem.name に相当
+	/** インスタンス化するために使用したライブラリアイテムへのパス。Instance#libraryItem#name(JSFL)に相当する。 */
 	var libraryPath:LibraryPath;
 }
