@@ -118,7 +118,7 @@ class FlatomoTools {
 				throw '設定オブジェクト ${path} のフレーム数は1でなければなりません。';
 			}
 			
-			loop_allElement(item.timeline, function (element:Element) {
+			scan_allElement(item.timeline, function (element:Element) {
 				if (element.name == INSTANCE_NAME_CONFIG) {
 					config = element;
 					return;
@@ -144,7 +144,7 @@ class FlatomoTools {
 	public static function createLibrary(library:Library):Map<LibraryPath, FlatomoItem> {
 		var map = new Map<LibraryPath, FlatomoItem>();
 		
-		loop_allSymbolItem(library, function (item:SymbolItem) {
+		scan_allSymbolItem(library, function (item:SymbolItem) {
 			var libraryPath:String = if (item.linkageExportForAS) PREFIX_LINKAGED_ELEMENT + item.linkageClassName else item.name;
 			var sections:Array<Section> = fetchSections(item.timeline);
 			
@@ -201,8 +201,8 @@ class FlatomoTools {
 	 * @param	library ライブラリ
 	 */
 	public static function setAllElementPersistentData(library:Library):Void {
-		loop_allSymbolItem(library, function (item:SymbolItem) {
-			loop_allInstance(item.timeline, function (instance:Instance) {
+		scan_allSymbolItem(library, function (item:SymbolItem) {
+			scan_allInstance(item.timeline, function (instance:Instance) {
 				var path:LibraryPath;
 				if (instance.libraryItem.linkageExportForAS) {
 					path = PREFIX_LINKAGED_ELEMENT + instance.libraryItem.linkageClassName;
@@ -217,34 +217,37 @@ class FlatomoTools {
 		});
 	}
 	
-	/** Timelineに存在するすべてのElementを走査します。 */
-	@:loop(Timeline, Element)
-	public static function loop_allElement(timeline:Timeline, loop:Element -> Void):Void {
+	/**
+	 * @scan Timelineに存在するすべてのElement
+	 */
+	public static function scan_allElement(timeline:Timeline, func:Element -> Void):Void {
 		for (layer in timeline.layers) {
 			for (frame in layer.frames) {
 				for (element in frame.elements) {
-					loop(element);
+					func(element);
 				}
 			}
 		}
 	}
 	
-	/** Timelineに存在するすべてのInstanceを操作します。 */
-	@:loop(Timeline, Instance)
-	public static function loop_allInstance(timeline:Timeline, loop:Instance -> Void):Void {
-		loop_allElement(timeline, function (element:Element) {
+	/**
+	 * @scan Timelineに存在するすべてのInstance
+	 */
+	public static function scan_allInstance(timeline:Timeline, func:Instance -> Void):Void {
+		scan_allElement(timeline, function (element:Element) {
 			if (Std.is(element, Instance)) {
-				loop(cast(element, Instance));
+				func(cast(element, Instance));
 			}
 		});
 	}
 	
-	/** ライブラリ項目のうち、SymbolItemだけを走査します。 */
-	@:loop(Library, SymbolItem)
-	public static function loop_allSymbolItem(library:Library, loop:SymbolItem -> Void):Void {
+	/**
+	 * @scan ライブラリに存在するすべてのSymbolItem
+	 */
+	public static function scan_allSymbolItem(library:Library, func:SymbolItem -> Void):Void {
 		for (item in library.items) {
 			if (!StringTools.startsWith(item.name, FLATOMO_SETTINGS_DIRECTORY_NAME) && Std.is(item, SymbolItem)) {
-				loop(cast(item, SymbolItem));
+				func(cast(item, SymbolItem));
 			}
 		}
 	}
