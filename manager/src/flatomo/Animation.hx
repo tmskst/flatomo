@@ -1,5 +1,4 @@
 package flatomo;
-import flash.geom.Rectangle;
 import flash.Vector;
 import starling.display.MovieClip;
 import starling.textures.Texture;
@@ -13,6 +12,10 @@ using flatomo.SectionTools;
  * アニメーションの再生ヘッドは、セクションによって制御される。
  */
 class Animation extends MovieClip {
+	/*
+	 * Animationクラスの責務は、セクション情報を元に再生ヘッドを制御することです。
+	 * テクスチャの管理と描画は親の starling.display.MovieClipに任せます。
+	 */
 	
 	/**
 	 * アニメーションを生成する。
@@ -27,8 +30,12 @@ class Animation extends MovieClip {
 		this.codes = sections.toControlCodes();
 	}
 	
-	/** 制御コード */
-	private var codes:Map</*Frame*/Int, ControlCode>;
+	/**
+	 * 再生ヘッドを制御するための制御コード
+	 * @key　フレーム番号（再生ヘッドの位置）
+	 * @value　フレームに対応する制御コード
+	 */
+	private var codes:Map<Int, ControlCode>;
 	
 	/**
 	 * アニメーションの再生ヘッドを1フレーム進める。

@@ -4,11 +4,7 @@ import flash.events.Event;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
-import flatomo.Creator;
 import flatomo.Flatomo;
-import flatomo.LibraryPath;
-import haxe.ds.StringMap.StringMap;
-import haxe.Unserializer;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
 

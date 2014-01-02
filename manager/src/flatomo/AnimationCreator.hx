@@ -16,6 +16,11 @@ class AnimationCreator {
 	 * @return 対象がアニメーションなら真。
 	 */
 	private static function isAlliedTo(target:flash.display.DisplayObject):Bool {
+		/*
+		 * アニメーションである条件は、
+		 * 1. 対象がflash.display.MovieClipであること。
+		 * 2. 対象のアニメーション属性が有効（真）であること。
+		 */
 		// TODO : 式をひとつまとめないでください。
 		if (!Std.is(target, flash.display.MovieClip)) { return false; }
 		
@@ -34,13 +39,13 @@ class AnimationCreator {
 		var bounds:Rectangle = new Rectangle();
 		
 		// ソースの描画領域を計算
-		for (frame in 1...(source.totalFrames + 1)) {
-			source.gotoAndStop(frame);
+		for (frame in 0...source.totalFrames) {
+			source.gotoAndStop(frame + 1);
 			bounds = bounds.union(source.getBounds(source));
 		}
 		// テクスチャを生成
-		for (frame in 1...(source.totalFrames + 1)) {
-			source.gotoAndStop(frame);
+		for (frame in 0...source.totalFrames) {
+			source.gotoAndStop(frame + 1);
 			var bitmapData = Blitter.toBitmapData(source, bounds);
 			textures.push(Texture.fromBitmapData(bitmapData));
 		}

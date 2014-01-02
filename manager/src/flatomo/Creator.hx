@@ -32,6 +32,7 @@ class Creator {
 			return container;
 		}
 		
+		// アニメーションとコンテナに該当しない表示オブジェクトはテクスチャに変換される。
 		var bitmapData = Blitter.toBitmapData(source);
 		return new Image(Texture.fromBitmapData(bitmapData));
 	}

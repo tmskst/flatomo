@@ -4,7 +4,6 @@ import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 
-using Lambda;
 using flatomo.SectionTools;
 
 // TODO : 将来、コンテナの親（継承関係）は starling.display.Sprite に置き換わる可能性があります。
@@ -36,10 +35,18 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 		}
 	}
 	
-	/** 「再生ヘッドの位置」と「そのフレームに配置された表示オブジェクトの配置情報のリスト」の対応関係。 */
+	/**
+	 * 「再生ヘッドの位置」と「そのフレームに配置された表示オブジェクトの配置情報のリスト」の対応関係。
+	 * @key 再生ヘッドの位置
+	 * @value 再生ヘッドのいちに対応する配置された表示オブジェクトの配置情報のリスト
+	 */
 	private var map:Map</*Frame*/Int, Array<Layout>>; // TODO : 不適切な命名
 	
-	/** 制御コード */
+	/**
+	 * 再生ヘッドを制御するための制御コード
+	 * @key　フレーム番号（再生ヘッドの位置）
+	 * @value　フレームに対応する制御コード
+	 */
 	private var codes:Map</*Frame*/Int, ControlCode>;
 	
 	/** 現在の再生ヘッドの位置 */
