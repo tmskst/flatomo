@@ -151,7 +151,7 @@ extern class Timeline {
 	public var layers(default, null):Array<Layer>;
 	
 	// 読み取り専用プロパティ。タイムラインがシーンに属しているかどうかを示します。
-	public var libraryItem(default, null):Bool;
+	public var libraryItem(default, null):Null<Item>;
 	
 	// 現在のタイムラインの名前を表すストリング。
 	public var name(default, default):String;
