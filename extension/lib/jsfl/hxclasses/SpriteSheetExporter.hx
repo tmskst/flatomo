@@ -65,6 +65,12 @@ extern class SpriteSheetExporter extends Item {
 	// スプライトシートのメタデータのフォーマット。
 	public var layoutFormat(default, default):String;
 	
+	// autoSize = true の場合、生成されるスプライトシートの高さの最大値が制御され、最大値 8192 で切り取られます。
+	public var maxSheetHeight(default, default):Int;
+	
+	// autoSize = true の場合、生成されるスプライトシートの幅の最大値が制御され、最大値 8192 で切り取られます。
+	public var maxSheetWidth(default, default):Int;
+	
 	// 指定されたすべてのフレームを指定されたスプライトシートの大きさに収めることができるかどうかを示すブール値。
 	public var overflowed(default, null):Bool;
 	
