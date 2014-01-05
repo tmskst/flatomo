@@ -18,10 +18,13 @@ class SectionTools {
 					codes.set(section.end, ControlCode.Stop);
 				case SectionKind.Pass : 
 					// 追加するコードはない
+				case SectionKind.Default :
+					// SectionKind.Pass と同じ扱い
 				case SectionKind.Standstill : 
 					codes.set(section.begin, ControlCode.Stop);
 				case SectionKind.Goto(goto) : 
-					codes.set(section.end, ControlCode.Goto(goto));
+					// TODO : SectionKind.Goto の仕様変更に追いついていません。
+					/* codes.set(section.end, ControlCode.Goto(goto)); */
 			}
 		}
 		

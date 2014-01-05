@@ -8,6 +8,8 @@ using Lambda;
 
 class Script {
 	
+	private static var send:Api -> Void;
+	
 	public static function main() {
 		send = Connector.send.bind("Panel");
 		
@@ -15,54 +17,68 @@ class Script {
 		flash.addEventListener("timelineChanged", timelineChanged);
 	}
 	
+	/**
+	 * 作業タイムラインが変更されたときに呼び出される。
+	 * パネルに作業タイムラインが変更されたこと（PanelApi.TimlineSelected, PanelApi.DisabledTimlineSelected）を通知する。
+	 */
 	private static function timelineChanged():Void {
 		var flash:Flash = untyped fl;
 		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
-		if (timeline.libraryItem == null) { return; }
+		
+		// 作業タイムラインがライブラリ内に存在しない場合はFlatomoItemを保存することができない
+		if (timeline.libraryItem == null) {
+			send(PanelApi.DisabledTimlineSelected);
+			return;
+		}
 		
 		var item:Item = null;
-		{
-			var index:Int = flash.getDocumentDOM().library.findItemIndex(timeline.libraryItem.name);
-			item = flash.getDocumentDOM().library.items[index];
+		{ // initialize item
+			var library:Library = flash.getDocumentDOM().library;
+			var index:Int = library.findItemIndex(timeline.libraryItem.name);
+			item = library.items[index];
 		}
-		var sections_current:Array<Section> = FlatomoTools.fetchSections(timeline);
-		var items_data:FlatomoItem = FlatomoTools.getItemData(item);
 		
-		var f_item:FlatomoItem = null;
-		if (items_data != null) {
-			sections_current.iter(function (section_c:Section) {
-				items_data.sections.iter(function (section_i:Section) {
-					if (section_c.name == section_i.name) {
-						section_c.kind = section_i.kind;
-					}
-				});
-			});
-			f_item = { sections: sections_current, animation: items_data.animation };
-		} else {
-			f_item = { sections: sections_current, animation: false };
-		}
-		send(PanelApi.TimlineChanged(f_item));
+		var latestSection:Array<Section> = FlatomoTools.fetchSections(timeline);
+		var savedItem:FlatomoItem = FlatomoTools.getItemData(item);
+		
+		send(PanelApi.TimlineSelected(latestSection, savedItem));
 	}
 	
-	private static function save(data:FlatomoItem):Void {
-		var flash:Flash = untyped fl;
-		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
-		var item:Item = null;
-		{
-			var index:Int = flash.getDocumentDOM().library.findItemIndex(timeline.libraryItem.name);
-			item = flash.getDocumentDOM().library.items[index];
-		}
-		FlatomoTools.setItemData(item, data);
-	}
-	
-	private static var send:Api -> Void;
+	// ------------------------------------------------------------------------------------
 	
 	public static function handle(raw_data:String):Void {
 		var data:ScriptApi = Unserializer.run(raw_data);
 		switch (data) {
-			case Save(data) : 
-				save(data);
+			case Refresh : refresh();
+			case Save(data) : save(data);
 		}
+	}
+	
+	/**
+	 * 作業タイムラインにFlatomoItemを保存します。
+	 * @param	data 保存するデータ
+	 */
+	private static function save(data:FlatomoItem):Void {
+		var flash:Flash = untyped fl;
+		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
+		var item:Item = null;
+		{ // initialize item
+			var library:Library = flash.getDocumentDOM().library;
+			var index:Int = library.findItemIndex(timeline.libraryItem.name);
+			item = library.items[index];
+		}
+		FlatomoTools.setItemData(item, data);
+	}
+	
+	/**
+	 * 現在（最新）のタイムラインを元にセクション情報を生成しパネルに送信します。
+	 */
+	private static function refresh():Void {
+		var flash:Flash = untyped fl;
+		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
+		
+		var latestSection:Array<Section> = FlatomoTools.fetchSections(timeline);
+		send(PanelApi.Refresh(latestSection));
 	}
 	
 }

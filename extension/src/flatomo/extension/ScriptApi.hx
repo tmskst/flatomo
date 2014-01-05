@@ -1,6 +1,6 @@
 package flatomo.extension;
-import flatomo.FlatomoItem;
 
 enum ScriptApi {
-	Save(data:FlatomoItem);
+	Refresh;
+	Save(item:FlatomoItem);
 }

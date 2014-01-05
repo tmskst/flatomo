@@ -11,7 +11,7 @@ enum SectionKind {
 	/** 再生ヘッドはセクションの最初のフレームで停止する。 */
 	Standstill;
 	/** 再生ヘッドはセクションの最終フレームで指定したセクションへと移動する。 */
-	Goto(goto:Int);
+	Goto(sectionName:String);
 	/** 初期設定値。動作は Pass に従う。 */
 	Default;
 }
