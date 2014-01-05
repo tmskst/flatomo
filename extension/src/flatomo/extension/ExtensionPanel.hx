@@ -1,6 +1,7 @@
 package flatomo.extension;
 import com.bit101.components.ComboBox;
 import com.bit101.components.Label;
+import com.bit101.components.Panel;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -13,10 +14,10 @@ import haxe.Unserializer;
 
 using Lambda;
 
-class Panel extends Sprite implements IHandler {
+class ExtensionPanel extends Sprite implements IHandler {
 	
 	public static function main() {
-		Lib.current.stage.addChild(new Panel());
+		Lib.current.stage.addChild(new ExtensionPanel());
 	}
 	
 	private var connector:Connector;
@@ -63,16 +64,19 @@ class Panel extends Sprite implements IHandler {
 				}
 			}
 			*/
-			var label = new Label(this, 20, 30 + 30 * index, section.name);
-			new Label(this, 90, 30 + 30 * index, Std.string(section.begin));
-			new Label(this, 100, 30 + 30 * index, Std.string(section.end));
+			var panel = new Panel(this, 5, 30 + 35 * index);
+			panel.name = '${index}_PANEL';
+			panel.width = 330;
+			panel.height = 30;
 			
-			var kind = new ComboBox(this, 120, 30 + 30 * index,  "ERROR", sectionKinds);
+			var label = new Label(panel, 5, 5, section.name);
+			
+			var kind = new ComboBox(panel, 120, 5, "ERROR", sectionKinds);
 			kind.name = '${index}_SECTION_KIND';
 			kind.selectedItem = section.kind.getName();
 			kind.addEventListener(Event.SELECT, kindChanged);
 			
-			var goto = new ComboBox(this, 230, 30 + 30 * index,  "ERROR", sectionNames);
+			var goto = new ComboBox(panel, 225, 5,  "ERROR", sectionNames);
 			goto.name = '${index}_GOTO';
 			goto.selectedIndex = 0;
 			goto.visible = switch (section.kind) {
@@ -88,8 +92,9 @@ class Panel extends Sprite implements IHandler {
 			var section:Section = item.sections[index];
 			var kind:SectionKind = null;
 			{
-				var kind_raw:String = cast(this.getChildByName('${index}_SECTION_KIND'), ComboBox).selectedItem;
-				var goto_raw:String = cast(this.getChildByName('${index}_GOTO'), ComboBox).selectedItem;
+				var panel:Panel = cast(this.getChildByName('${index}_PANEL'), Panel);
+				var kind_raw:String = cast(panel.content.getChildByName('${index}_SECTION_KIND'), ComboBox).selectedItem;
+				var goto_raw:String = cast(panel.content.getChildByName('${index}_GOTO'), ComboBox).selectedItem;
 				
 				if (kind_raw == "Goto") {
 					var r:Section = item.sections.filter(function (target) {
@@ -107,7 +112,8 @@ class Panel extends Sprite implements IHandler {
 	private function kindChanged(event:Event):Void {
 		var id:Int = Std.parseInt(event.currentTarget.name);
 		var source:String = cast(event.currentTarget, ComboBox).selectedItem;
-		this.getChildByName('${id}_GOTO').visible = (source == "Goto");
+		var panel:Panel = cast(this.getChildByName('${id}_PANEL'), Panel);
+		panel.content.getChildByName('${id}_GOTO').visible = (source == "Goto");
 		
 		save();
 		connector.send(ScriptApi.Save(item));
