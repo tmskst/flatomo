@@ -168,9 +168,13 @@ class FlatomoTools {
 		
 		scan_allSymbolItem(library, function (item:SymbolItem) {
 			var libraryPath:String = if (item.linkageExportForAS) PREFIX_LINKAGED_ELEMENT + item.linkageClassName else item.name;
-			var sections:Array<Section> = fetchSections(item.timeline);
+			var flatomoItem:FlatomoItem = getItemData(item);
+			if (flatomoItem == null) {
+				var sections = fetchSections(item.timeline);
+				flatomoItem = { sections: sections, animation: false };
+			}
 			
-			map.set(libraryPath, { sections: sections, animation: false } );
+			map.set(libraryPath, flatomoItem);
 		});
 		
 		return map;
