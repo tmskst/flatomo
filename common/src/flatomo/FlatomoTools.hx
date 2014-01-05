@@ -94,6 +94,28 @@ class FlatomoTools {
 	public static inline var CONTROL_LAYER_NAME:String = "FlatomoControlLayer";
 	
 	/**
+	 * ItemからFlatomoItemを取り出す
+	 * @param	item ライブラリ項目
+	 * @return 取得したFlatomoItem
+	 */
+	public static function getItemData(item:Item):FlatomoItem {
+		if (!item.hasData("f_item")) { return null; }
+		return Unserializer.run(item.getData("f_item"));
+	}
+	
+	/**
+	 * ItemにFlatomoItemを保存する
+	 * @param	item 保存先
+	 * @param	data 保存するデータ
+	 */
+	public static function setItemData(item:Item, data:FlatomoItem):Void {
+		if (item.hasData("f_item")) {
+			item.removeData("f_item");
+		}
+		item.addData("f_item", "string", Serializer.run(data));
+	}
+	
+	/**
 	 * ライブラリを設定オブジェクトに格納する。
 	 * @param	data ライブラリ
 	 */

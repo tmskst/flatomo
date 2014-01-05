@@ -1,5 +1,6 @@
 package flatomo.extension;
+import flatomo.FlatomoItem;
 
 enum PanelApi {
-	foobar(value:Int);
+	TimlineChanged(item:FlatomoItem);
 }

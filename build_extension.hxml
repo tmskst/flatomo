@@ -2,6 +2,9 @@
 -cp extension/src
 -main flatomo.extension.Panel
 -swf bin/Panel.swf
+-swf-version 11.8 
+-cp extension/lib/minimal/hxclasses
+-swf-lib extension/lib/minimal/minimal.swc
 
 --next
 

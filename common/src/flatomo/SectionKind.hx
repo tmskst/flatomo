@@ -12,4 +12,6 @@ enum SectionKind {
 	Standstill;
 	/** 再生ヘッドはセクションの最終フレームで指定したセクションへと移動する。 */
 	Goto(goto:Int);
+	/** 初期設定値。動作は Pass に従う。 */
+	Default;
 }

@@ -1,5 +1,6 @@
 package flatomo.extension;
+import flatomo.FlatomoItem;
 
 enum ScriptApi {
-	hoge(value:Int, name:String);
+	Save(data:FlatomoItem);
 }
