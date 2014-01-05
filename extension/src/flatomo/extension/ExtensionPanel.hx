@@ -1,4 +1,5 @@
 package flatomo.extension;
+import com.bit101.components.CheckBox;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -18,13 +19,24 @@ class ExtensionPanel extends Sprite implements IHandler {
 	}
 	
 	private var connector:Connector;
-	private var viewers:Array<SectionViewer>;
+	
+	private var canvasAnimationViewer:Sprite;
+	private var animationViewer:CheckBox;
+	
+	private var canvasSectionViewer:Sprite;
+	private var sectionViewers:Array<SectionViewer>;
 	
 	public function new() {
 		super();
 		this.connector = new Connector("flatomo.jsfl", "flatomo.extension.Script", this);
 		this.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, 200);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
+		
+		canvasSectionViewer = new Sprite();
+		this.addChild(canvasSectionViewer);
+		
+		canvasAnimationViewer = new Sprite();
+		this.addChild(canvasAnimationViewer);
 	}
 	
 	private function mouseWheel(event:MouseEvent):Void {
@@ -49,7 +61,8 @@ class ExtensionPanel extends Sprite implements IHandler {
 	
 	private function timlineSelected(latestSection:Array<Section>, savedItem:Null<FlatomoItem>):Void {
 		// セクションビュアーをすべて消去
-		this.removeChildren();
+		canvasSectionViewer.removeChildren();
+		canvasAnimationViewer.removeChildren();
 		
 		// 最新のセクション情報と保存済みセクション情報を比較する。名前(name属性)が一致するものについては、保存済みセクションのkind属性を最新のセクションにコピーする。
 		if (savedItem != null) {
@@ -71,12 +84,15 @@ class ExtensionPanel extends Sprite implements IHandler {
 		}
 		
 		// ビュアーを生成する。
-		this.viewers = new Array<SectionViewer>();
+		animationViewer = new CheckBox(canvasAnimationViewer, 5, 10, "Animation", changed);
+		animationViewer.selected = if (savedItem != null) savedItem.animation else false;
+		
+		this.sectionViewers = new Array<SectionViewer>();
 		for (index in 0...latestSection.length) {
 			var section:Section = latestSection[index];
-			var viewer:SectionViewer = new SectionViewer(this, 5, 30 + 35 * index, section, names, kinds);
+			var viewer:SectionViewer = new SectionViewer(canvasSectionViewer, 5, 30 + 35 * index, section, names, kinds);
 			viewer.addEventListener(SectionViewer.CHANGED, changed);
-			viewers.push(viewer);
+			sectionViewers.push(viewer);
 		}
 		
 	}
@@ -88,11 +104,11 @@ class ExtensionPanel extends Sprite implements IHandler {
 	 */
 	private function changed(event:Event):Void {
 		var sections:Array<Section> = new Array<Section>();
-		for (index in 0...viewers.length) {
-			var viewer:SectionViewer = viewers[index];
+		for (index in 0...sectionViewers.length) {
+			var viewer:SectionViewer = sectionViewers[index];
 			sections.push(viewer.fetchLatestSection());
 		}
-		connector.send(ScriptApi.Save( { sections: sections, animation: false } ));
+		connector.send(ScriptApi.Save( { sections: sections, animation: animationViewer.selected } ));
 	}
 	
 }
