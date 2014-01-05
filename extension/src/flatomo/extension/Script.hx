@@ -11,7 +11,7 @@ class Script {
 	private static var send:Api -> Void;
 	
 	public static function main() {
-		send = Connector.send.bind("Panel");
+		send = Connector.send;
 		
 		var flash:Flash = untyped fl;
 		flash.addEventListener("timelineChanged", timelineChanged);
