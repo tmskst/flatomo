@@ -34,7 +34,10 @@ class Creator {
 		
 		// アニメーションとコンテナに該当しない表示オブジェクトはテクスチャに変換される。
 		var bitmapData = Blitter.toBitmapData(source);
-		return new Image(Texture.fromBitmapData(bitmapData));
+		var image = new Image(Texture.fromBitmapData(bitmapData));
+		image.name = source.name;
+		
+		return image;
 	}
 	
 	
