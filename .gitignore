@@ -2,7 +2,7 @@ bin/
 obj/
 
 *.hxproj
+*.iml
 /.idea
-/flatomo.iml
 
 /out
