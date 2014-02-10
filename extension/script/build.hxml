@@ -4,7 +4,7 @@
 -cp ../common/src
 
 # libraries
--cp script/lib/jsfl/hxclasses
+-cp script/lib/haxe-jsfl/jsfl/hxclasses
 
 -main flatomo.extension.Script
 -js script/bin/flatomo.jsfl
@@ -17,7 +17,7 @@
 -cp ../common/src
 
 # libraries
--cp script/lib/jsfl/hxclasses
+-cp script/lib/haxe-jsfl/jsfl/hxclasses
 
 -main flatomo.extension.ConfigCreator
 -js script/bin/ConfigCreator.jsfl

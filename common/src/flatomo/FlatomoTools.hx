@@ -2,6 +2,15 @@ package flatomo;
 
 import haxe.Serializer;
 import haxe.Unserializer;
+import jsfl.Element;
+import jsfl.Flash;
+import jsfl.Frame;
+import jsfl.Instance;
+import jsfl.Item;
+import jsfl.Layer;
+import jsfl.Library;
+import jsfl.SymbolItem;
+import jsfl.Timeline;
 
 class FlatomoTools {
 	

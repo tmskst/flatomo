@@ -43,7 +43,7 @@ class Connector {
 	#if js
 	
 	public static function send(data:Dynamic):Void {
-		var panel:SwfPanel = untyped fl.getSwfPanel(SWF_PANEL_NAME);
+		var panel:jsfl.SwfPanel = untyped fl.getSwfPanel(SWF_PANEL_NAME);
 		var raw_data:String = Serializer.run(data);
 		panel.call(CONNECTION_NAME, raw_data);
 	}

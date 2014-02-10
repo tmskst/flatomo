@@ -3,6 +3,10 @@ import flatomo.FlatomoItem;
 import flatomo.FlatomoTools;
 import flatomo.Section;
 import haxe.Unserializer;
+import jsfl.Flash;
+import jsfl.Item;
+import jsfl.Library;
+import jsfl.Timeline;
 
 using Lambda;
 
