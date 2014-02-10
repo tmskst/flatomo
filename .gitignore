@@ -6,3 +6,11 @@ obj/
 /.idea
 
 /out
+
+# munit
+TestMain.hx
+TestSuite.hx
+test.bat
+
+report/
+build/

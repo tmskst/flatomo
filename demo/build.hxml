@@ -1,0 +1,13 @@
+-debug
+-cp src
+-cp ../common/src
+-cp ../manager/src
+-main Bootstrap
+
+-swf bin/demo.swf
+-swf-version 11.8 
+-swf-header 480:720:30:333333
+
+# libraries
+-cp ../manager/lib/starling/hxclasses
+-swf-lib ../manager/lib/starling/starling.swc

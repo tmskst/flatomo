@@ -1,0 +1,11 @@
+-cp panel/src
+-cp common/src
+-cp ../common/src
+-main flatomo.extension.ExtensionPanel
+
+-swf panel/bin/Panel.swf
+-swf-version 11.8 
+
+# libraries
+-cp panel/lib/minimal/hxclasses
+-swf-lib panel/lib/minimal/minimal.swc

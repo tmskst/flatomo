@@ -1,0 +1,23 @@
+-D js-classic
+-cp script/src
+-cp common/src
+-cp ../common/src
+
+# libraries
+-cp script/lib/jsfl/hxclasses
+
+-main flatomo.extension.Script
+-js script/bin/flatomo.jsfl
+
+--next 
+
+-D js-classic
+-cp script/src
+-cp common/src
+-cp ../common/src
+
+# libraries
+-cp script/lib/jsfl/hxclasses
+
+-main flatomo.extension.ConfigCreator
+-js script/bin/ConfigCreator.jsfl
