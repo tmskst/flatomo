@@ -3,6 +3,7 @@
 -lib munit
 -lib hamcrest
 -cp src
+-cp ../common/src
 
 -cp test
 -swf-version 11
@@ -15,6 +16,7 @@
 -lib munit
 -lib hamcrest
 -cp src
+-cp ../common/src
 
 -cp test
 -swf-version 8
@@ -27,6 +29,7 @@
 -lib munit
 -lib hamcrest
 -cp src
+-cp ../common/src
 
 -cp test
 -js build/js_test.js
@@ -38,6 +41,7 @@
 -lib munit
 -lib hamcrest
 -cp src
+-cp ../common/src
 
 -cp test
 -neko build/neko_test.n
@@ -49,6 +53,7 @@
 -lib munit
 -lib hamcrest
 -cp src
+-cp ../common/src
 
 -cp test
 #-D HXCPP_M64

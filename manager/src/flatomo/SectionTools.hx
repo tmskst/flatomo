@@ -11,24 +11,28 @@ class SectionTools {
 		var codes:Map<Int, ControlCode> = new Map<Int, ControlCode>();
 		
 		for (section in sections) {
-			switch(section.kind) {
-				case SectionKind.Loop : 
-					codes.set(section.end, ControlCode.Goto(section.begin));
-				case SectionKind.Once : 
-					codes.set(section.end, ControlCode.Stop);
-				case SectionKind.Pass : 
-					// 追加するコードはない
-				case SectionKind.Default :
-					// SectionKind.Pass と同じ扱い
-				case SectionKind.Standstill : 
-					codes.set(section.begin, ControlCode.Stop);
-				case SectionKind.Goto(goto) : 
-					// TODO : SectionKind.Goto の仕様変更に追いついていません。
-					/* codes.set(section.end, ControlCode.Goto(goto)); */
-			}
+			var code = toControlCode(section);
+			codes.set(code.frame, code.code);
 		}
-		
 		return codes;
+	}
+	
+	public static function toControlCode(section:Section): { frame:Int, code:ControlCode } {
+		switch (section.kind) {
+			case SectionKind.Loop : 
+				return { frame: section.end, code: ControlCode.Goto(section.begin) };
+			case SectionKind.Once : 
+				return { frame: section.end, code: ControlCode.Stop };
+			case SectionKind.Pass, SectionKind.Default : 
+				// 追加するコードはない
+				return null;
+			case SectionKind.Standstill : 
+				return { frame: section.begin, code: ControlCode.Stop };
+			case SectionKind.Goto(goto) : 
+				// TODO : SectionKind.Goto の仕様変更に追いついていません。
+				/* codes.set(section.end, ControlCode.Goto(goto)); */
+				return null;
+		}
 	}
 	
 }
