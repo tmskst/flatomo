@@ -2,6 +2,7 @@ package flatomo;
 
 import haxe.Serializer;
 import haxe.Unserializer;
+#if js
 import jsfl.Element;
 import jsfl.Flash;
 import jsfl.Frame;
@@ -11,6 +12,7 @@ import jsfl.Layer;
 import jsfl.Library;
 import jsfl.SymbolItem;
 import jsfl.Timeline;
+#end
 
 class FlatomoTools {
 	
