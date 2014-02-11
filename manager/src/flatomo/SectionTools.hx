@@ -12,11 +12,14 @@ class SectionTools {
 		
 		for (section in sections) {
 			var code = toControlCode(section);
-			codes.set(code.frame, code.code);
+			if (code != null) {
+				codes.set(code.frame, code.code);
+			}
 		}
 		return codes;
 	}
 	
+	// 制御コードなしをnullで表現するのはどうかと思う
 	public static function toControlCode(section:Section): { frame:Int, code:ControlCode } {
 		switch (section.kind) {
 			case SectionKind.Loop : 

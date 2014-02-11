@@ -57,5 +57,18 @@ class SectionToolsTest {
 		Assert.areEqual(expected.code, actual.code);
 	}
 	
+	@Test("すべてのセクションが例外なく変換できる")
+	public function toControlCodes1():Void {
+		var sections = [
+			{ name: "Loop", kind: SectionKind.Loop, begin: 1, end: 10 },
+			{ name: "Once", kind: SectionKind.Once, begin: 11, end: 20 },
+			{ name: "Pass", kind: SectionKind.Pass, begin: 21, end: 30 },
+			{ name: "Default", kind: SectionKind.Default, begin: 31, end: 40 },
+			{ name: "Standstill", kind: SectionKind.Standstill, begin: 41, end: 50 },
+			{ name: "Goto", kind: SectionKind.Goto("Loop"), begin: 51, end: 60 }
+		];
+		SectionTools.toControlCodes(sections);
+	}
+	
 	
 }

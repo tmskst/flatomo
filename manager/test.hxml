@@ -4,6 +4,8 @@
 -lib hamcrest
 -cp src
 -cp ../common/src
+-cp lib/starling/hxclasses
+-swf-lib lib/starling/starling.swc
 
 -cp test
 -swf-version 11

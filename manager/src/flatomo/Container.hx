@@ -84,6 +84,7 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 		
 		// 現在の再生ヘッド位置に対応する表示オブジェクトの位置情報を取得して子に適応する。
 		var layouts:Array<Layout> = map.get(currentFrame);
+		if (layouts == null) { return; }
 		for (layout in layouts) {
 			var child:DisplayObject = this.getChildByName(layout.instanceName);
 			// TODO : Layout の変更に弱いのでこれを修正する。
