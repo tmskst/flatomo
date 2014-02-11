@@ -63,19 +63,10 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 	public function advanceTime(time:Float):Void {
 		if (!isPlaying) { return; }
 		
-		if (codes.exists(currentFrame)) {
-			switch (codes.get(currentFrame)) {
-				case ControlCode.Goto(frame) :
-					this.currentFrame = frame;
-				case ControlCode.Stop : 
-					this.isPlaying = false;
-					return;
-			}
-		} else {
-			this.currentFrame = currentFrame + 1;
-		}
-		
-		// 最も簡単な実装です。最適化はされていません。
+		/*
+		 * 描画処理
+		 * 最も簡単な実装です。最適化はされていません
+		 */
 		
 		// すべての表示オブジェクトを不可視状態にする。
 		for (index in 0...numChildren) {
@@ -83,14 +74,29 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 		}
 		
 		// 現在の再生ヘッド位置に対応する表示オブジェクトの位置情報を取得して子に適応する。
-		var layouts:Array<Layout> = map.get(currentFrame);
-		if (layouts == null) { return; }
-		for (layout in layouts) {
-			var child:DisplayObject = this.getChildByName(layout.instanceName);
-			// TODO : Layout の変更に弱いのでこれを修正する。
-			child.visible = true;
-			child.x = layout.x;
-			child.y = layout.y;
+		if (map.exists(currentFrame)) {
+			var layouts:Array<Layout> = map.get(currentFrame);
+			for (layout in layouts) {
+				var child:DisplayObject = this.getChildByName(layout.instanceName);
+				// TODO : Layout の変更に弱いのでこれを修正する。
+				child.visible = true;
+				child.x = layout.x;
+				child.y = layout.y;
+			}
+		}
+		
+		/*
+		 * 制御コード処理
+		 */
+		if (codes.exists(currentFrame)) {
+			switch (codes.get(currentFrame)) {
+				case ControlCode.Goto(frame) :
+					this.currentFrame = frame;
+				case ControlCode.Stop : 
+					this.isPlaying = false;
+			}
+		} else {
+			this.currentFrame = currentFrame + 1;
 		}
 		
 	}
