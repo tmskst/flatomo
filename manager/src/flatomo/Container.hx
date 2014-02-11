@@ -31,6 +31,8 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
 		for (object in displayObjects) {
+			// TODO : ジャグラーに登録しないとコンテナは可視状態にならない
+			object.visible = false;
 			this.addChild(object);
 		}
 	}
