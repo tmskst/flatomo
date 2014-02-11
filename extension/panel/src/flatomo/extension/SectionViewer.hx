@@ -24,7 +24,10 @@ class SectionViewer extends Panel {
 		new Label(this, 5, 5, section.name);
 		this.kind = new ComboBox(this, 120, 5, "ERROR", kinds);
 		{ // initialize kind
-			kind.selectedItem = section.kind.getName();
+			kind.selectedItem = switch (section.kind) {
+				case SectionKind.Default : SectionKind.Pass.getName();
+				case v : v.getName();
+			}
 			kind.addEventListener(Event.SELECT, changed);
 		}
 		this.goto = new ComboBox(this, 225, 5,  "ERROR", names);
