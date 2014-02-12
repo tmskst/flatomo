@@ -68,6 +68,7 @@ class ContainerTest {
 			{ name: "a", kind: SectionKind.Standstill, begin: 1, end: 10 }
 		];
 		var sut = new Container([], new Map<Int, Array<Layout>>(), sections);
+		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
@@ -103,4 +104,20 @@ class ContainerTest {
 		Assert.areEqual(1, sut.currentFrame);
 	}
 	
+	@Test("SectionKind.Goto: 遷移先セクションが自身の場合はLoopと同等")
+	public function currentFrame_Goto2():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Goto("a"), begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Goto("a"), begin: 4, end: 6}
+		];
+		var sut = new Container([], new Map < Int, Array<Layout> > (), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(2, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(3, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+	}
 }
