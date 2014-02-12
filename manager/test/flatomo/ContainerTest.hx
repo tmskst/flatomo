@@ -74,10 +74,33 @@ class ContainerTest {
 		Assert.areEqual(1, sut.currentFrame);
 	}
 	
-	@Ignore("未実装")
 	@Test("SectionKind.Goto: 再生ヘッドはセクションの最終フレームで指定したセクションへと移動する")
 	public function currentFrame_Goto():Void {
-		// ...
+		var sections = [
+			{ name: "a", kind: SectionKind.Goto("c"), begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Goto("a"), begin: 4, end: 6},
+			{ name: "c", kind: SectionKind.Goto("b"), begin: 7, end: 9}
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(2, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(3, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(7, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(8, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(9, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(5, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(6, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
 	}
 	
 }

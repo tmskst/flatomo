@@ -31,7 +31,7 @@ class SectionToolsTest {
 	}
 	
 	@Test("SectionKind.Standstill: セクション内の最初のフレームにStopを追加する")
-	public function toControlCodeTest_Standstill():Void {
+	public function toControlCodes_Standstill():Void {
 		var expected = ControlCode.Stop;
 		var codes = SectionTools.toControlCodes([
 			{ name: "anonymous", kind: SectionKind.Standstill, begin: 1, end: 10 }
@@ -41,7 +41,7 @@ class SectionToolsTest {
 	}
 	
 	@Test("SectionKind.Pass: セクション内にオペコードは存在しない")
-	public function toControlCodeTest_Pass():Void {
+	public function toControlCodes_Pass():Void {
 		var codes = SectionTools.toControlCodes([
 			{ name: "anonymous", kind: SectionKind.Pass, begin: 1, end: 10 }
 		]);
@@ -50,7 +50,7 @@ class SectionToolsTest {
 	}
 	
 	@Test("SectionKind.Default: SectionKind.Passと同等")
-	public function toControlCodeTest_Default():Void {
+	public function toControlCodes_Default():Void {
 		var codes = SectionTools.toControlCodes([
 			{ name: "anonymous", kind: SectionKind.Default, begin: 1, end: 10 }
 		]);
@@ -58,10 +58,48 @@ class SectionToolsTest {
 		Assert.isFalse(codes.exists(10));
 	}
 	
-	@Ignore("未実装")
-	@Test("SectionKind.Goto: ...")
-	public function toControlCodeTest_Goto():Void {
-		// ...
+	@Test("SectionKind.Goto: セクション内の最終フレームにGoto(next.begin)を追加する")
+	public function toControlCodes_Goto():Void {
+		var codes = SectionTools.toControlCodes([
+			{ name: "a", kind: SectionKind.Goto("c"), begin: 1, end: 10 },
+			{ name: "b", kind: SectionKind.Goto("a"), begin: 11, end: 20 },
+			{ name: "c", kind: SectionKind.Goto("b"), begin: 21, end: 30 }
+		]);
+		Assert.areEqual(codes.get(10), ControlCode.Goto(21));
+		Assert.areEqual(codes.get(30), ControlCode.Goto(11));
+		Assert.areEqual(codes.get(20), ControlCode.Goto(1));
+	}
+	
+	@Test("SectionKind.Goto: 遷移先の該当セクションが存在しないとき例外が送出される")
+	public function toControlCodes_Goto_Error1():Void {
+		var catched:Bool = false;
+		try {
+			var codes = SectionTools.toControlCodes([
+				{ name: "a", kind: SectionKind.Goto("c"), begin: 1, end: 10 },
+				{ name: "c", kind: SectionKind.Goto("a"), begin: 11, end: 20 },
+				{ name: "c", kind: SectionKind.Goto("b"), begin: 21, end: 30 }
+			]);
+		} catch (error:Dynamic) {
+			catched = true;
+			Assert.isType(error, String);
+		}
+		Assert.isTrue(catched);
+	}
+	
+	@Test("SectionKind.Goto: 遷移先の該当セクションが複数存在するとき例外が送出される")
+	public function toControlCodes_Goto_Error2():Void {
+		var catched:Bool = false;
+		try {
+			var codes = SectionTools.toControlCodes([
+				{ name: "a", kind: SectionKind.Goto("z"), begin: 1, end: 10 },
+				{ name: "b", kind: SectionKind.Goto("a"), begin: 11, end: 20 },
+				{ name: "c", kind: SectionKind.Goto("b"), begin: 21, end: 30 }
+			]);
+		} catch (error:Dynamic) {
+			catched = true;
+			Assert.isType(error, String);
+		}
+		Assert.isTrue(catched);
 	}
 	
 	@Test("すべてのセクションが例外なく変換できる")

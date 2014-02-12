@@ -20,9 +20,19 @@ class SectionTools {
 				// 追加するコードはない
 			case SectionKind.Standstill : 
 				codes.set(section.begin, ControlCode.Stop);
-			case SectionKind.Goto(goto) : 
-				// TODO : SectionKind.Goto の仕様変更に追いついていません。
-				/* codes.set(section.end, ControlCode.Goto(goto)); */
+			case SectionKind.Goto(destinationSectionName) : 
+				var destination = Lambda.filter(sections, function(s:Section):Bool {
+					return s.name == destinationSectionName;
+				});
+				if (destination.length != 1) {
+					throw if (destination.isEmpty()) {
+						'遷移先のセクション ${destinationSectionName} が見つかりません。';
+					} else {
+						'遷移先のセクション ${destinationSectionName} が複数見つかりました。';
+					}
+				}
+				
+				codes.set(section.end, ControlCode.Goto(destination.first().begin));
 			}
 		}
 		return codes;
