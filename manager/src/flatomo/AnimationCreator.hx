@@ -34,7 +34,7 @@ class AnimationCreator {
 	 * @param	sections アニメーションの再生ヘッドを制御するセクション情報。
 	 * @return 生成されたアニメーション。
 	 */
-	private static function create(source:flash.display.MovieClip, sections:Array<Section>):MovieClip {
+	private static function create(source:flash.display.MovieClip, sections:Array<Section>):Animation {
 		var textures:Vector<Texture> = new Vector<Texture>();
 		var bounds:Rectangle = new Rectangle();
 		

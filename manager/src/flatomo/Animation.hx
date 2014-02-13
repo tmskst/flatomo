@@ -1,6 +1,7 @@
 package flatomo;
 import flash.Vector;
-import starling.display.MovieClip;
+import starling.animation.IAnimatable;
+import starling.display.Image;
 import starling.textures.Texture;
 
 using flatomo.SectionTools;
@@ -11,7 +12,7 @@ using flatomo.SectionTools;
  * FPSの指定はできない。呼び出し元（Flatomo#juggler）の更新頻度に依存する。
  * アニメーションの再生ヘッドは、セクションによって制御される。
  */
-class Animation extends MovieClip {
+class Animation extends Image implements IAnimatable {
 	/*
 	 * Animationクラスの責務は、セクション情報を元に再生ヘッドを制御することです。
 	 * テクスチャの管理と描画は親の starling.display.MovieClipに任せます。
@@ -25,10 +26,20 @@ class Animation extends MovieClip {
 	 */
 	@:allow(flatomo.AnimationCreator)
 	private function new(textures:Vector<Texture>, sections:Array<Section>) {
-		// 更新頻度は呼び出し元(Flatomo#juggler)に依存する。
-		super(textures, 1.00);
+		if (textures.length == 0) {
+			throw '少なくとも一つのテクスチャが必要です。';
+		}
+		
+		super(textures[0]);
+		this.textures = textures;
 		this.codes = sections.toControlCodes();
+		this.isPlaying = true;
+		this.currentFrame = 1;
+		this.nextFrame = 1;
 	}
+	
+	/** テクスチャ */
+	private var textures:Vector<Texture>;
 	
 	/**
 	 * 再生ヘッドを制御するための制御コード
@@ -37,22 +48,38 @@ class Animation extends MovieClip {
 	 */
 	private var codes:Map<Int, ControlCode>;
 	
+	/** 現在の再生ヘッドの位置 */
+	public var currentFrame(default, null):Int;
+	
+	private var nextFrame:Int;
+	
+	/** 再生中かどうか */
+	public var isPlaying(default, null):Bool;
+	
 	/**
 	 * アニメーションの再生ヘッドを1フレーム進める。
 	 * 制御コードによって再生ヘッドが移動したり停止する可能性がある。
 	 * @param	time 利用しない
 	 */
-	public override function advanceTime(time:Float):Void {
+	public function advanceTime(time:Float):Void {
+		if (!isPlaying) { return; }
+		
+		this.currentFrame = nextFrame;
+		
+		// テクスチャの更新
+		texture = textures[currentFrame - 1];
+		
+		// 制御コード処理
+		nextFrame = nextFrame + 1;
 		if (codes.exists(currentFrame)) {
 			switch (codes.get(currentFrame)) {
-				case ControlCode.Stop : 
-					this.pause();
-					return;
 				case ControlCode.Goto(frame) :
-					this.currentFrame = frame;
+					nextFrame = frame;
+				case ControlCode.Stop : 
+					this.isPlaying = false;
 			}
 		}
-		super.advanceTime(time);
+		
 	}
 	
 }
