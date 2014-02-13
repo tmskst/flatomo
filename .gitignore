@@ -10,6 +10,7 @@ obj/
 # munit
 TestMain.hx
 TestSuite.hx
+ExampleTest.hx
 test.bat
 
 report/
