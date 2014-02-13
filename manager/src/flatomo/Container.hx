@@ -27,6 +27,7 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 		this.map = map;
 		this.codes = sections.toControlCodes();
 		this.currentFrame = 1;
+		this.nextFrame = 1;
 		this.isPlaying = true;
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
@@ -54,6 +55,8 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 	/** 現在の再生ヘッドの位置 */
 	public var currentFrame(default, null):Int;
 	
+	private var nextFrame:Int;
+	
 	/** 再生中かどうか */
 	public var isPlaying(default, null):Bool;
 	
@@ -64,6 +67,8 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 	 */
 	public function advanceTime(time:Float):Void {
 		if (!isPlaying) { return; }
+		
+		this.currentFrame = nextFrame;
 		
 		/*
 		 * 描画処理
@@ -90,15 +95,14 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 		/*
 		 * 制御コード処理
 		 */
+		nextFrame = nextFrame + 1;
 		if (codes.exists(currentFrame)) {
 			switch (codes.get(currentFrame)) {
 				case ControlCode.Goto(frame) :
-					this.currentFrame = frame;
+					nextFrame = frame;
 				case ControlCode.Stop : 
 					this.isPlaying = false;
 			}
-		} else {
-			this.currentFrame = currentFrame + 1;
 		}
 		
 	}

@@ -9,9 +9,21 @@ class ContainerTest {
 	public function new() { }
 	
 	@Test("生成直後のフレームは「1」")
-	public function currentFrame1():Void {
+	public function afterConstruct_currentFrame():Void {
 		var sut = new Container([], new Map <Int, Array<Layout>>(), []);
 		Assert.areEqual(1, sut.currentFrame);
+	}
+	
+	@Test("生成直後は可視状態にある")
+	public function afterConstruct_visible():Void {
+		var sut = new Container([], new Map <Int, Array<Layout>>(), []);
+		Assert.areEqual(true, sut.visible);
+	}
+	
+	@Test("生成直後は再生中の状態にある")
+	public function afterConstruct_isPlaying():Void {
+		var sut = new Container([], new Map <Int, Array<Layout>>(), []);
+		Assert.areEqual(true, sut.isPlaying);
 	}
 	
 	@Test("SectionKind.Loop: 再生ヘッドはセクション内でループする")
@@ -20,6 +32,8 @@ class ContainerTest {
 			{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }
 		];
 		var sut = new Container([], new Map<Int, Array<Layout>>(), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(2, sut.currentFrame);
@@ -37,6 +51,8 @@ class ContainerTest {
 		var sut = new Container([], new Map<Int, Array<Layout>>(), sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
 		Assert.areEqual(2, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(3, sut.currentFrame);
@@ -51,6 +67,8 @@ class ContainerTest {
 			{ name: "b", kind: SectionKind.Pass, begin: 4, end: 7 }
 		];
 		var sut = new Container([], new Map<Int, Array<Layout>>(), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(2, sut.currentFrame);
@@ -85,6 +103,8 @@ class ContainerTest {
 		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
 		Assert.areEqual(2, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(3, sut.currentFrame);
@@ -111,6 +131,8 @@ class ContainerTest {
 			{ name: "b", kind: SectionKind.Goto("a"), begin: 4, end: 6}
 		];
 		var sut = new Container([], new Map < Int, Array<Layout> > (), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(2, sut.currentFrame);
