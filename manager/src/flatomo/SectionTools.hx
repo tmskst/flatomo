@@ -9,8 +9,11 @@ class SectionTools {
 	 */
 	public static function toControlCodes(sections:Array<Section>):Map</*Frame*/Int, ControlCode> {
 		var codes:Map<Int, ControlCode> = new Map<Int, ControlCode>();
+		var totalFrames:Int = 0;
 		
 		for (section in sections) {
+			totalFrames = Std.int(Math.max(totalFrames, section.end));
+			
 			switch (section.kind) {
 			case SectionKind.Loop : 
 				codes.set(section.end, ControlCode.Goto(section.begin));
@@ -35,6 +38,12 @@ class SectionTools {
 				codes.set(section.end, ControlCode.Goto(destination.first().begin));
 			}
 		}
+		
+		// 最終セクションの最終フレームに制御コードを挿入する
+		if (!codes.exists(totalFrames)) {
+			codes.set(totalFrames, ControlCode.Goto(1));
+		}
+		
 		return codes;
 	}
 	

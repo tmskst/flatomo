@@ -80,6 +80,25 @@ class ContainerTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
+	@Test("SectionKind.Pass: 最終フレームにはGoto(1)が挿入される")
+	public function currentFrame_Pass2():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 3 }
+		];
+		var sut = new Container([], new Map < Int, Array<Layout> > (), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(2, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(3, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(2, sut.currentFrame);
+	}
+	
 	@Test("SectionKind.Standstill: 再生ヘッドはセクションの最初のフレームで停止する")
 	public function currentFrame_Standstill():Void {
 		var sections = [

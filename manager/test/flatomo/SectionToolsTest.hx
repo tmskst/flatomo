@@ -20,6 +20,17 @@ class SectionToolsTest {
 		Assert.areEqual(expected, actual);
 	}
 	
+	@Test("最終フレームに制御コードを挿入する処理がLoopを破壊しない")
+	public function toControlCodes_Loop2():Void {
+		var expected = ControlCode.Goto(11);
+		var codes = SectionTools.toControlCodes([
+			{ name: "anonymous", kind: SectionKind.Loop, begin: 1, end: 10 },
+			{ name: "anonymous", kind: SectionKind.Loop, begin: 11, end: 20 }
+		]);
+		var actual = codes.get(20);
+		Assert.areEqual(expected, actual);
+	}
+	
 	@Test("SectionKind.Once: セクション内の最終フレームにStopを追加する")
 	public function toControlCodes_Once():Void {
 		var expected = ControlCode.Stop;
@@ -46,7 +57,8 @@ class SectionToolsTest {
 			{ name: "anonymous", kind: SectionKind.Pass, begin: 1, end: 10 }
 		]);
 		Assert.isFalse(codes.exists(1));
-		Assert.isFalse(codes.exists(10));
+		// 最終フレームには制御コードが挿入される
+		Assert.areEqual(ControlCode.Goto(1), codes.get(10));
 	}
 	
 	@Test("SectionKind.Default: SectionKind.Passと同等")
@@ -55,7 +67,8 @@ class SectionToolsTest {
 			{ name: "anonymous", kind: SectionKind.Default, begin: 1, end: 10 }
 		]);
 		Assert.isFalse(codes.exists(1));
-		Assert.isFalse(codes.exists(10));
+		// 最終フレームには制御コードが挿入される
+		Assert.areEqual(ControlCode.Goto(1), codes.get(10));
 	}
 	
 	@Test("SectionKind.Goto: セクション内の最終フレームにGoto(next.begin)を追加する")
@@ -114,6 +127,5 @@ class SectionToolsTest {
 		];
 		SectionTools.toControlCodes(sections);
 	}
-	
 	
 }
