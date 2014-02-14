@@ -3,6 +3,8 @@ package flatomo;
 import haxe.Serializer;
 import haxe.Unserializer;
 #if js
+import jsfl.Document;
+import jsfl.Text;
 import jsfl.Element;
 import jsfl.Flash;
 import jsfl.Frame;
@@ -103,6 +105,69 @@ class FlatomoTools {
 	
 	/** 制御レイヤー名 */
 	public static inline var CONTROL_LAYER_NAME:String = "FlatomoControlLayer";
+	
+	/**
+	 * 設定シンボルをライブラリに生成します。
+	 */
+	public static function createFlatomo():Void {
+		var flash:Flash = untyped fl;
+		var document:Document = flash.getDocumentDOM();
+		var library:Library = document.library;
+		
+		// フォルダを作成
+		if (library.itemExists(FLATOMO_SETTINGS_DIRECTORY_NAME)) {
+			throw 'library.newFolder';
+		}
+		library.newFolder(FLATOMO_SETTINGS_DIRECTORY_NAME);
+		
+		// マネージャで読み込むシンボルを作成
+		library.addNewItem("movie clip", '${FLATOMO_SETTINGS_DIRECTORY_NAME}/${FLATOMO_SETTINGS_CONFIG_OBJECT_NAME}');
+		library.setItemProperty('linkageExportForAS', true);
+		library.setItemProperty('linkageExportForRS', false);
+		library.setItemProperty('linkageExportInFirstFrame', true);
+		library.setItemProperty('linkageClassName', 'Config');
+		
+		// Elementを作成
+		library.selectItem('flatomo/config');
+		library.editItem();
+		document.addNewText( { left: 0, top: 0, right: 30, bottom: 18 }, "CONFIG");
+		document.mouseClick( { x: 0, y: 0 }, false, false);
+		document.setElementProperty('textType', 'dynamic');
+		document.setElementProperty('name', INSTANCE_NAME_CONFIG);
+		
+		document.exitEditMode();
+	}
+	
+	/**
+	 * ライブラリから設定シンボルを削除します。
+	 */
+	public static function deleteFlatomo():Void {
+		var flash:Flash = untyped fl;
+		var library:Library = flash.getDocumentDOM().library;
+		
+		if (library.itemExists(FLATOMO_SETTINGS_DIRECTORY_NAME)) {
+			library.deleteItem(FLATOMO_SETTINGS_DIRECTORY_NAME);
+		}
+	}
+	
+	public static function isFlatomo():Bool {
+		var flash:Flash = untyped fl;
+		var document:Document = flash.getDocumentDOM();
+		var library:Library = document.library;
+		
+		if (!library.itemExists('${FLATOMO_SETTINGS_DIRECTORY_NAME}/${FLATOMO_SETTINGS_CONFIG_OBJECT_NAME}')) { return false; }
+		if (library.getItemType('${FLATOMO_SETTINGS_DIRECTORY_NAME}/${FLATOMO_SETTINGS_CONFIG_OBJECT_NAME}') != "movie clip") { return false; }
+		
+		var index:Int = library.findItemIndex('${FLATOMO_SETTINGS_DIRECTORY_NAME}/${FLATOMO_SETTINGS_CONFIG_OBJECT_NAME}');
+		var config:SymbolItem = cast(library.items[index], SymbolItem);
+		try {
+			var element:Text = cast(config.timeline.layers[0].frames[0].elements[0], Text);
+			return element.name == INSTANCE_NAME_CONFIG;
+		} catch (error:Dynamic) {
+			return false;
+		}
+	}
+	
 	
 	/**
 	 * ItemからFlatomoItemを取り出す
