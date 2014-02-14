@@ -5,7 +5,7 @@ enum PanelApi {
 	 * パネルを更新する。
 	 * @param latestSection タイムラインから取得したセクション情報。すべてのkind属性は初期値。
 	 */
-	Refresh(latestSection:Array<Section>);
+	Refresh(latestSection:Array<Section>, savedItem:Null<FlatomoItem>);
 	/**
 	 * 作業タイムラインが変更されたことをパネルに通知する。
 	 * @param latestSection タイムラインから取得したセクション情報。すべてのkind属性は初期値。
@@ -16,4 +16,8 @@ enum PanelApi {
 	 * ライブラリ内に存在しない（FlatomoItemが保存できない）タイムラインが選択されたことをパネルに通知する。
 	 */
 	DisabledTimlineSelected;
+	/**
+	 * 作業中のドキュメントはFlatomoに対応していないか有効でない
+	 */
+	FlatomoDisabled;
 }

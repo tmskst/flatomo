@@ -55,6 +55,10 @@ class Script {
 		switch (data) {
 			case Refresh : refresh();
 			case Save(data) : save(data);
+			case ScriptApi.Disable :
+				FlatomoTools.disableFlatomo();
+			case ScriptApi.Enable :
+				FlatomoTools.enableFlatomo();
 		}
 	}
 	
@@ -81,8 +85,14 @@ class Script {
 		var flash:Flash = untyped fl;
 		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
 		
-		var latestSection:Array<Section> = FlatomoTools.fetchSections(timeline);
-		send(PanelApi.Refresh(latestSection));
+		if (!FlatomoTools.isFlatomo()) {
+			send(PanelApi.FlatomoDisabled);
+			return;
+		}
+		
+		//var latestSection:Array<Section> = FlatomoTools.fetchSections(timeline);
+		//send(PanelApi.Refresh(latestSection));
+		timelineChanged();
 	}
 	
 }

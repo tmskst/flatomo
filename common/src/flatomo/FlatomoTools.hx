@@ -97,6 +97,11 @@ class FlatomoTools {
 	
 	#if js
 	
+	/*
+	 * 設定シンボル Flatomo/Config はパブリッシュ直前に生成する。
+	 * ドキュメントでFlatomoが有効かどうかは documentの永続データ領域に保存されている。
+	 */
+	
 	/** Flatomoが使用する設定オブジェクトを格納するフォルダ名 */
 	public static inline var FLATOMO_SETTINGS_DIRECTORY_NAME:String = "Flatomo";
 	
@@ -109,7 +114,7 @@ class FlatomoTools {
 	/**
 	 * 設定シンボルをライブラリに生成します。
 	 */
-	public static function createFlatomo():Void {
+	public static function createConfigSymbol():Void {
 		var flash:Flash = untyped fl;
 		var document:Document = flash.getDocumentDOM();
 		var library:Library = document.library;
@@ -141,7 +146,7 @@ class FlatomoTools {
 	/**
 	 * ライブラリから設定シンボルを削除します。
 	 */
-	public static function deleteFlatomo():Void {
+	public static function deleteConfigSymbol():Void {
 		var flash:Flash = untyped fl;
 		var library:Library = flash.getDocumentDOM().library;
 		
@@ -150,22 +155,36 @@ class FlatomoTools {
 		}
 	}
 	
+	public static inline var DOCUMENT_ATTR_FLATOMO:String = "flatomo";
+	
+	/**
+	 * 現在のドキュメントでFlatomoが有効かどうか
+	 * @return 有効なら真
+	 */
 	public static function isFlatomo():Bool {
 		var flash:Flash = untyped fl;
 		var document:Document = flash.getDocumentDOM();
 		var library:Library = document.library;
 		
-		if (!library.itemExists('${FLATOMO_SETTINGS_DIRECTORY_NAME}/${FLATOMO_SETTINGS_CONFIG_OBJECT_NAME}')) { return false; }
-		if (library.getItemType('${FLATOMO_SETTINGS_DIRECTORY_NAME}/${FLATOMO_SETTINGS_CONFIG_OBJECT_NAME}') != "movie clip") { return false; }
-		
-		var index:Int = library.findItemIndex('${FLATOMO_SETTINGS_DIRECTORY_NAME}/${FLATOMO_SETTINGS_CONFIG_OBJECT_NAME}');
-		var config:SymbolItem = cast(library.items[index], SymbolItem);
-		try {
-			var element:Text = cast(config.timeline.layers[0].frames[0].elements[0], Text);
-			return element.name == INSTANCE_NAME_CONFIG;
-		} catch (error:Dynamic) {
-			return false;
-		}
+		return document.documentHasData(DOCUMENT_ATTR_FLATOMO);
+	}
+	
+	/**
+	 * Flatomoを有効にします
+	 */
+	public static function enableFlatomo():Void {
+		var flash:Flash = untyped fl;
+		var document:Document = flash.getDocumentDOM();
+		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, "string", "enabled");
+	}
+	
+	/**
+	 * Flatomoを無効にします
+	 */
+	public static function disableFlatomo():Void {
+		var flash:Flash = untyped fl;
+		var document:Document = flash.getDocumentDOM();
+		document.removeDataFromDocument(DOCUMENT_ATTR_FLATOMO);
 	}
 	
 	

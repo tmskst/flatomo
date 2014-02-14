@@ -1,5 +1,7 @@
 package flatomo.extension;
 import com.bit101.components.CheckBox;
+import com.bit101.components.Label;
+import com.bit101.components.PushButton;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -20,6 +22,9 @@ class ExtensionPanel extends Sprite implements IHandler {
 	
 	private var connector:Connector;
 	
+	private var canvasHeader:Sprite;
+	private var canvasContent:Sprite;
+	
 	private var canvasAnimationViewer:Sprite;
 	private var animationViewer:CheckBox;
 	
@@ -32,17 +37,39 @@ class ExtensionPanel extends Sprite implements IHandler {
 		this.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, 200);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 		
+		
+		
+		
+		
+		canvasContent = new Sprite();
+		canvasContent.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+		this.addChild(canvasContent);
+		
+		canvasHeader = new Sprite();
+		this.addChild(canvasHeader);
+		
+		new PushButton(canvasHeader, 10, 10, "UPDATE", function (event:Event):Void {
+			connector.send(ScriptApi.Refresh);
+		});
+		
+		new PushButton(canvasHeader, 120, 10, "ENABLE", function (event:Event):Void {
+			connector.send(ScriptApi.Enable);
+		});
+		new PushButton(canvasHeader, 230, 10, "DISABLE", function (event:Event):Void {
+			connector.send(ScriptApi.Disable);
+		});
+		
 		canvasSectionViewer = new Sprite();
-		this.addChild(canvasSectionViewer);
+		canvasContent.addChild(canvasSectionViewer);
 		
 		canvasAnimationViewer = new Sprite();
-		this.addChild(canvasAnimationViewer);
+		canvasContent.addChild(canvasAnimationViewer);
 	}
 	
 	private function mouseWheel(event:MouseEvent):Void {
-		var rectangle:Rectangle = this.scrollRect;
+		var rectangle:Rectangle = canvasContent.scrollRect;
 		rectangle.y -= event.delta * 7;
-		this.scrollRect = rectangle;
+		canvasContent.scrollRect = rectangle;
 	}
 	
 	// ------------------------------------------------------------------------------------
@@ -50,13 +77,26 @@ class ExtensionPanel extends Sprite implements IHandler {
 	public function handle(raw_data:String):Void {
 		var data:PanelApi = Unserializer.run(raw_data);
 		switch (data) {
-			case PanelApi.Refresh(latestSection) :
-				// refresh(latestSection);
+			case PanelApi.Refresh(latestSection, savedItem) :
+				timlineSelected(latestSection, savedItem);
 			case PanelApi.TimlineSelected(latestSection, savedItem) :
 				timlineSelected(latestSection, savedItem);
 			case PanelApi.DisabledTimlineSelected :
 				// disabledTimlineSelected();
+			case PanelApi.FlatomoDisabled :
+				flatomoDisabled();
 		}
+	}
+	
+	/**
+	 * 作業中のドキュメントはFlatomoに対応していないか有効でない
+	 */
+	private function flatomoDisabled():Void {
+		// セクションビュアーをすべて消去
+		canvasSectionViewer.removeChildren();
+		canvasAnimationViewer.removeChildren();
+		
+		new Label(canvasSectionViewer, 10, 50, "Flatomo is disabled");
 	}
 	
 	private function timlineSelected(latestSection:Array<Section>, savedItem:Null<FlatomoItem>):Void {
