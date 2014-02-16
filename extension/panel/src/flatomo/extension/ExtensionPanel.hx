@@ -2,11 +2,13 @@ package flatomo.extension;
 import com.bit101.components.CheckBox;
 import com.bit101.components.Label;
 import com.bit101.components.PushButton;
+import com.bit101.components.Style;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.Lib;
+import flatomo.extension.ExtensionPanel.Header;
 import flatomo.FlatomoItem;
 import flatomo.Section;
 import flatomo.SectionKind;
@@ -17,12 +19,16 @@ using Lambda;
 class ExtensionPanel extends Sprite implements IHandler {
 	
 	public static function main() {
-		Lib.current.stage.addChild(new ExtensionPanel());
+		try {
+			Lib.current.stage.addChild(new ExtensionPanel());
+		} catch (error:Dynamic) {
+			trace(error);
+		}
 	}
 	
 	private var connector:Connector;
 	
-	private var canvasHeader:Sprite;
+	private var canvasHeader:Header;
 	private var canvasContent:Sprite;
 	
 	private var canvasAnimationViewer:Sprite;
@@ -33,20 +39,23 @@ class ExtensionPanel extends Sprite implements IHandler {
 	
 	public function new() {
 		super();
+		
+		Style.embedFonts = false;
+		Style.fontSize = 12;
+		
 		this.connector = new Connector("flatomo.jsfl", "flatomo.extension.Script", this);
 		this.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, 200);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 		
 		canvasContent = new Sprite();
 		canvasContent.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+		canvasContent.y = 30;
 		this.addChild(canvasContent);
 		
-		canvasHeader = new Sprite();
-		this.addChild(canvasHeader);
-		
-		new PushButton(canvasHeader, 10, 10, "UPDATE", function (event:Event):Void {
+		canvasHeader = new Header(function (event:Event):Void {
 			connector.send(ScriptApi.Refresh);
 		});
+		this.addChild(canvasHeader);
 		
 		canvasSectionViewer = new Sprite();
 		canvasContent.addChild(canvasSectionViewer);
@@ -66,10 +75,10 @@ class ExtensionPanel extends Sprite implements IHandler {
 	public function handle(raw_data:String):Void {
 		var data:PanelApi = Unserializer.run(raw_data);
 		switch (data) {
-			case PanelApi.Refresh(latestSection, savedItem) :
-				timlineSelected(latestSection, savedItem);
-			case PanelApi.TimlineSelected(latestSection, savedItem) :
-				timlineSelected(latestSection, savedItem);
+			case PanelApi.Refresh(timelineName, latestSection, savedItem) :
+				timlineSelected(timelineName, latestSection, savedItem);
+			case PanelApi.TimlineSelected(timelineName, latestSection, savedItem) :
+				timlineSelected(timelineName, latestSection, savedItem);
 			case PanelApi.DisabledTimlineSelected :
 				// disabledTimlineSelected();
 			case PanelApi.FlatomoDisabled :
@@ -85,13 +94,14 @@ class ExtensionPanel extends Sprite implements IHandler {
 		canvasSectionViewer.removeChildren();
 		canvasAnimationViewer.removeChildren();
 		
-		new Label(canvasSectionViewer, 10, 50, "Flatomo is disabled");
+		new Label(canvasSectionViewer, 10, 20, "Flatomo is disabled");
 	}
 	
-	private function timlineSelected(latestSection:Array<Section>, savedItem:Null<FlatomoItem>):Void {
+	private function timlineSelected(timelineName:String, latestSection:Array<Section>, savedItem:Null<FlatomoItem>):Void {
 		// セクションビュアーをすべて消去
 		canvasSectionViewer.removeChildren();
 		canvasAnimationViewer.removeChildren();
+		canvasContent.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
 		
 		// 最新のセクション情報と保存済みセクション情報を比較する。名前(name属性)が一致するものについては、保存済みセクションのkind属性を最新のセクションにコピーする。
 		if (savedItem != null) {
@@ -113,6 +123,7 @@ class ExtensionPanel extends Sprite implements IHandler {
 		}
 		
 		// ビュアーを生成する。
+		canvasHeader.updateLabel(timelineName);
 		animationViewer = new CheckBox(canvasAnimationViewer, 5, 10, "Animation", changed);
 		animationViewer.selected = if (savedItem != null) savedItem.animation else false;
 		
@@ -138,6 +149,31 @@ class ExtensionPanel extends Sprite implements IHandler {
 			sections.push(viewer.fetchLatestSection());
 		}
 		connector.send(ScriptApi.Save( { sections: sections, animation: animationViewer.selected } ));
+	}
+	
+}
+
+class Header extends Sprite {
+	
+	private var label:Label;
+	
+	public function new(update:Event -> Void) {
+		super();
+		graphics.beginFill(0x000000, 0.8);
+		graphics.drawRect(0, 0, Lib.current.stage.stageWidth, 30);
+		graphics.endFill();
+		
+		updateLabel("Flatomo");
+		new PushButton(this, Lib.current.stage.stageWidth - 120, 5, "UPDATE", update);
+	}
+	
+	public function updateLabel(name:String):Void {
+		if (label != null && contains(label)) {
+			removeChild(label);
+		}
+		Style.LABEL_TEXT = 0xFFFFFF;
+		label = new Label(this, 5, 5, name);
+		Style.LABEL_TEXT = 0x666666;
 	}
 	
 }
