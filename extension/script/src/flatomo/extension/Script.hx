@@ -50,7 +50,7 @@ class Script {
 		var latestSection:Array<Section> = SectionCreator.fetchSections(timeline);
 		var savedItem:FlatomoItem = item.getFlatomoItem();
 		
-		send(PanelApi.TimlineSelected(latestSection, savedItem));
+		send(PanelApi.TimlineSelected(timeline.name, latestSection, savedItem));
 	}
 	
 	// ------------------------------------------------------------------------------------
