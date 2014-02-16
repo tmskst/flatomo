@@ -9,6 +9,11 @@ import jsfl.Item;
 import jsfl.Library;
 import jsfl.Timeline;
 
+import jsfl.Lib.fl;
+
+using flatomo.extension.DocumentTools;
+using flatomo.extension.ItemTools;
+
 using Lambda;
 
 class Script {
@@ -43,8 +48,8 @@ class Script {
 			item = library.items[index];
 		}
 		
-		var latestSection:Array<Section> = FlatomoTools.fetchSections(timeline);
-		var savedItem:FlatomoItem = FlatomoTools.getItemData(item);
+		var latestSection:Array<Section> = SectionCreator.fetchSections(timeline);
+		var savedItem:FlatomoItem = item.getFlatomoItem();
 		
 		send(PanelApi.TimlineSelected(latestSection, savedItem));
 	}
@@ -54,14 +59,10 @@ class Script {
 	public static function handle(raw_data:String):Void {
 		var data:ScriptApi = Unserializer.run(raw_data);
 		switch (data) {
-			case Refresh : refresh();
-			case Save(data) : save(data);
-			case ScriptApi.Disable :
-				FlatomoTools.deleteAllItemData();
-				FlatomoTools.deleteAllElementPersistentData();
-				FlatomoTools.disableFlatomo();
-			case ScriptApi.Enable :
-				FlatomoTools.enableFlatomo();
+			case ScriptApi.Refresh : refresh();
+			case ScriptApi.Save(data) : save(data);
+			case ScriptApi.Disable : disable();
+			case ScriptApi.Enable : enable();
 		}
 	}
 	
@@ -69,10 +70,13 @@ class Script {
 	 * 作業タイムラインにFlatomoItemを保存します。
 	 * @param	data 保存するデータ
 	 */
+	@:access(flatomo.extension.ItemTools)
 	private static function save(data:FlatomoItem):Void {
-		if (!FlatomoTools.isFlatomo()) { return; }
-		
 		var flash:Flash = untyped fl;
+		if (!flash.getDocumentDOM().isFlatomo()) {
+			return;
+		}
+		
 		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
 		var item:Item = null;
 		{ // initialize item
@@ -80,7 +84,7 @@ class Script {
 			var index:Int = library.findItemIndex(timeline.libraryItem.name);
 			item = library.items[index];
 		}
-		FlatomoTools.setItemData(item, data);
+		item.setFlatomoItem(data);
 	}
 	
 	/**
@@ -90,7 +94,7 @@ class Script {
 		var flash:Flash = untyped fl;
 		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
 		
-		if (!FlatomoTools.isFlatomo()) {
+		if (!flash.getDocumentDOM().isFlatomo()) {
 			send(PanelApi.FlatomoDisabled);
 			return;
 		}
@@ -98,6 +102,28 @@ class Script {
 		//var latestSection:Array<Section> = FlatomoTools.fetchSections(timeline);
 		//send(PanelApi.Refresh(latestSection));
 		timelineChanged();
+	}
+	
+	/**
+	 * 作業中のドキュメントでFlatomoが使えるようにドキュメントを変更します。
+	 */
+	@:access(flatomo.extension.DocumentTools)
+	private static function enable():Void {
+		fl.getDocumentDOM().enableFlatomo();
+	}
+	
+	/**
+	 * 作業中のドキュメントでFlatomoを無効にします。
+	 * Flatomoに関する全ての設定は失われます。
+	 */
+	@:access(flatomo.FlatomoTools)
+	@:access(flatomo.extension.DocumentTools)
+	private static function disable():Void {
+		for (item in fl.getDocumentDOM().library.items) {
+			item.getFlatomoItem();
+		}
+		FlatomoTools.deleteAllElementPersistentData();
+		fl.getDocumentDOM().disableFlatomo();
 	}
 	
 }

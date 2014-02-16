@@ -3,6 +3,9 @@ package flatomo;
 import haxe.Serializer;
 import haxe.Unserializer;
 #if js
+import jsfl.Lib;
+import flatomo.extension.DocumentTools;
+import flatomo.extension.SectionCreator;
 import jsfl.PersistentDataType;
 import jsfl.Document;
 import jsfl.Text;
@@ -15,6 +18,11 @@ import jsfl.Layer;
 import jsfl.Library;
 import jsfl.SymbolItem;
 import jsfl.Timeline;
+import jsfl.Lib.fl;
+
+using flatomo.extension.DocumentTools;
+using flatomo.extension.ItemTools;
+
 #end
 
 class FlatomoTools {
@@ -109,17 +117,15 @@ class FlatomoTools {
 	/** Flatomoが使用する設定オブジェクトの名前 */
 	public static inline var FLATOMO_SETTINGS_CONFIG_OBJECT_NAME:String = "Config";
 	
-	/** 制御レイヤー名 */
-	public static inline var CONTROL_LAYER_NAME:String = "FlatomoControlLayer";
-	
 	/**
 	 * 設定シンボルをライブラリに生成します。
 	 */
-	public static function createConfigSymbol():Void {
-		if (!isFlatomo()) { return; }
+	private static function createConfigSymbol():Void {
+		if (!fl.getDocumentDOM().isFlatomo()) {
+			Lib.throwError('不正な操作 : Flatomoが書き込みできないドキュメント ${fl.getDocumentDOM().name}で設定シンボル作成しようと試みました。');
+		}
 		
-		var flash:Flash = untyped fl;
-		var document:Document = flash.getDocumentDOM();
+		var document:Document = fl.getDocumentDOM();
 		var library:Library = document.library;
 		
 		// フォルダを作成
@@ -149,78 +155,27 @@ class FlatomoTools {
 	/**
 	 * ライブラリから設定シンボルを削除します。
 	 */
-	public static function deleteConfigSymbol():Void {
-		var flash:Flash = untyped fl;
-		var library:Library = flash.getDocumentDOM().library;
+	private static function deleteConfigSymbol():Void {
+		if (!fl.getDocumentDOM().isFlatomo()) {
+			Lib.throwError('不正な操作 : Flatomoが書き込みできないドキュメント ${fl.getDocumentDOM().name}で設定シンボルを削除しようと試みました。');
+		}
 		
+		var library:Library = fl.getDocumentDOM().library;
 		if (library.itemExists(FLATOMO_SETTINGS_DIRECTORY_NAME)) {
 			library.deleteItem(FLATOMO_SETTINGS_DIRECTORY_NAME);
 		}
-	}
-	
-	public static inline var DOCUMENT_ATTR_FLATOMO:String = "flatomo";
-	
-	/**
-	 * 現在のドキュメントでFlatomoが有効かどうか
-	 * @return 有効なら真
-	 */
-	public static function isFlatomo():Bool {
-		var flash:Flash = untyped fl;
-		var document:Document = flash.getDocumentDOM();
-		var library:Library = document.library;
-		
-		return document.documentHasData(DOCUMENT_ATTR_FLATOMO);
-	}
-	
-	/**
-	 * Flatomoを有効にします
-	 */
-	public static function enableFlatomo():Void {
-		var flash:Flash = untyped fl;
-		var document:Document = flash.getDocumentDOM();
-		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, PersistentDataType.STRING, "enabled");
-	}
-	
-	/**
-	 * Flatomoを無効にします
-	 */
-	public static function disableFlatomo():Void {
-		var flash:Flash = untyped fl;
-		var document:Document = flash.getDocumentDOM();
-		document.removeDataFromDocument(DOCUMENT_ATTR_FLATOMO);
-	}
-	
-	
-	/**
-	 * ItemからFlatomoItemを取り出す
-	 * @param	item ライブラリ項目
-	 * @return 取得したFlatomoItem
-	 */
-	public static function getItemData(item:Item):FlatomoItem {
-		if (!item.hasData("f_item")) { return null; }
-		return Unserializer.run(item.getData("f_item"));
-	}
-	
-	/**
-	 * ItemにFlatomoItemを保存する
-	 * @param	item 保存先
-	 * @param	data 保存するデータ
-	 */
-	public static function setItemData(item:Item, data:FlatomoItem):Void {
-		if (!isFlatomo()) { return; }
-		
-		if (item.hasData("f_item")) {
-			item.removeData("f_item");
-		}
-		item.addData("f_item", PersistentDataType.STRING, Serializer.run(data));
 	}
 	
 	/**
 	 * ライブラリを設定オブジェクトに格納する。
 	 * @param	data ライブラリ
 	 */
-	public static function setLibrary(data:Map<LibraryPath, FlatomoItem>):Void {
-		var flash:Flash = untyped fl;
+	private static function setLibrary(data:Map<LibraryPath, FlatomoItem>):Void {
+		if (!fl.getDocumentDOM().isFlatomo()) {
+			Lib.throwError('不正な操作 : Flatomoが書き込みできないドキュメント ${fl.getDocumentDOM().name}で設定シンボルにライブラリを書き込もうと試みました。');
+		}
+		
+		var flash:Flash = fl;
 		var library:Library = flash.getDocumentDOM().library;
 		flash.getDocumentDOM().setPublishDocumentData("_EMBED_SWF_", true);
 		
@@ -268,9 +223,9 @@ class FlatomoTools {
 		
 		scan_allSymbolItem(library, function (item:SymbolItem) {
 			var libraryPath:String = if (item.linkageExportForAS) PREFIX_LINKAGED_ELEMENT + item.linkageClassName else item.name;
-			var flatomoItem:FlatomoItem = getItemData(item);
+			var flatomoItem:FlatomoItem = item.getFlatomoItem();
 			if (flatomoItem == null) {
-				var sections = fetchSections(item.timeline);
+				var sections = SectionCreator.fetchSections(item.timeline);
 				flatomoItem = { sections: sections, animation: false };
 			}
 			
@@ -281,52 +236,14 @@ class FlatomoTools {
 	}
 	
 	/**
-	 * ライムラインを元にセクション情報を抽出します。
-	 * @param	timeline 元となるタイムライン
-	 * @return 生成されたセクション情報
-	 */
-	public static function fetchSections(timeline:Timeline):Array<Section> {
-		// タイムライン中から制御レイヤーを抽出
-		var layers:Array<Layer> = timeline.layers.filter(
-			function(layer:Layer):Bool { return layer.name == CONTROL_LAYER_NAME; }
-		);
-		
-		// 制御レイヤーが存在しない場合は自動的にセクションが生成される。
-		if (layers.length == 0) {
-			untyped fl.trace('タイムライン ${timeline.name} に制御レイヤーが存在しません。セクションを自動的に生成します。');
-			return [{ name: "anonymous", kind: SectionKind.Once, begin: 1, end: timeline.frameCount }];
-		}
-		
-		// 制御レイヤーが複数存在する場合はエラーを送出する。
-		if (layers.length != 1) {
-			throw '複数のコントロールレイヤーが見つかりました。';
-		}
-		
-		var keyFrames:Array<Int> = new Array<Int>();
-		
-		// 制御レイヤーのキーフレームを探索
-		var controlLayer:Layer = layers.shift();
-		var frames:Array<Frame> = controlLayer.frames;
-		for (i in 0...frames.length) {
-			if (i == frames[i].startFrame) { keyFrames.push(i); }
-		}
-		keyFrames.push(controlLayer.frameCount);
-		
-		// セクションの生成
-		var sections:Array<Section> = new Array<Section>();
-		for (i in 0...keyFrames.length - 1) {
-			var frame:Frame = frames[keyFrames[i]];
-			sections.push({ name: frame.name, kind: SectionKind.Once, begin: keyFrames[i] + 1, end: keyFrames[i + 1] });
-		}
-		
-		return sections;
-	}
-	
-	/**
 	 * ライブラリ項目のすべてのElementについてメタデータを生成、格納します。
 	 * @param	library ライブラリ
 	 */
-	public static function setAllElementPersistentData(library:Library):Void {
+	private static function setAllElementPersistentData(library:Library):Void {
+		if (!fl.getDocumentDOM().isFlatomo()) {
+			Lib.throwError('不正な操作 : Flatomoが書き込みできないドキュメント ${fl.getDocumentDOM().name}でElementに対しメタデータを書き込もうと試みました。');
+		}
+		
 		scan_allSymbolItem(library, function (item:SymbolItem) {
 			scan_allInstance(item.timeline, function (instance:Instance) {
 				var path:LibraryPath;
@@ -343,9 +260,12 @@ class FlatomoTools {
 		});
 	}
 	
-	public static function deleteAllElementPersistentData():Void {
-		var flash:Flash = untyped fl;
-		scan_allSymbolItem(flash.getDocumentDOM().library, function (item:SymbolItem) {
+	private static function deleteAllElementPersistentData():Void {
+		if (!fl.getDocumentDOM().isFlatomo()) {
+			Lib.throwError('不正な操作 : Flatomoが書き込みできないドキュメント ${fl.getDocumentDOM().name}でElementに対しメタデータを削除しようと試みました。');
+		}
+		
+		scan_allSymbolItem(fl.getDocumentDOM().library, function (item:SymbolItem) {
 			scan_allInstance(item.timeline, function (instance:Instance) {
 				if (instance.hasPersistentData(FIELD_NAME_ELEMENT)) {
 					instance.removePersistentData(FIELD_NAME_ELEMENT);
@@ -355,14 +275,8 @@ class FlatomoTools {
 		});
 	}
 	
-	public static function deleteAllItemData():Void {
-		var flash:Flash = untyped fl;
-		for (item in flash.getDocumentDOM().library.items) {
-			if (item.hasData("f_item")) {
-				item.removeData("f_item");
-			}
-		}
-	}
+	
+	// --------------------------------------------------------------------------------------
 	
 	/**
 	 * @scan Timelineに存在するすべてのElement
