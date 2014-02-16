@@ -32,3 +32,15 @@
 
 -main flatomo.extension.DisableFlatomo
 -js script/bin/DisableFlatomo.jsfl
+
+--next
+
+-cp script/src
+-cp common/src
+-cp ../common/src
+
+# libraries
+-cp script/lib/haxe-jsfl/jsfl/hxclasses
+
+-main flatomo.extension.Publisher
+-js script/bin/Publisher.jsfl
