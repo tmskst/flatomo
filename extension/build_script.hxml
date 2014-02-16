@@ -8,3 +8,27 @@
 
 -main flatomo.extension.Script
 -js script/bin/flatomo.jsfl
+
+--next
+
+-cp script/src
+-cp common/src
+-cp ../common/src
+
+# libraries
+-cp script/lib/haxe-jsfl/jsfl/hxclasses
+
+-main flatomo.extension.EnableFlatomo
+-js script/bin/EnableFlatomo.jsfl
+
+--next
+
+-cp script/src
+-cp common/src
+-cp ../common/src
+
+# libraries
+-cp script/lib/haxe-jsfl/jsfl/hxclasses
+
+-main flatomo.extension.DisableFlatomo
+-js script/bin/DisableFlatomo.jsfl

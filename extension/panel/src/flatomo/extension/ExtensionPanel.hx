@@ -37,10 +37,6 @@ class ExtensionPanel extends Sprite implements IHandler {
 		this.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, 200);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 		
-		
-		
-		
-		
 		canvasContent = new Sprite();
 		canvasContent.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
 		this.addChild(canvasContent);
@@ -50,13 +46,6 @@ class ExtensionPanel extends Sprite implements IHandler {
 		
 		new PushButton(canvasHeader, 10, 10, "UPDATE", function (event:Event):Void {
 			connector.send(ScriptApi.Refresh);
-		});
-		
-		new PushButton(canvasHeader, 120, 10, "ENABLE", function (event:Event):Void {
-			connector.send(ScriptApi.Enable);
-		});
-		new PushButton(canvasHeader, 230, 10, "DISABLE", function (event:Event):Void {
-			connector.send(ScriptApi.Disable);
 		});
 		
 		canvasSectionViewer = new Sprite();

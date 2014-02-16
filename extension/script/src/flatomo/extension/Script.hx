@@ -1,15 +1,14 @@
 package flatomo.extension;
 import flatomo.FlatomoItem;
-import flatomo.FlatomoTools;
 import flatomo.Section;
 import haxe.Unserializer;
 import jsfl.EventType;
 import jsfl.Flash;
 import jsfl.Item;
+import jsfl.Lib.fl;
 import jsfl.Library;
 import jsfl.Timeline;
 
-import jsfl.Lib.fl;
 
 using flatomo.extension.DocumentTools;
 using flatomo.extension.ItemTools;
@@ -63,12 +62,6 @@ class Script {
 				refresh();
 			case ScriptApi.Save(data) :
 				save(data);
-			case ScriptApi.Disable :
-				disable();
-				refresh();
-			case ScriptApi.Enable :
-				enable();
-				refresh();
 		}
 	}
 	
@@ -102,29 +95,6 @@ class Script {
 		} else {
 			timelineChanged();
 		}
-	}
-	
-	/**
-	 * 作業中のドキュメントでFlatomoが使えるようにドキュメントを変更します。
-	 */
-	@:access(flatomo.extension.DocumentTools)
-	private static function enable():Void {
-		fl.getDocumentDOM().enableFlatomo();
-	}
-	
-	/**
-	 * 作業中のドキュメントでFlatomoを無効にします。
-	 * Flatomoに関する全ての設定は失われます。
-	 */
-	@:access(flatomo.FlatomoTools)
-	@:access(flatomo.extension.ItemTools)
-	@:access(flatomo.extension.DocumentTools)
-	private static function disable():Void {
-		for (item in fl.getDocumentDOM().library.items) {
-			item.removeFlatomoItem();
-		}
-		FlatomoTools.deleteAllElementPersistentData();
-		fl.getDocumentDOM().disableFlatomo();
 	}
 	
 }
