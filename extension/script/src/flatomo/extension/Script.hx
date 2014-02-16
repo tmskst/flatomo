@@ -3,6 +3,7 @@ import flatomo.FlatomoItem;
 import flatomo.FlatomoTools;
 import flatomo.Section;
 import haxe.Unserializer;
+import jsfl.EventType;
 import jsfl.Flash;
 import jsfl.Item;
 import jsfl.Library;
@@ -18,7 +19,7 @@ class Script {
 		send = Connector.send;
 		
 		var flash:Flash = untyped fl;
-		flash.addEventListener("timelineChanged", timelineChanged);
+		flash.addEventListener(EventType.TIMELINE_CHANGED, timelineChanged);
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package flatomo;
 import haxe.Serializer;
 import haxe.Unserializer;
 #if js
+import jsfl.PersistentDataType;
 import jsfl.Document;
 import jsfl.Text;
 import jsfl.Element;
@@ -175,7 +176,7 @@ class FlatomoTools {
 	public static function enableFlatomo():Void {
 		var flash:Flash = untyped fl;
 		var document:Document = flash.getDocumentDOM();
-		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, "string", "enabled");
+		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, PersistentDataType.STRING, "enabled");
 	}
 	
 	/**
@@ -207,7 +208,7 @@ class FlatomoTools {
 		if (item.hasData("f_item")) {
 			item.removeData("f_item");
 		}
-		item.addData("f_item", "string", Serializer.run(data));
+		item.addData("f_item", PersistentDataType.STRING, Serializer.run(data));
 	}
 	
 	/**
@@ -249,7 +250,7 @@ class FlatomoTools {
 		if (config.hasPersistentData(FIELD_NAME_LIBRARY)) {
 			config.removePersistentData(FIELD_NAME_LIBRARY);
 		}
-		config.setPersistentData(FIELD_NAME_LIBRARY, "string", Serializer.run(data));
+		config.setPersistentData(FIELD_NAME_LIBRARY, PersistentDataType.STRING, Serializer.run(data));
 		config.setPublishPersistentData(FIELD_NAME_LIBRARY, "_EMBED_SWF_", true);
 	}
 	
@@ -332,7 +333,7 @@ class FlatomoTools {
 				}
 				
 				var data:FlatomoElement = { libraryPath: path };
-				instance.setPersistentData(FIELD_NAME_ELEMENT, "string", Serializer.run(data));
+				instance.setPersistentData(FIELD_NAME_ELEMENT, PersistentDataType.STRING, Serializer.run(data));
 				instance.setPublishPersistentData(FIELD_NAME_ELEMENT, "_EMBED_SWF_", true);
 			});
 		});
