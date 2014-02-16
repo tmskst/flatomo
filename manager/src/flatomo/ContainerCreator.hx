@@ -43,7 +43,15 @@ class ContainerCreator {
 			for (index in 0...movie.numChildren) {
 				var source:flash.display.DisplayObject = movie.getChildAt(index);
 				displayObjects.push(Creator.translate(source));
-				layouts.push({ instanceName: source.name, libraryPath: /*FlatomoTools.fetchElement(source).libraryPath*/'', x: source.x, y: source.y });
+				layouts.push( {
+					instanceName: source.name,
+					libraryPath: /*FlatomoTools.fetchElement(source).libraryPath*/'',
+					x: source.x,
+					y: source.y,
+					rotation: untyped { __global__["starling.utils.deg2rad"](source.rotation); } ,
+					scaleX: source.scaleX,
+					scaleY: source.scaleY
+				} );
 			}
 			map.set(frame + 1, layouts);
 		}

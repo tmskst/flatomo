@@ -89,6 +89,9 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 				child.visible = true;
 				child.x = layout.x;
 				child.y = layout.y;
+				child.rotation = layout.rotation;
+				child.scaleX = layout.scaleX;
+				child.scaleY= layout.scaleY;
 			}
 		}
 		

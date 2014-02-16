@@ -9,4 +9,7 @@ typedef Layout = {
 	var instanceName:InstanceName;
 	var x:Float;
 	var y:Float;
+	var rotation:Float;
+	var scaleX:Float;
+	var scaleY:Float;
 }
