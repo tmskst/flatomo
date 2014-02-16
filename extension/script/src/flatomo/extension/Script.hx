@@ -24,7 +24,7 @@ class Script {
 		send = Connector.send;
 		
 		var flash:Flash = untyped fl;
-		flash.addEventListener(EventType.TIMELINE_CHANGED, timelineChanged);
+		flash.addEventListener(EventType.TIMELINE_CHANGED, refresh);
 	}
 	
 	/**
@@ -59,10 +59,16 @@ class Script {
 	public static function handle(raw_data:String):Void {
 		var data:ScriptApi = Unserializer.run(raw_data);
 		switch (data) {
-			case ScriptApi.Refresh : refresh();
-			case ScriptApi.Save(data) : save(data);
-			case ScriptApi.Disable : disable();
-			case ScriptApi.Enable : enable();
+			case ScriptApi.Refresh :
+				refresh();
+			case ScriptApi.Save(data) :
+				save(data);
+			case ScriptApi.Disable :
+				disable();
+				refresh();
+			case ScriptApi.Enable :
+				enable();
+				refresh();
 		}
 	}
 	
@@ -91,17 +97,11 @@ class Script {
 	 * 現在（最新）のタイムラインを元にセクション情報を生成しパネルに送信します。
 	 */
 	private static function refresh():Void {
-		var flash:Flash = untyped fl;
-		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
-		
-		if (!flash.getDocumentDOM().isFlatomo()) {
+		if (!fl.getDocumentDOM().isFlatomo()) {
 			send(PanelApi.FlatomoDisabled);
-			return;
+		} else {
+			timelineChanged();
 		}
-		
-		//var latestSection:Array<Section> = FlatomoTools.fetchSections(timeline);
-		//send(PanelApi.Refresh(latestSection));
-		timelineChanged();
 	}
 	
 	/**
@@ -117,10 +117,11 @@ class Script {
 	 * Flatomoに関する全ての設定は失われます。
 	 */
 	@:access(flatomo.FlatomoTools)
+	@:access(flatomo.extension.ItemTools)
 	@:access(flatomo.extension.DocumentTools)
 	private static function disable():Void {
 		for (item in fl.getDocumentDOM().library.items) {
-			item.getFlatomoItem();
+			item.removeFlatomoItem();
 		}
 		FlatomoTools.deleteAllElementPersistentData();
 		fl.getDocumentDOM().disableFlatomo();
