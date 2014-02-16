@@ -80,10 +80,18 @@ class ExtensionPanel extends Sprite implements IHandler {
 			case PanelApi.TimlineSelected(timelineName, latestSection, savedItem) :
 				timlineSelected(timelineName, latestSection, savedItem);
 			case PanelApi.DisabledTimlineSelected :
-				// disabledTimlineSelected();
+				 disabledTimlineSelected();
 			case PanelApi.FlatomoDisabled :
 				flatomoDisabled();
 		}
+	}
+	
+	private function disabledTimlineSelected():Void {
+		// セクションビュアーをすべて消去
+		canvasSectionViewer.removeChildren();
+		canvasAnimationViewer.removeChildren();
+		
+		new Label(canvasSectionViewer, 10, 20, "Disabled Timline");
 	}
 	
 	/**
