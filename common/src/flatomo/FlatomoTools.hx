@@ -116,6 +116,8 @@ class FlatomoTools {
 	 * 設定シンボルをライブラリに生成します。
 	 */
 	public static function createConfigSymbol():Void {
+		if (!isFlatomo()) { return; }
+		
 		var flash:Flash = untyped fl;
 		var document:Document = flash.getDocumentDOM();
 		var library:Library = document.library;
@@ -205,6 +207,8 @@ class FlatomoTools {
 	 * @param	data 保存するデータ
 	 */
 	public static function setItemData(item:Item, data:FlatomoItem):Void {
+		if (!isFlatomo()) { return; }
+		
 		if (item.hasData("f_item")) {
 			item.removeData("f_item");
 		}
@@ -337,6 +341,27 @@ class FlatomoTools {
 				instance.setPublishPersistentData(FIELD_NAME_ELEMENT, "_EMBED_SWF_", true);
 			});
 		});
+	}
+	
+	public static function deleteAllElementPersistentData():Void {
+		var flash:Flash = untyped fl;
+		scan_allSymbolItem(flash.getDocumentDOM().library, function (item:SymbolItem) {
+			scan_allInstance(item.timeline, function (instance:Instance) {
+				if (instance.hasPersistentData(FIELD_NAME_ELEMENT)) {
+					instance.removePersistentData(FIELD_NAME_ELEMENT);
+					instance.setPublishPersistentData(FIELD_NAME_ELEMENT, "_EMBED_SWF_", false);
+				}
+			});
+		});
+	}
+	
+	public static function deleteAllItemData():Void {
+		var flash:Flash = untyped fl;
+		for (item in flash.getDocumentDOM().library.items) {
+			if (item.hasData("f_item")) {
+				item.removeData("f_item");
+			}
+		}
 	}
 	
 	/**

@@ -57,6 +57,8 @@ class Script {
 			case Refresh : refresh();
 			case Save(data) : save(data);
 			case ScriptApi.Disable :
+				FlatomoTools.deleteAllItemData();
+				FlatomoTools.deleteAllElementPersistentData();
 				FlatomoTools.disableFlatomo();
 			case ScriptApi.Enable :
 				FlatomoTools.enableFlatomo();
@@ -68,6 +70,8 @@ class Script {
 	 * @param	data 保存するデータ
 	 */
 	private static function save(data:FlatomoItem):Void {
+		if (!FlatomoTools.isFlatomo()) { return; }
+		
 		var flash:Flash = untyped fl;
 		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
 		var item:Item = null;
