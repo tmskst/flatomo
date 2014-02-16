@@ -31,7 +31,7 @@ class Connector {
 	
 	private function initialize():Void {
 		untyped __global__["adobe.utils.MMExecute"]('var ${FLATOMO_INITIALIZE} = true;');
-		untyped __global__["adobe.utils.MMExecute"]('fl.runScript(fl.configURI + "Commands/${path}")');
+		untyped __global__["adobe.utils.MMExecute"]('fl.runScript(fl.configURI + "WindowSWF/${path}")');
 	}
 	
 	public function send(data:Dynamic):Void {
