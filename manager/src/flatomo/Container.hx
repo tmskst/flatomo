@@ -25,6 +25,7 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 	public function new(displayObjects:Array<DisplayObject>, map:Map<Int, Array<Layout>>, sections:Array<Section>) {
 		super();
 		this.map = map;
+		this.sections = sections;
 		this.codes = sections.toControlCodes();
 		this.currentFrame = 1;
 		this.nextFrame = 1;
@@ -57,6 +58,8 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 	
 	private var nextFrame:Int;
 	
+	private var sections:Array<Section>;
+	
 	/** 再生中かどうか */
 	public var isPlaying(default, null):Bool;
 	
@@ -74,7 +77,24 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 		 * 描画処理
 		 * 最も簡単な実装です。最適化はされていません
 		 */
+		rebuild();
 		
+		/*
+		 * 制御コード処理
+		 */
+		nextFrame = nextFrame + 1;
+		if (codes.exists(currentFrame)) {
+			switch (codes.get(currentFrame)) {
+				case ControlCode.Goto(frame) :
+					nextFrame = frame;
+				case ControlCode.Stop : 
+					this.isPlaying = false;
+			}
+		}
+		
+	}
+	
+	private function rebuild():Void {
 		// すべての表示オブジェクトを不可視状態にする。
 		for (index in 0...numChildren) {
 			this.getChildAt(index).visible = false;
@@ -94,20 +114,46 @@ class Container extends DisplayObjectContainer implements IAnimatable {
 				child.scaleY= layout.scaleY;
 			}
 		}
-		
-		/*
-		 * 制御コード処理
-		 */
-		nextFrame = nextFrame + 1;
-		if (codes.exists(currentFrame)) {
-			switch (codes.get(currentFrame)) {
-				case ControlCode.Goto(frame) :
-					nextFrame = frame;
-				case ControlCode.Stop : 
-					this.isPlaying = false;
+	}
+	
+	public function play():Void {
+		isPlaying = true;
+	}
+	
+	public function stop():Void {
+		isPlaying = false;
+	}
+	
+	public function gotoAndPlay(sectionName:String, ?increment:Int = 0):Void {
+		gotoGlobalAndPlay(findSection(sectionName) + increment);
+	}
+	
+	public function gotoAndStop(sectionName:String, ?increment:Int = 0):Void {
+		gotoGlobalAndStop(findSection(sectionName) + increment);
+	}
+	
+	private function findSection(sectionName:String):Int {
+		for (section in sections) {
+			if (section.name == sectionName) {
+				return section.begin;
 			}
 		}
-		
+		throw 'セクション ${sectionName} が見つかりません。';
 	}
+	
+	public function gotoGlobalAndPlay(frame:Int):Void {
+		isPlaying = true;
+		currentFrame = frame;
+		nextFrame = frame + 1;
+		rebuild();
+	}
+	
+	public function gotoGlobalAndStop(frame:Int):Void {
+		isPlaying = false;
+		currentFrame = frame;
+		nextFrame = frame + 1;
+		rebuild();
+	}
+	
 	
 }

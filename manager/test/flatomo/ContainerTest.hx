@@ -161,4 +161,178 @@ class ContainerTest {
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceTime(1.0);
 	}
+	
+	@Test("生成直後にplayを呼び出したときのフレームの遷移は呼び出さなかったときの遷移に等しい")
+	public function afterConstruct_play():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Loop, begin: 1, end: 5 }
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.play();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(2, sut.currentFrame);
+	}
+	
+	@Test("生成直後にstopを呼び出すと再生ヘッドは移動しない")
+	public function afterConstruct_apply_stop():Void {
+		var sut = new Container([], new Map <Int, Array<Layout>>(), [{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }]);
+		sut.stop();
+		sut.advanceTime(1.0);
+		sut.advanceTime(1.0);
+		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+	}
+	
+	@Test("playを呼び出すと再生ヘッドは移動し始める")
+	public function play_currentFrame():Void {
+		var sut = new Container([], new Map <Int, Array<Layout>>(), [{ name: "a", kind: SectionKind.Loop, begin: 1, end: 6 }]);
+		sut.advanceTime(1.0); // 1
+		sut.advanceTime(1.0); // 2
+		sut.advanceTime(1.0); // 3
+		Assert.areEqual(3, sut.currentFrame);
+		
+		sut.stop();
+		sut.advanceTime(1.0);
+		Assert.areEqual(3, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(3, sut.currentFrame);
+		
+		sut.play();
+		Assert.areEqual(3, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("制御コードで停止した後にplayを呼び出すと再生ヘッドは移動し始める")
+	public function play_currentFrame2():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		sut.advanceTime(1.0); // 1
+		sut.advanceTime(1.0); // 1
+		sut.advanceTime(1.0); // 2
+		sut.advanceTime(1.0); // 3
+		Assert.areEqual(3, sut.currentFrame);
+		sut.advanceTime(1.0);
+		// 制御コード Stopにより再生ヘッドは停止した
+		Assert.areEqual(3, sut.currentFrame);
+		
+		sut.play();
+		Assert.areEqual(3, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("生成直後にgotoGlobalAndPlayを呼び出して再生ヘッドを移動する")
+	public function gotoGlobalAndPlay_currentFrame():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		// gotoAndPlayを呼び出すと同時にテクスチャが切り替わる（表示は変化しない）
+		sut.gotoGlobalAndPlay(4);
+		Assert.areEqual(4, sut.currentFrame);
+		// gotoAndPlay呼び出し後、初めて描画されるテクスチャは「5」
+		sut.advanceTime(1.0);
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("生成直後にgotoAndPlayを呼び出して再生ヘッドを移動する")
+	public function gotoAndPlay_currentFrame():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		// gotoAndPlayを呼び出すと同時にテクスチャが切り替わる（表示は変化しない）
+		sut.gotoAndPlay("b");
+		Assert.areEqual(4, sut.currentFrame);
+		// gotoAndPlay呼び出し後、初めて描画されるテクスチャは「5」
+		sut.advanceTime(1.0);
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("生成直後にgotoGlobalAndStopを呼び出して再生ヘッドを移動する")
+	public function gotoGlobalAndStop_currentFrame():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		// 生成直後のフレームは「1」
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoGlobalAndStop(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(4, sut.currentFrame);
+	}
+	
+	@Test("生成直後にgotoAndStopを呼び出して再生ヘッドを移動する")
+	public function gotoAndStop_currentFrame():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		// 生成直後のフレームは「1」
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoAndStop("b");
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(4, sut.currentFrame);
+	}
+	
+	@Test("gotoGlobalAndStop呼び出し後にplayを呼び出す")
+	public function gotoGlobalAndStop_play_currentFrame():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 6 }
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		Assert.areEqual(1, sut.currentFrame);
+		
+		sut.gotoGlobalAndStop(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(4, sut.currentFrame);
+		
+		sut.play();
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(5, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(6, sut.currentFrame);
+	}
+	
+	@Ignore("あとでこの仕様を許容するかどうか判断する")
+	@Test("生成直後に停止し、その後再生した場合はすぐに動き出す")
+	public function afterConstruct_stop_play():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 6 }
+		];
+		var sut = new Container([], new Map <Int, Array<Layout>>(), sections);
+		sut.stop();
+		sut.advanceTime(1.0);
+		sut.advanceTime(1.0);
+		sut.advanceTime(1.0);
+		Assert.areEqual(1, sut.currentFrame);
+		sut.play();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(2, sut.currentFrame);
+	}
+	
+	
+	
+	
 }
