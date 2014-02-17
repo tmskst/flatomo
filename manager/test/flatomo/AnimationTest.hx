@@ -276,6 +276,21 @@ class AnimationTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
+	@Test("生成直後にgotoGlobalAndPlayを呼び出して再生ヘッドを移動する")
+	public function gotoGlobalAndPlay_currentFrame():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
+		];
+		var sut = new Animation(createTextures(6), sections);
+		// gotoAndPlayを呼び出すと同時にテクスチャが切り替わる（表示は変化しない）
+		sut.gotoGlobalAndPlay(4);
+		Assert.areEqual(4, sut.currentFrame);
+		// gotoAndPlay呼び出し後、初めて描画されるテクスチャは「5」
+		sut.advanceTime(1.0);
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
 	@Test("生成直後にgotoAndPlayを呼び出して再生ヘッドを移動する")
 	public function gotoAndPlay_currentFrame():Void {
 		var sections = [
@@ -284,11 +299,26 @@ class AnimationTest {
 		];
 		var sut = new Animation(createTextures(6), sections);
 		// gotoAndPlayを呼び出すと同時にテクスチャが切り替わる（表示は変化しない）
-		sut.gotoAndPlay(4);
+		sut.gotoAndPlay("b");
 		Assert.areEqual(4, sut.currentFrame);
 		// gotoAndPlay呼び出し後、初めて描画されるテクスチャは「5」
 		sut.advanceTime(1.0);
 		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("生成直後にgotoGlobalAndStopを呼び出して再生ヘッドを移動する")
+	public function gotoGlobalAndStop_currentFrame():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
+		];
+		var sut = new Animation(createTextures(6), sections);
+		// 生成直後のフレームは「1」
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoGlobalAndStop(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceTime(1.0);
+		Assert.areEqual(4, sut.currentFrame);
 	}
 	
 	@Test("生成直後にgotoAndStopを呼び出して再生ヘッドを移動する")
@@ -300,21 +330,21 @@ class AnimationTest {
 		var sut = new Animation(createTextures(6), sections);
 		// 生成直後のフレームは「1」
 		Assert.areEqual(1, sut.currentFrame);
-		sut.gotoAndStop(4);
+		sut.gotoAndStop("b");
 		Assert.areEqual(4, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(4, sut.currentFrame);
 	}
 	
-	@Test("gotoAndStop呼び出し後にplayを呼び出す")
-	public function gotoAndStop_play_currentFrame():Void {
+	@Test("gotoGlobalAndStop呼び出し後にplayを呼び出す")
+	public function gotoGlobalAndStop_play_currentFrame():Void {
 		var sections = [
 			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 6 }
 		];
 		var sut = new Animation(createTextures(6), sections);
 		Assert.areEqual(1, sut.currentFrame);
 		
-		sut.gotoAndStop(4);
+		sut.gotoGlobalAndStop(4);
 		Assert.areEqual(4, sut.currentFrame);
 		sut.advanceTime(1.0);
 		Assert.areEqual(4, sut.currentFrame);

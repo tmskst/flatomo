@@ -32,6 +32,7 @@ class Animation extends Image implements IAnimatable {
 		
 		super(textures[0]);
 		this.textures = textures;
+		this.sections = sections;
 		this.codes = sections.toControlCodes();
 		this.isPlaying = true;
 		this.currentFrame = 1;
@@ -52,6 +53,8 @@ class Animation extends Image implements IAnimatable {
 	public var currentFrame(default, null):Int;
 	
 	private var nextFrame:Int;
+	
+	private var sections:Array<Section>;
 	
 	/** 再生中かどうか */
 	public var isPlaying(default, null):Bool;
@@ -90,14 +93,31 @@ class Animation extends Image implements IAnimatable {
 		isPlaying = false;
 	}
 	
-	public function gotoAndPlay(frame:Int):Void {
+	public function gotoAndPlay(sectionName:String, ?increment:Int = 0):Void {
+		gotoGlobalAndPlay(findSection(sectionName) + increment);
+	}
+	
+	public function gotoAndStop(sectionName:String, ?increment:Int = 0):Void {
+		gotoGlobalAndStop(findSection(sectionName) + increment);
+	}
+	
+	private function findSection(sectionName:String):Int {
+		for (section in sections) {
+			if (section.name == sectionName) {
+				return section.begin;
+			}
+		}
+		throw 'セクション ${sectionName} が見つかりません。';
+	}
+	
+	public function gotoGlobalAndPlay(frame:Int):Void {
 		isPlaying = true;
 		currentFrame = frame;
 		nextFrame = frame + 1;
 		texture = textures[currentFrame - 1];
 	}
 	
-	public function gotoAndStop(frame:Int):Void {
+	public function gotoGlobalAndStop(frame:Int):Void {
 		isPlaying = false;
 		currentFrame = frame;
 		nextFrame = frame + 1;
