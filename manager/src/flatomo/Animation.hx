@@ -64,13 +64,13 @@ class Animation extends Image implements IAnimatable {
 	public function advanceTime(time:Float):Void {
 		if (!isPlaying) { return; }
 		
-		this.currentFrame = nextFrame;
+		currentFrame = nextFrame;
 		
 		// テクスチャの更新
 		texture = textures[currentFrame - 1];
 		
 		// 制御コード処理
-		nextFrame = nextFrame + 1;
+		nextFrame = currentFrame + 1;
 		if (codes.exists(currentFrame)) {
 			switch (codes.get(currentFrame)) {
 				case ControlCode.Goto(frame) :
@@ -80,6 +80,28 @@ class Animation extends Image implements IAnimatable {
 			}
 		}
 		
+	}
+	
+	public function play():Void {
+		isPlaying = true;
+	}
+	
+	public function stop():Void {
+		isPlaying = false;
+	}
+	
+	public function gotoAndPlay(frame:Int):Void {
+		isPlaying = true;
+		currentFrame = frame;
+		nextFrame = frame + 1;
+		texture = textures[currentFrame - 1];
+	}
+	
+	public function gotoAndStop(frame:Int):Void {
+		isPlaying = false;
+		currentFrame = frame;
+		nextFrame = frame + 1;
+		texture = textures[currentFrame - 1];
 	}
 	
 }
