@@ -145,7 +145,7 @@ class FlatomoTools {
 		library.selectItem('flatomo/config');
 		library.editItem();
 		document.addNewText( { left: -1, top: -1, right: 30, bottom: 18 }, "CONFIG");
-		document.mouseClick( { x: 0, y: 0 }, false, false);
+		document.selectAll();
 		document.setElementProperty('textType', 'dynamic');
 		document.setElementProperty('name', INSTANCE_NAME_CONFIG);
 		
