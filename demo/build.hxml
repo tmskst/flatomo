@@ -5,6 +5,7 @@
 -main Bootstrap
 
 -swf bin/demo.swf
+-swf-lib bin/library.swc
 -swf-version 11.8 
 -swf-header 480:720:30:333333
 
