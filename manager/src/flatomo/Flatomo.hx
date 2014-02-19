@@ -25,7 +25,7 @@ class Flatomo {
 	 * @return 変換後の表示オブジェクト(starling.display)
 	 */
 	public static function create(source:flash.display.DisplayObject):DisplayObject {
-		return Creator.translate(source);
+		return Creator.translate(source, "root");
 	}
 	
 	private static var flatomo:Flatomo = null;

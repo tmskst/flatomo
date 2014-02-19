@@ -26,7 +26,7 @@ class ContainerCreator {
 	 * @param	sections コンテナの再生ヘッドを制御するセクション情報。
 	 * @return 生成されたコンテナ。
 	 */
-	private static function create(source:flash.display.DisplayObjectContainer, sections:Array<Section>):Container {
+	private static function create(source:flash.display.DisplayObjectContainer, sections:Array<Section>, path:String):Container {
 		// TODO : 現在、flash.display.Sprite と flash.display.Loader に対応していません。
 		
 		// flash.display.MovieClip をコンテナに変換する
