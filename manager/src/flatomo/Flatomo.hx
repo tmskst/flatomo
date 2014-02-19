@@ -14,9 +14,7 @@ class Flatomo {
 		if (isStarted) { return; }
 		
 		Flatomo.isStarted = true;
-		Flatomo.juggler = new Juggler();
 		Flatomo.library = FlatomoTools.fetchLibrary(config);
-		Flatomo.flatomo = new Flatomo();
 	}
 	
 	/**
@@ -31,19 +29,5 @@ class Flatomo {
 	private static var flatomo:Flatomo = null;
 	private static var isStarted:Bool = false;
 	
-	/**
-	 * Flatomoが管理するジャグラー。
-	 * ステージの Event.ENTER_FRAME が送出されるたびにジャグラーは更新される。
-	 */
-	public static var juggler(default, null):Juggler = null;
 	public static var library(default, null):Map<String, FlatomoItem> = null;
-	
-	private function new() {
-		Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, onEnterFrame);
-	}
-	
-	private function onEnterFrame(e:flash.events.Event):Void {
-		juggler.advanceTime(1.00);
-	}
-	
 }

@@ -22,13 +22,11 @@ class Creator {
 		if (AnimationCreator.isAlliedTo(source)) {
 			var sections:Array<Section> = FlatomoTools.fetchItem(source).sections;
 			var animation = AnimationCreator.create(cast(source, flash.display.MovieClip), sections);
-			Flatomo.juggler.add(animation);
 			return animation;
 		}
 		if (ContainerCreator.isAlliedTo(source)) {
 			var sections:Array<Section> = FlatomoTools.fetchItem(source).sections;
 			var container = ContainerCreator.create(cast(source, flash.display.DisplayObjectContainer), sections, path);
-			Flatomo.juggler.add(container);
 			return container;
 		}
 		trace(path + "." +source.name);
