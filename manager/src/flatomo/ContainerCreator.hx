@@ -41,16 +41,16 @@ class ContainerCreator {
 			// フレーム中の全ての表示オブジェクトを走査
 			var layouts = new Array<Layout>();
 			for (index in 0...movie.numChildren) {
-				var source:flash.display.DisplayObject = movie.getChildAt(index);
-				displayObjects.push(Creator.translate(source));
+				var child:flash.display.DisplayObject = movie.getChildAt(index);
+				displayObjects.push(Creator.translate(child, FlatomoTools.fetchLibraryPath(source)));
 				layouts.push( {
-					instanceName: source.name,
-					libraryPath: /*FlatomoTools.fetchElement(source).libraryPath*/'',
-					x: source.x,
-					y: source.y,
-					rotation: untyped { __global__["starling.utils.deg2rad"](source.rotation); } ,
-					scaleX: source.scaleX,
-					scaleY: source.scaleY
+					instanceName: child.name,
+					libraryPath: /*FlatomoTools.fetchElement(child).libraryPath*/'',
+					x: child.x,
+					y: child.y,
+					rotation: untyped { __global__["starling.utils.deg2rad"](child.rotation); } ,
+					scaleX: child.scaleX,
+					scaleY: child.scaleY
 				} );
 			}
 			map.set(frame + 1, layouts);
