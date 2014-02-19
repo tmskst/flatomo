@@ -59,7 +59,12 @@ class FlatomoTools {
 	 * @return 対象をインスタンス化するために使用されたライブラリパス
 	 */
 	public static function fetchLibraryPath(instance:flash.display.DisplayObject):LibraryPath {
-		return fetchElement(instance).libraryPath;
+		var libraryPath:LibraryPath = if (untyped instance.metaData == null) {
+			PREFIX_LINKAGED_ELEMENT + Type.getClassName(Type.getClass(instance));
+		} else {
+			fetchElement(instance).libraryPath;
+		}
+		return libraryPath;
 	}
 	
 	/**
@@ -68,14 +73,7 @@ class FlatomoTools {
 	 * @return 対象から取り出されたFlatomoItem
 	 */
 	public static function fetchItem(source:flash.display.DisplayObject):FlatomoItem {
-		var libraryPath:LibraryPath;
-		if (untyped source.metaData == null) {
-			libraryPath = PREFIX_LINKAGED_ELEMENT + Type.getClassName(Type.getClass(source));
-			trace('${source.name} にメタデータが見つかりません。パス ${libraryPath} でライブラリを探索します。');
-		} else {
-			libraryPath = fetchLibraryPath(source);
-		}
-		
+		var libraryPath:LibraryPath = fetchLibraryPath(source);
 		if (!Flatomo.library.exists(libraryPath)) {
 			throw 'ライブラリにキー ${libraryPath} というオブジェクトは存在しません。';
 		}
