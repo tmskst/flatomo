@@ -51,17 +51,17 @@ class Flatomo {
 		var source:Source = Flatomo.sources.get(key);
 		switch (source) {
 			case Source.Animation(name, textures, sections) :
-				var a = new Animation(textures, sections);
-				a.name = name;
-				return a;
+				var animation = new Animation(textures, sections);
+				animation.name = name;
+				return animation;
 			case Source.Container(name, keys, map, sections) :
 				var displayObjects:Array<DisplayObject> = new Array<DisplayObject>();
 				for (t in keys) {
 					displayObjects.push(Flatomo.get(t));
 				}
-				var c = new Container(displayObjects, map, sections);
-				c.name = name;
-				return c;
+				var container = new Container(displayObjects, map, sections);
+				container.name = name;
+				return container;
 			case Source.Texture(name, texture) :
 				var image = new Image(texture);
 				image.name = name;
