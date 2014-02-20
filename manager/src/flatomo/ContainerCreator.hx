@@ -26,13 +26,14 @@ class ContainerCreator {
 	 * @param	sections コンテナの再生ヘッドを制御するセクション情報。
 	 * @return 生成されたコンテナ。
 	 */
-	private static function create(source:flash.display.DisplayObjectContainer, sections:Array<Section>, path:String):Container {
+	private static function create(source:flash.display.DisplayObjectContainer, sections:Array<Section>, path:String):Void {
 		// TODO : 現在、flash.display.Sprite と flash.display.Loader に対応していません。
+		if (Flatomo.exists(FlatomoTools.fetchLibraryPath(source))) { return; }
 		
 		// flash.display.MovieClip をコンテナに変換する
 		var movie:flash.display.MovieClip = cast(source, flash.display.MovieClip);
 		var map = new Map<Int, Array<Layout>>();
-		var displayObjects = new Array<DisplayObject>();
+		var displayObjects = new Array<String>();
 		
 		// 全フレームを走査
 		for (frame in 0...movie.totalFrames) {
@@ -42,7 +43,8 @@ class ContainerCreator {
 			var layouts = new Array<Layout>();
 			for (index in 0...movie.numChildren) {
 				var child:flash.display.DisplayObject = movie.getChildAt(index);
-				displayObjects.push(Creator.translate(child, FlatomoTools.fetchLibraryPath(source)));
+				displayObjects.push(FlatomoTools.fetchLibraryPath(child));
+				Creator.translate(child, FlatomoTools.fetchLibraryPath(source));
 				layouts.push( {
 					instanceName: child.name,
 					libraryPath: /*FlatomoTools.fetchElement(child).libraryPath*/'',
@@ -57,10 +59,7 @@ class ContainerCreator {
 		}
 		
 		// コンテナを生成
-		var container:Container = new Container(displayObjects, map, sections);
-		container.name = source.name;
-		
-		return container;
+		Flatomo.addSource(FlatomoTools.fetchLibraryPath(source), Source.Container(source.name, displayObjects, map, sections));
 	}
 	
 }

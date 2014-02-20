@@ -18,24 +18,21 @@ class Creator {
 	 * @param	source 変換元となる表示オブジェクト(flash.display)
 	 * @return 変換後の表示オブジェクト(starling.display)
 	 */
-	private static function translate(source:flash.display.DisplayObject, path:String):starling.display.DisplayObject {
+	private static function translate(source:flash.display.DisplayObject, path:String):Void {
 		if (AnimationCreator.isAlliedTo(source)) {
 			var sections:Array<Section> = FlatomoTools.fetchItem(source).sections;
-			var animation = AnimationCreator.create(cast(source, flash.display.MovieClip), sections);
-			return animation;
+			AnimationCreator.create(cast(source, flash.display.MovieClip), sections);
 		}
 		if (ContainerCreator.isAlliedTo(source)) {
 			var sections:Array<Section> = FlatomoTools.fetchItem(source).sections;
-			var container = ContainerCreator.create(cast(source, flash.display.DisplayObjectContainer), sections, path);
-			return container;
+			ContainerCreator.create(cast(source, flash.display.DisplayObjectContainer), sections, path);
 		}
-		trace(path + "." +source.name);
+		var key:String = '${path}.${source.name}';
+		if (Flatomo.exists(key)) { return; }
+		
 		// アニメーションとコンテナに該当しない表示オブジェクトはテクスチャに変換される。
 		var bitmapData = Blitter.toBitmapData(source);
-		var image = new Image(Texture.fromBitmapData(bitmapData));
-		image.name = source.name;
-		
-		return image;
+		Flatomo.addSource(key, Source.Texture(source.name, Texture.fromBitmapData(bitmapData)));
 	}
 	
 	

@@ -34,8 +34,9 @@ class AnimationCreator {
 	 * @param	sections アニメーションの再生ヘッドを制御するセクション情報。
 	 * @return 生成されたアニメーション。
 	 */
-	private static function create(source:flash.display.MovieClip, sections:Array<Section>):Animation {
-		trace(FlatomoTools.fetchLibraryPath(source));
+	private static function create(source:flash.display.MovieClip, sections:Array<Section>):Void {
+		if (Flatomo.exists(FlatomoTools.fetchLibraryPath(source))) { return; }
+		
 		var textures:Vector<Texture> = new Vector<Texture>();
 		var bounds:Rectangle = new Rectangle();
 		
@@ -52,10 +53,6 @@ class AnimationCreator {
 		}
 		
 		// アニメーションを生成
-		var animation:Animation = new Animation(textures, sections);
-		animation.transformationMatrix = source.transform.matrix;
-		animation.name = source.name;
-		
-		return animation;
+		Flatomo.addSource(FlatomoTools.fetchLibraryPath(source), Source.Animation(source.name, textures, sections));
 	}
 }
