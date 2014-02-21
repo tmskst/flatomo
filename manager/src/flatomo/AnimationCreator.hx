@@ -1,4 +1,5 @@
 package flatomo;
+import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.Vector;
 import starling.display.MovieClip;
@@ -15,7 +16,7 @@ class AnimationCreator {
 	 * @param	target 判定の対象。
 	 * @return 対象がアニメーションなら真。
 	 */
-	private static function isAlliedTo(target:flash.display.DisplayObject):Bool {
+	private static function isAlliedTo(target:flash.display.DisplayObject, flatomo:Flatomo):Bool {
 		/*
 		 * アニメーションである条件は、
 		 * 1. 対象がflash.display.MovieClipであること。
@@ -24,7 +25,7 @@ class AnimationCreator {
 		// TODO : 式をひとつまとめないでください。
 		if (!Std.is(target, flash.display.MovieClip)) { return false; }
 		
-		var item:FlatomoItem = FlatomoTools.fetchItem(target);
+		var item:FlatomoItem = FlatomoTools.fetchItem(flatomo.library, target);
 		return item != null && item.animation;
 	}
 	
@@ -34,10 +35,10 @@ class AnimationCreator {
 	 * @param	sections アニメーションの再生ヘッドを制御するセクション情報。
 	 * @return 生成されたアニメーション。
 	 */
-	private static function create(source:flash.display.MovieClip, sections:Array<Section>):Void {
-		if (Flatomo.exists(FlatomoTools.fetchLibraryPath(source))) { return; }
+	private static function create(source:flash.display.MovieClip, sections:Array<Section>, flatomo:Flatomo):Void {
+		if (flatomo.sources.exists(FlatomoTools.fetchLibraryPath(source))) { return; }
 		
-		var textures:Vector<Texture> = new Vector<Texture>();
+		var textures:Array<BitmapData> = new Array<BitmapData>();
 		var bounds:Rectangle = new Rectangle();
 		
 		// ソースの描画領域を計算
@@ -49,10 +50,10 @@ class AnimationCreator {
 		for (frame in 0...source.totalFrames) {
 			source.gotoAndStop(frame + 1);
 			var bitmapData = Blitter.toBitmapData(source, bounds);
-			textures.push(Texture.fromBitmapData(bitmapData));
+			textures.push(bitmapData);
 		}
 		
 		// アニメーションを生成
-		Flatomo.addSource(FlatomoTools.fetchLibraryPath(source), Source.Animation(source.name, textures, sections));
+		flatomo.sources.set(FlatomoTools.fetchLibraryPath(source), Source.Animation(source.name, textures, sections));
 	}
 }

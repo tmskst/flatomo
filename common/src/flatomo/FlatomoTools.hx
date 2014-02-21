@@ -72,13 +72,13 @@ class FlatomoTools {
 	 * @param	source 対象
 	 * @return 対象から取り出されたFlatomoItem
 	 */
-	public static function fetchItem(source:flash.display.DisplayObject):FlatomoItem {
+	public static function fetchItem(library:Map<String, FlatomoItem>, source:flash.display.DisplayObject):FlatomoItem {
 		var libraryPath:LibraryPath = fetchLibraryPath(source);
-		if (!Flatomo.library.exists(libraryPath)) {
+		if (!library.exists(libraryPath)) {
 			throw 'ライブラリにキー ${libraryPath} というオブジェクトは存在しません。';
 		}
 		
-		return Flatomo.library.get(libraryPath);
+		return library.get(libraryPath);
 	}
 	
 	/**
