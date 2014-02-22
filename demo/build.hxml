@@ -1,4 +1,5 @@
 -debug
+-D fdb
 -cp src
 -cp ../common/src
 -cp ../manager/src
