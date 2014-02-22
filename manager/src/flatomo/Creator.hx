@@ -15,6 +15,14 @@ using flatomo.FlatomoTools;
 @:allow(flatomo.Flatomo)
 class Creator {
 	
+	public static function create(library:Map<String, FlatomoItem>, classes:Array<Class<DisplayObject>>):{ images:Map<String, BitmapData>, meta:Map<String, Meta> } {
+		var creator:Creator = new Creator(library);
+		for (clazz in classes) {
+			creator.translate(Type.createInstance(clazz, []), "root");
+		}
+		return { images: creator.images, meta: creator.meta };
+	}
+	
 	// TODO : 現在、テクスチャアトラスには対応していません。
 	
 	/**
@@ -23,9 +31,8 @@ class Creator {
 	 * @return 変換後の表示オブジェクト(starling.display)
 	 */
 	
-	@:access(flatomo.FlatomoTools)
-	public function new(config:flash.display.DisplayObjectContainer) {
-		this.library = FlatomoTools.fetchLibrary(config);
+	private function new(library:Map < String, FlatomoItem > ) {
+		this.library = library;
 		this.images = new Map<String, BitmapData>();
 		this.meta = new Map<String, Meta>();
 	}
@@ -34,12 +41,6 @@ class Creator {
 
 	private var images:Map<String, BitmapData>;
 	private var meta:Map<String, Meta>;
-	
-	public function create(classes:Array<Class<flash.display.DisplayObject>>):Void {
-		for (clazz in classes) {
-			translate(Type.createInstance(clazz, []), "root");
-		}
-	}
 	
 	private function translate(source:flash.display.DisplayObject, path:String):Void {
 		var kind = source.fetchDisplayObjectKind(library);
