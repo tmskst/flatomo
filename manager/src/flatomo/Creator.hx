@@ -76,7 +76,7 @@ class Creator {
 		if (meta.exists(key)) { return; }
 		
 		var map = new Map<Int, Array<Layout>>();
-		var children = new Array<{ key:String, instanceName:InstanceName }>();
+		var children = new Array<{ key:String, instanceName:String }>();
 		
 		// 全フレームを走査
 		for (frame in 0...source.totalFrames) {
@@ -154,7 +154,7 @@ class Creator {
 
 enum Meta {
 	Animation(sections:Array<Section>);
-	Container(children:Array<{ key:String, instanceName:InstanceName }>, layouts:Map<Int, Array<Layout>>, sections:Array<Section>);
+	Container(children:Array<{ key:String, instanceName:String }>, layouts:Map<Int, Array<Layout>>, sections:Array<Section>);
 }
 
 enum DisplayObjectKind {
