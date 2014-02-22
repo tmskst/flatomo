@@ -31,11 +31,8 @@ class Blitter {
 		var width:Int = Std.int(bounds.width);
 		var height:Int = Std.int(bounds.height);
 		
-		if (width == 0) {
-			width = 1;
-		}
-		if (height == 0) {
-			height = 1;
+		if (width == 0 || height == 0) {
+			return new BitmapData(1, 1, true, 0x00000000);
 		}
 		
 		var bitmapData:BitmapData = new BitmapData(width, height, true, 0x0000FFFF);
