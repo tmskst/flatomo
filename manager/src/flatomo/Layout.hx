@@ -4,7 +4,6 @@ package flatomo;
 
 /** 表示オブジェクトの配置情報。 */
 typedef Layout = {
-	> FlatomoElement,
 	/** 表示オブジェクトのインスタンス名。 */
 	var instanceName:InstanceName;
 	var x:Float;
