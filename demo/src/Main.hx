@@ -12,8 +12,7 @@ class Main extends Sprite {
 		super();
 		
 		var foobar = Flatomo.createTextureAtlas(new Config(), [TestMovie]);
-		var asset = new AssetManager();
-		asset.addTextureAtlas("foobar", foobar);
+		trace(foobar.layout);
 	}
 	
 }

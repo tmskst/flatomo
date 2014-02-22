@@ -67,7 +67,7 @@ class Creator {
 		for (frame in 0...source.totalFrames) {
 			source.gotoAndStop(frame + 1);
 			var index = ("00000" + Std.string(frame)).substr(-5);
-			images.push({ name: '${key} ${index}', bitmapData: Blitter.toBitmapData(source, bounds) });
+			images.push({ name: '${key} ${index}', image: Blitter.toBitmapData(source, bounds) });
 		}
 		
 		meta.set(key, Meta.Animation(sections));
@@ -118,7 +118,7 @@ class Creator {
 			if (image.name == key) { return; }
 		}
 		
-		images.push({ name: key, bitmapData: Blitter.toBitmapData(source) });
+		images.push({ name: key, image: Blitter.toBitmapData(source) });
 	}
 	
 	private static function fetchDisplayObjectKind(source:DisplayObject, library:Map<String, FlatomoItem>):DisplayObjectKind {

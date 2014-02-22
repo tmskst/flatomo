@@ -3,16 +3,14 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.xml.XML;
-import starling.textures.Texture;
-import starling.textures.TextureAtlas;
 
 class AtlasGenerator{
 	
-	public static function generate(mints:Array<Mint>):TextureAtlas {
+	public static function generate(mints:Array<Mint>):{ atlas:BitmapData, layout:Xml } {
 		var LENGTHS = [64, 128, 256, 512, 1024, 2048, 4096];
 		
 		mints.sort(function (a:Mint, b:Mint):Int {
-			return Std.int(b.bitmapData.height - a.bitmapData.height);
+			return Std.int(b.image.height - a.image.height);
 		});
 		var size:Int = 0;
 		var atlas:Array<Area> = null;
@@ -27,7 +25,7 @@ class AtlasGenerator{
 		return genAtlas(size, mints, atlas);
 	}
 	
-	private static function genAtlas(size:Int, textures:Array<Mint>, areas:Array<Area>):TextureAtlas {
+	private static function genAtlas(size:Int, textures:Array<Mint>, areas:Array<Area>):{ atlas:BitmapData, layout:Xml } {
 		var canvas = new BitmapData(size, size, true, 0x00000000);
 		var atlas:Xml = Xml.createElement("TextureAtlas");
 		atlas.set("imagePath", "atlas.png");
@@ -42,9 +40,9 @@ class AtlasGenerator{
 			info.set("height", Std.string(area.rectangle.height));
 			atlas.addChild(info);
 			
-			canvas.copyPixels(subTexture.bitmapData, subTexture.bitmapData.rect, new Point(area.rectangle.x, area.rectangle.y));
+			canvas.copyPixels(subTexture.image, subTexture.image.rect, new Point(area.rectangle.x, area.rectangle.y));
 		}
-		return new TextureAtlas(Texture.fromBitmapData(canvas), new XML(atlas.toString()));
+		return { atlas: canvas, layout: atlas };
 	}
 	
 	private static function findTexture(name:String, textures:Array<Mint>):Mint {
@@ -62,32 +60,31 @@ class AtlasGenerator{
 		for (texture in mints) {
 			var isNewLayer = false;
 			for (layer in layers) {
-				if (layer.x + texture.bitmapData.width <= length) {
-					areas.push({ name: texture.name, rectangle: new Rectangle(layer.x, layer.y, texture.bitmapData.width, texture.bitmapData.height)} );
-					layer.x = layer.x + texture.bitmapData.width;
+				if (layer.x + texture.image.width <= length) {
+					areas.push({ name: texture.name, rectangle: new Rectangle(layer.x, layer.y, texture.image.width, texture.image.height)} );
+					layer.x = layer.x + texture.image.width;
 					isNewLayer = true;
 					break;
 				}
 			}
 			if (!isNewLayer) {
 				var lastLayer = if (layers.length != 0) layers[layers.length - 1] else { x: 0, y: 0, width: 0, height: 0 };
-				var newLayer = { x: texture.bitmapData.width, y: lastLayer.y + lastLayer.height, width: texture.bitmapData.width, height: texture.bitmapData.height };
+				var newLayer = { x: texture.image.width, y: lastLayer.y + lastLayer.height, width: texture.image.width, height: texture.image.height };
 				if (newLayer.y + newLayer.height >= length) {
 					return null;
 				}
-				areas.push({ name: texture.name, rectangle: new Rectangle(0, newLayer.y, texture.bitmapData.width, texture.bitmapData.height) });
+				areas.push({ name: texture.name, rectangle: new Rectangle(0, newLayer.y, texture.image.width, texture.image.height) });
 				layers.push(newLayer);
 			}
 		}
 		return areas;
 	}
 	
-	
 }
 
 typedef Mint = {
 	var name:String;
-	var bitmapData:BitmapData;
+	var image:BitmapData;
 }
 
 private typedef Area = {
