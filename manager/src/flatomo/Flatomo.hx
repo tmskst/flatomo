@@ -25,7 +25,8 @@ class Flatomo {
 			switch (source) {
 				case Source.Animation(_name, _textures, sections) : 
 					for (i in 0...(_textures.length)) {
-						mints.push( { name: '${key} ${i}', bitmapData : _textures[i] } );
+						var index = ("00000" + Std.string(i)).substr(-5);
+						mints.push( { name: '${key} ${index}', bitmapData : _textures[i] } );
 					}
 				case Source.Container(_name, _displayObjects, _layouts, _sections) :
 				case Source.Texture(_name, _texture) : 
