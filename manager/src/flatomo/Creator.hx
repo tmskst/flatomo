@@ -5,6 +5,7 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
+import flatomo.AtlasGenerator.Mint;
 
 using flatomo.Creator;
 using flatomo.FlatomoTools;
@@ -15,7 +16,7 @@ using flatomo.FlatomoTools;
 @:allow(flatomo.Flatomo)
 class Creator {
 	
-	public static function create(library:Map<String, FlatomoItem>, classes:Array<Class<DisplayObject>>):{ images:Map<String, BitmapData>, meta:Map<String, Meta> } {
+	public static function create(library:Map<String, FlatomoItem>, classes:Array<Class<DisplayObject>>):{ images:Array<Mint>, meta:Map<String, Meta> } {
 		var creator:Creator = new Creator(library);
 		for (clazz in classes) {
 			creator.translate(Type.createInstance(clazz, []), "root");
@@ -33,13 +34,13 @@ class Creator {
 	
 	private function new(library:Map < String, FlatomoItem > ) {
 		this.library = library;
-		this.images = new Map<String, BitmapData>();
+		this.images = new Array<Mint>();
 		this.meta = new Map<String, Meta>();
 	}
 	
 	private var library:Map<String, FlatomoItem>;
 
-	private var images:Map<String, BitmapData>;
+	private var images:Array<Mint>;
 	private var meta:Map<String, Meta>;
 	
 	private function translate(source:flash.display.DisplayObject, path:String):Void {
@@ -66,7 +67,7 @@ class Creator {
 		for (frame in 0...source.totalFrames) {
 			source.gotoAndStop(frame + 1);
 			var index = ("00000" + Std.string(frame)).substr(-5);
-			images.set('${key} ${index}', Blitter.toBitmapData(source, bounds));
+			images.push({ name: '${key} ${index}', bitmapData: Blitter.toBitmapData(source, bounds) });
 		}
 		
 		meta.set(key, Meta.Animation(sections));
@@ -113,9 +114,11 @@ class Creator {
 	
 	private function translateQuaImage(source:DisplayObject, path:String):Void {
 		var key:String = path;
-		if (images.exists(key)) { return; }
+		for (image in images) {
+			if (image.name == key) { return; }
+		}
 		
-		images.set(key, Blitter.toBitmapData(source));
+		images.push({ name: key, bitmapData: Blitter.toBitmapData(source) });
 	}
 	
 	private static function fetchDisplayObjectKind(source:DisplayObject, library:Map<String, FlatomoItem>):DisplayObjectKind {

@@ -1,18 +1,19 @@
 package ;
 import flatomo.Creator;
+import flatomo.Flatomo;
 import flatomo.FlatomoTools;
+import starling.display.MovieClip;
 import starling.display.Sprite;
+import starling.utils.AssetManager;
 
 class Main extends Sprite {
 	
-	@:access(flatomo.FlatomoTools)
 	public function new() {
 		super();
 		
-		var library = FlatomoTools.fetchLibrary(new Config());
-		var foobar = Creator.create(library, [TestMovie]);
-		trace(foobar.images);
-		trace(foobar.meta);
+		var foobar = Flatomo.createTextureAtlas(new Config(), [TestMovie]);
+		var asset = new AssetManager();
+		asset.addTextureAtlas("foobar", foobar);
 	}
 	
 }
