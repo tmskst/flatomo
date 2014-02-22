@@ -1,9 +1,5 @@
 package flatomo;
 
-import starling.display.DisplayObject;
-import starling.display.Image;
-import starling.textures.Texture;
-
 /**
  * flash.display.DisplayObject を starling.display.DisplayObject に変換する機能を提供する。
  */

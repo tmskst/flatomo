@@ -1,7 +1,6 @@
 package flatomo;
 import flash.display.BitmapData;
 import flash.display.DisplayObjectContainer;
-import starling.display.DisplayObject;
 import starling.textures.TextureAtlas;
 
 class Flatomo {

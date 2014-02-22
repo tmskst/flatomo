@@ -1,9 +1,6 @@
 package flatomo;
 
-import flash.Vector;
 import flatomo.Section;
-import starling.textures.Texture;
-import starling.display.DisplayObject;
 import flash.display.BitmapData;
 
 enum Source {

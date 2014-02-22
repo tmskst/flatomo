@@ -1,5 +1,4 @@
 package flatomo;
-import starling.display.DisplayObject;
 
 /**
  * コンテナの生成手段を提供する。

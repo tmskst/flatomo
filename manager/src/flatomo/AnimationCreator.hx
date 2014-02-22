@@ -1,9 +1,6 @@
 package flatomo;
 import flash.display.BitmapData;
 import flash.geom.Rectangle;
-import flash.Vector;
-import starling.display.MovieClip;
-import starling.textures.Texture;
 
 /**
  * アニメーションの生成手段を提供する。
