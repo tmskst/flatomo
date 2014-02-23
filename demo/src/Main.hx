@@ -1,21 +1,20 @@
 package ;
-import flash.xml.XML;
 import flatomo.Flatomo;
 import flatomo.FlatomoAssetManager;
 import starling.display.Sprite;
-import starling.textures.Texture;
-import starling.textures.TextureAtlas;
+
+using flatomo.FlatomoAssetManager;
+
 class Main extends Sprite {
 	
 	public function new() {
 		super();
 		
 		var foobar = Flatomo.createTextureAtlas(new Config(), [TestMovie]);
-		var af = FlatomoAssetManager.build(foobar);
-		var tm = af.createInstance(TestMovie);
-		untyped tm.advanceTime(1.0);
-		addChild(tm);
-		
+		var manager = foobar.build();
+		var object = manager.createInstance(TestMovie);
+		untyped object.advanceTime(1.0);
+		addChild(object);
 	}
 	
 }
