@@ -11,7 +11,7 @@ class Main extends Sprite {
 		super();
 		
 		var foobar = Flatomo.createTextureAtlas(new Config(), [TestMovie]);
-		var af = new AssetFactory(new TextureAtlas(Texture.fromBitmapData(foobar.atlas), new XML(foobar.layout.toString())), foobar.meta);
+		var af = AssetFactory.build(foobar);
 		var tm = af.createInstance(TestMovie);
 		untyped tm.advanceTime(1.0);
 		addChild(tm);

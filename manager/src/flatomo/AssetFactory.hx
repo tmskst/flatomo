@@ -1,6 +1,8 @@
 package flatomo;
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.Vector.Vector;
+import flash.xml.XML;
 import flatomo.Creator.Meta;
 import starling.display.Image;
 import starling.textures.Texture;
@@ -8,6 +10,10 @@ import starling.textures.TextureAtlas;
 import starling.utils.AssetManager;
 
 class AssetFactory {
+	
+	public static function build(atlas:{ atlas:BitmapData, layout:Xml, meta:Map<String, Meta> }):AssetFactory {
+		return new AssetFactory(new TextureAtlas(Texture.fromBitmapData(atlas.atlas), new XML(atlas.layout.toString())), atlas.meta);
+	}
 
 	public function new(atlas:TextureAtlas, meta:Map<String, Meta>) {
 		this.manager = new AssetManager();
