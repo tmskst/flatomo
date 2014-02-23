@@ -114,11 +114,10 @@ class Creator {
 	
 	private function translateQuaImage(source:DisplayObject, path:String):Void {
 		var key:String = path;
-		for (image in images) {
-			if (image.name == key) { return; }
-		}
+		if (meta.exists(key)) { return; }
 		
 		images.push({ name: key, image: Blitter.toBitmapData(source) });
+		meta.set(key, Meta.Image);
 	}
 	
 	private static function fetchDisplayObjectKind(source:DisplayObject, library:Map<String, FlatomoItem>):DisplayObjectKind {
@@ -158,7 +157,8 @@ class Creator {
 
 enum Meta {
 	Animation(sections:Array<Section>);
-	Container(children:Array<{ key:String, instanceName:String }>, layouts:Map<Int, Array<Layout>>, sections:Array<Section>);
+	Container(children:Array<{ key:String, instanceName:String }>, layouts:Map < Int, Array<Layout> > , sections:Array<Section>);
+	Image;
 }
 
 enum DisplayObjectKind {
