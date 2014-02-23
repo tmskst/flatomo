@@ -10,7 +10,7 @@ class Flatomo {
 		var library = FlatomoTools.fetchLibrary(config);
 		var source = Creator.create(library, classes);
 		var atlas = AtlasGenerator.generate(source.images);
-		return { atlas:atlas.atlas, layout:atlas.layout, meta: source.meta };
+		return { atlas:atlas.image, layout:atlas.layout, meta: source.meta };
 	}
 	
 }

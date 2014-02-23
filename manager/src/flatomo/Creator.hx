@@ -5,7 +5,6 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
-import flatomo.AtlasGenerator.Mint;
 
 using flatomo.Creator;
 using flatomo.FlatomoTools;
@@ -16,7 +15,7 @@ using flatomo.FlatomoTools;
 @:allow(flatomo.Flatomo)
 class Creator {
 	
-	public static function create(library:Map<String, FlatomoItem>, classes:Array<Class<DisplayObject>>):{ images:Array<Mint>, meta:Map<String, Meta> } {
+	public static function create(library:Map<String, FlatomoItem>, classes:Array<Class<DisplayObject>>):{ images:Array<{ name:String, image:BitmapData }>, meta:Map<String, Meta> } {
 		var creator:Creator = new Creator(library);
 		for (clazz in classes) {
 			creator.translate(Type.createInstance(clazz, []), "root");
@@ -34,13 +33,13 @@ class Creator {
 	
 	private function new(library:Map < String, FlatomoItem > ) {
 		this.library = library;
-		this.images = new Array<Mint>();
+		this.images = new Array<{ name:String, image:BitmapData }>();
 		this.meta = new Map<String, Meta>();
 	}
 	
 	private var library:Map<String, FlatomoItem>;
 
-	private var images:Array<Mint>;
+	private var images:Array<{ name:String, image:BitmapData }>;
 	private var meta:Map<String, Meta>;
 	
 	private function translate(source:flash.display.DisplayObject, path:String):Void {
