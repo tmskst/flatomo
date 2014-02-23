@@ -2,7 +2,7 @@ package flatomo;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flatomo.Creator.Meta;
+import flatomo.Meta;
 
 class Flatomo {
 	

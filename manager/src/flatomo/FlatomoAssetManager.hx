@@ -3,7 +3,7 @@ import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.Vector.Vector;
 import flash.xml.XML;
-import flatomo.Creator.Meta;
+import flatomo.Meta;
 import starling.display.Image;
 import starling.textures.Texture;
 import starling.textures.TextureAtlas;

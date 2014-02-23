@@ -1,17 +1,13 @@
 package flatomo;
-import flash.accessibility.Accessibility;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
 
-using flatomo.Creator;
 using flatomo.FlatomoTools;
+using flatomo.Creator.DisplayObjectTools;
 
-/**
- * flash.display.DisplayObject を starling.display.DisplayObject に変換する機能を提供する。
- */
 @:allow(flatomo.Flatomo)
 class Creator {
 	
@@ -23,34 +19,34 @@ class Creator {
 		return { images: creator.images, meta: creator.meta };
 	}
 	
-	// TODO : 現在、テクスチャアトラスには対応していません。
-	
-	/**
-	 * flash.display.DisplayObject を starling.display.DisplayObject に変換する。
-	 * @param	source 変換元となる表示オブジェクト(flash.display)
-	 * @return 変換後の表示オブジェクト(starling.display)
-	 */
-	
-	private function new(library:Map < String, FlatomoItem > ) {
+	private function new(library:Map<String, FlatomoItem>) {
 		this.library = library;
-		this.images = new Array<{ name:String, image:BitmapData }>();
+		this.images = new Array<{name:String, image:BitmapData}>();
 		this.meta = new Map<String, Meta>();
 	}
 	
 	private var library:Map<String, FlatomoItem>;
-
 	private var images:Array<{ name:String, image:BitmapData }>;
 	private var meta:Map<String, Meta>;
 	
-	private function translate(source:flash.display.DisplayObject, path:String):Void {
-		var kind = source.fetchDisplayObjectKind(library);
-		switch (kind) {
-			case DisplayObjectKind.Animation : translateQuaAnimation(cast(source, MovieClip));
-			case DisplayObjectKind.Container : translateQuaContainer(cast(source, MovieClip));
-			case DisplayObjectKind.Image : translateQuaImage(source, path);
+	/**
+	 * 表示オブジェクト（flash.display.DisplayObject）を解析します
+	 * @param	source 解析する表示オブジェクト
+	 * @param	path 対象のライブラリパス
+	 */
+	private function translate(source:DisplayObject, path:String):Void {
+		var type = source.fetchDisplayObjectType(library);
+		switch (type) {
+			case DisplayObjectType.Animation : translateQuaAnimation(cast(source, MovieClip));
+			case DisplayObjectType.Container : translateQuaContainer(cast(source, MovieClip));
+			case DisplayObjectType.Image : translateQuaImage(source, path);
 		}
 	}
 	
+	/**
+	 * 表示オブジェクトをDisplayObjectType.Animationとして解析します
+	 * @param	source 対象の表示オブジェクト
+	 */
 	private function translateQuaAnimation(source:MovieClip):Void {
 		var key:String = FlatomoTools.fetchLibraryPath(source);
 		if (meta.exists(key)) { return; }
@@ -72,6 +68,10 @@ class Creator {
 		meta.set(key, Meta.Animation(sections));
 	}
 	
+	/**
+	 * 表示オブジェクトをDisplayObjectType.Containerとして解析します
+	 * @param	source 対象の表示オブジェクト
+	 */
 	private function translateQuaContainer(source:MovieClip):Void {
 		var key:String = FlatomoTools.fetchLibraryPath(source);
 		if (meta.exists(key)) { return; }
@@ -87,11 +87,11 @@ class Creator {
 			var layouts = new Array<Layout>();
 			for (index in 0...source.numChildren) {
 				var child:DisplayObject = source.getChildAt(index);
-				var childKind = child.fetchDisplayObjectKind(library);
-				var childKey:String = switch (childKind) {
-					case DisplayObjectKind.Animation : child.fetchLibraryPath();
-					case DisplayObjectKind.Container : child.fetchLibraryPath();
-					case DisplayObjectKind.Image : '${key}#${child.name}';
+				var childType = child.fetchDisplayObjectType(library);
+				var childKey:String = switch (childType) {
+					case DisplayObjectType.Animation : child.fetchLibraryPath();
+					case DisplayObjectType.Container : child.fetchLibraryPath();
+					case DisplayObjectType.Image : '${key}#${child.name}';
 				}
 				children.push({ key: childKey, instanceName: child.name });
 				translate(child, childKey);
@@ -111,6 +111,11 @@ class Creator {
 		meta.set(key, Meta.Container(children, map, sections));
 	}
 	
+	/**
+	 * 表示オブジェクトをDisplayObjectType.Imageとして解析します
+	 * @param	source 対象の表示オブジェクト
+	 * @param	path 対象のライブラリパス
+	 */
 	private function translateQuaImage(source:DisplayObject, path:String):Void {
 		var key:String = path;
 		if (meta.exists(key)) { return; }
@@ -119,50 +124,50 @@ class Creator {
 		meta.set(key, Meta.Image);
 	}
 	
-	private static function fetchDisplayObjectKind(source:DisplayObject, library:Map<String, FlatomoItem>):DisplayObjectKind {
+}
+
+@:allow(flatomo.Creator)
+class DisplayObjectTools {
+	
+	/**
+	 * 表示オブジェクトが属するDisplayObjectTypeを返します
+	 */
+	private static function fetchDisplayObjectType(source:DisplayObject, library:Map<String, FlatomoItem>):DisplayObjectType {
 		if (source.isAlliedToAnimation(library)) {
-			return DisplayObjectKind.Animation;
+			return DisplayObjectType.Animation;
 		}
 		if (source.isAlliedToContainer()) {
-			return DisplayObjectKind.Container;
+			return DisplayObjectType.Container;
 		}
 		
-		return DisplayObjectKind.Image;
+		return DisplayObjectType.Image;
 	}
 	
-	private static function isAlliedToAnimation(source:flash.display.DisplayObject, library:Map<String, FlatomoItem>):Bool {
-		/*
-		 * アニメーションである条件は、
-		 * 1. 対象がflash.display.MovieClipであること。
-		 * 2. 対象のアニメーション属性が有効（真）であること。
-		 */
+	/*
+	 * アニメーションである条件は、
+	 * 1. 対象がflash.display.MovieClipであること。
+	 * 2. 対象のアニメーション属性が有効（真）であること。
+	 */
+	private static function isAlliedToAnimation(source:DisplayObject, library:Map<String, FlatomoItem>):Bool {
 		// 式をひとつまとめないでください。
-		if (!Std.is(source, flash.display.MovieClip)) { return false; }
+		if (!Std.is(source, MovieClip)) { return false; }
 		
-		var item:FlatomoItem = FlatomoTools.fetchItem(library, source);
+		var item:FlatomoItem = library.fetchItem(source);
 		return item != null && item.animation;
 	}
 	
-	private static function isAlliedToContainer(source:flash.display.DisplayObject):Bool {
-		/*
-		 * コンテナである条件は、
-		 * 1. 対象は flash.display.DisplayObjectContainerであること。
-		 */
-		return Std.is(source, flash.display.DisplayObjectContainer);
+	/*
+	 * コンテナである条件は、
+	 * 1. 対象は flash.display.DisplayObjectContainerであること。
+	 */
+	private static function isAlliedToContainer(source:DisplayObject):Bool {
+		return Std.is(source, DisplayObjectContainer);
 	}
 	
-	
 }
 
-enum Meta {
-	Animation(sections:Array<Section>);
-	Container(children:Array<{ key:String, instanceName:String }>, layouts:Map < Int, Array<Layout> > , sections:Array<Section>);
-	Image;
-}
-
-enum DisplayObjectKind {
+private enum DisplayObjectType {
 	Animation;
 	Container;
 	Image;
 }
-
