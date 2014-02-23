@@ -9,10 +9,10 @@ import starling.textures.Texture;
 import starling.textures.TextureAtlas;
 import starling.utils.AssetManager;
 
-class AssetFactory {
+class FlatomoAssetManager {
 	
-	public static function build(atlas:{ atlas:BitmapData, layout:Xml, meta:Map<String, Meta> }):AssetFactory {
-		return new AssetFactory(new TextureAtlas(Texture.fromBitmapData(atlas.atlas), new XML(atlas.layout.toString())), atlas.meta);
+	public static function build(atlas:{ atlas:BitmapData, layout:Xml, meta:Map<String, Meta> }):FlatomoAssetManager {
+		return new FlatomoAssetManager(new TextureAtlas(Texture.fromBitmapData(atlas.atlas), new XML(atlas.layout.toString())), atlas.meta);
 	}
 
 	public function new(atlas:TextureAtlas, meta:Map<String, Meta>) {

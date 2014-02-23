@@ -24,7 +24,7 @@ class Animation extends Image implements IAnimatable {
 	 * @param	textures テクスチャ
 	 * @param	sections　セクション
 	 */
-	@:allow(flatomo.AssetFactory)
+	@:allow(flatomo.FlatomoAssetManager)
 	private function new(textures:Vector<Texture>, sections:Array<Section>) {
 		if (textures.length == 0) {
 			throw '少なくとも一つのテクスチャが必要です。';
