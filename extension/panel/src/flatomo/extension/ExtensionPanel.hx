@@ -61,16 +61,14 @@ class ExtensionPanel extends Sprite implements IHandler {
 	}
 	
 	private function disabledTimlineSelected():Void {
-		// セクションビュアーをすべて消去
-		canvasContent.clear();
+		canvasContent.disabledTimlineSelected();
 	}
 	
 	/**
 	 * 作業中のドキュメントはFlatomoに対応していないか有効でない
 	 */
 	private function flatomoDisabled():Void {
-		// セクションビュアーをすべて消去
-		canvasContent.clear();
+		canvasContent.flatomoDisabled();
 	}
 	
 	private function timlineSelected(timelineName:String, latestSection:Array<Section>, savedItem:Null<FlatomoItem>):Void {

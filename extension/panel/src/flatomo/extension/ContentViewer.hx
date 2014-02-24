@@ -1,6 +1,9 @@
 package flatomo.extension;
 import com.bit101.components.CheckBox;
+import com.bit101.components.Label;
+import com.bit101.components.PushButton;
 import com.bit101.components.VScrollBar;
+import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -62,7 +65,7 @@ class ContentViewer extends Sprite {
 	}
 	
 	public function update(isAnimation:Bool, sections:Array<Section>, names:Array<String>, kinds:Array<String>):Void {
-		animationViewer = new CheckBox(canvasAnimationViewer, 5, 10, "Animation", changed);
+		animationViewer = new CheckBox(canvasAnimationViewer, 5, 10, "タイムラインをパラパラ漫画化する", changed);
 		animationViewer.selected = isAnimation;
 		
 		sectionViewer = new Array<SectionViewer>();
@@ -78,7 +81,16 @@ class ContentViewer extends Sprite {
 	public function clear():Void {
 		canvasSectionViewer.removeChildren();
 		canvasAnimationViewer.removeChildren();
-		canvas.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+	}
+	
+	public function flatomoDisabled():Void {
+		clear();
+		new Label(canvasSectionViewer, 5, 10, "Flatomoが使えないドキュメントかFlatomoが無効です");
+	}
+	
+	public function disabledTimlineSelected():Void {
+		clear();
+		new Label(canvasSectionViewer, 5, 10, "対応していないタイムラインです");
 	}
 	
 	public function toFlatomoItem():FlatomoItem {
