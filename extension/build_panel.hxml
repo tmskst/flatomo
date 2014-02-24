@@ -3,7 +3,7 @@
 -cp ../common/src
 -main flatomo.extension.ExtensionPanel
 
--swf panel/bin/Panel.swf
+-swf panel/bin/Flatomo.swf
 -swf-version 11.8 
 
 # libraries

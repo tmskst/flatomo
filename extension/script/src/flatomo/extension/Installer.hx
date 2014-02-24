@@ -24,7 +24,7 @@ class Installer {
 		
 		// Panel
 		copy(scriptURI + "script/bin/flatomo.jsfl", configURI + "WindowSWF/flatomo.jsfl");
-		copy(scriptURI + "panel/bin/Panel.swf", configURI + "WindowSWF/Panel.swf");
+		copy(scriptURI + "panel/bin/Flatomo.swf", configURI + "WindowSWF/Flatomo.swf");
 	}
 	
 	private static function copy(fileURI:String, copyURI:String):Void {

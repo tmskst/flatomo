@@ -6,7 +6,7 @@ class Connector {
 	private static inline var CONNECTION_NAME:String = "FLATOMO";
 	private static inline var HANDSHAKE:String = "INITIALIZE";
 	
-	private static inline var SWF_PANEL_NAME:String = "Panel";
+	private static inline var SWF_PANEL_NAME:String = "Flatomo";
 	private static inline var FLATOMO_INITIALIZE:String = "flatomo_initialized";
 	
 	#if flash
