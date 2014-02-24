@@ -23,7 +23,7 @@ class SectionCreator {
 		
 		// 制御レイヤーが存在しない場合は自動的にセクションが生成される。
 		if (layers.length == 0) {
-			untyped fl.trace('タイムライン ${timeline.name} に制御レイヤーが存在しません。セクションを自動的に生成します。');
+			// untyped fl.trace('タイムライン ${timeline.name} に制御レイヤーが存在しません。セクションを自動的に生成します。');
 			return [{ name: "anonymous", kind: SectionKind.Once, begin: 1, end: timeline.frameCount }];
 		}
 		
