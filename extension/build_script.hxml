@@ -48,8 +48,6 @@
 --next
 
 -cp script/src
--cp common/src
--cp ../common/src
 
 # libraries
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
