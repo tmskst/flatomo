@@ -1,4 +1,7 @@
-bin/
+demo/bin/*
+extension/panel/bin/*
+extension/script/bin/*
+!.gitkeep
 obj/
 
 *.hxproj
