@@ -137,8 +137,7 @@ class FlatomoTools {
 		library.setItemProperty('linkageExportForAS', true);
 		library.setItemProperty('linkageExportForRS', false);
 		library.setItemProperty('linkageExportInFirstFrame', true);
-		library.setItemProperty('linkageClassName', 'Config');
-		
+		library.setItemProperty('linkageClassName', DocumentTools.fetchConfigSymbolClassPath(document));
 		// Elementを作成
 		library.selectItem('flatomo/config');
 		library.editItem();
