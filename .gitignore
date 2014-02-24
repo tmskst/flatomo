@@ -10,7 +10,6 @@ obj/
 
 /out
 
-build.bat
 
 # munit
 TestMain.hx
