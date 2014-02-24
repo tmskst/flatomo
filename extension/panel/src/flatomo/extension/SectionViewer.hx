@@ -4,6 +4,7 @@ import com.bit101.components.Label;
 import com.bit101.components.Panel;
 import flash.display.DisplayObjectContainer;
 import flash.events.Event;
+import flash.Lib;
 import flatomo.Section;
 import flatomo.SectionKind;
 
@@ -17,12 +18,11 @@ class SectionViewer extends Panel {
 	
 	public function new(parent:DisplayObjectContainer, xpos:Float, ypos:Float, section:Section, names:Array<String>, kinds:Array<String>) {
 		super(parent, xpos, ypos);
-		this.width = 330;
 		this.height = 30;
 		this.section = section;
 		
 		new Label(this, 5, 5, section.name);
-		this.kind = new ComboBox(this, 120, 5, "ERROR", kinds);
+		this.kind = new ComboBox(this, 0, 5, "ERROR", kinds);
 		{ // initialize kind
 			kind.selectedItem = switch (section.kind) {
 				case SectionKind.Default : SectionKind.Pass.getName();
@@ -30,7 +30,7 @@ class SectionViewer extends Panel {
 			}
 			kind.addEventListener(Event.SELECT, changed);
 		}
-		this.goto = new ComboBox(this, 225, 5,  "ERROR", names);
+		this.goto = new ComboBox(this, 0, 5,  "ERROR", names);
 		{ // initialize goto
 			goto.selectedIndex = 0;
 			goto.addEventListener(Event.SELECT, changed);
@@ -40,6 +40,14 @@ class SectionViewer extends Panel {
 			}
 		}
 		
+		resize();
+		Lib.current.stage.addEventListener(Event.RESIZE, resize);
+	}
+	
+	private function resize(?event:Event = null):Void {
+		this.width = Lib.current.stage.stageWidth - 25;
+		kind.x = width - 100 - 10 - 110;
+		goto.x = width - 100 - 10;
 	}
 	
 	private function changed(event:Event):Void {

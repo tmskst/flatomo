@@ -1,17 +1,12 @@
 package flatomo.extension;
-import com.bit101.components.CheckBox;
 import com.bit101.components.Label;
 import com.bit101.components.PushButton;
 import com.bit101.components.Style;
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.events.MouseEvent;
-import flash.geom.Rectangle;
 import flash.Lib;
-import flatomo.extension.ExtensionPanel.Header;
 import flatomo.FlatomoItem;
 import flatomo.Section;
-import flatomo.SectionKind;
 import haxe.Unserializer;
 
 using Lambda;
@@ -29,13 +24,7 @@ class ExtensionPanel extends Sprite implements IHandler {
 	private var connector:Connector;
 	
 	private var canvasHeader:Header;
-	private var canvasContent:Sprite;
-	
-	private var canvasAnimationViewer:Sprite;
-	private var animationViewer:CheckBox;
-	
-	private var canvasSectionViewer:Sprite;
-	private var sectionViewers:Array<SectionViewer>;
+	private var canvasContent:ContentViewer;
 	
 	public function new() {
 		super();
@@ -44,11 +33,8 @@ class ExtensionPanel extends Sprite implements IHandler {
 		Style.fontSize = 12;
 		
 		this.connector = new Connector("flatomo.jsfl", "flatomo.extension.Script", this);
-		this.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, 200);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 		
-		canvasContent = new Sprite();
-		canvasContent.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+		canvasContent = new ContentViewer(changed);
 		canvasContent.y = 30;
 		this.addChild(canvasContent);
 		
@@ -56,18 +42,6 @@ class ExtensionPanel extends Sprite implements IHandler {
 			connector.send(ScriptApi.Refresh);
 		});
 		this.addChild(canvasHeader);
-		
-		canvasSectionViewer = new Sprite();
-		canvasContent.addChild(canvasSectionViewer);
-		
-		canvasAnimationViewer = new Sprite();
-		canvasContent.addChild(canvasAnimationViewer);
-	}
-	
-	private function mouseWheel(event:MouseEvent):Void {
-		var rectangle:Rectangle = canvasContent.scrollRect;
-		rectangle.y -= event.delta * 7;
-		canvasContent.scrollRect = rectangle;
 	}
 	
 	// ------------------------------------------------------------------------------------
@@ -88,10 +62,7 @@ class ExtensionPanel extends Sprite implements IHandler {
 	
 	private function disabledTimlineSelected():Void {
 		// セクションビュアーをすべて消去
-		canvasSectionViewer.removeChildren();
-		canvasAnimationViewer.removeChildren();
-		
-		new Label(canvasSectionViewer, 10, 20, "Disabled Timline");
+		canvasContent.clear();
 	}
 	
 	/**
@@ -99,17 +70,12 @@ class ExtensionPanel extends Sprite implements IHandler {
 	 */
 	private function flatomoDisabled():Void {
 		// セクションビュアーをすべて消去
-		canvasSectionViewer.removeChildren();
-		canvasAnimationViewer.removeChildren();
-		
-		new Label(canvasSectionViewer, 10, 20, "Flatomo is disabled");
+		canvasContent.clear();
 	}
 	
 	private function timlineSelected(timelineName:String, latestSection:Array<Section>, savedItem:Null<FlatomoItem>):Void {
 		// セクションビュアーをすべて消去
-		canvasSectionViewer.removeChildren();
-		canvasAnimationViewer.removeChildren();
-		canvasContent.scrollRect = new Rectangle(0, 0, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+		canvasContent.clear();
 		
 		// 最新のセクション情報と保存済みセクション情報を比較する。名前(name属性)が一致するものについては、保存済みセクションのkind属性を最新のセクションにコピーする。
 		if (savedItem != null) {
@@ -132,16 +98,9 @@ class ExtensionPanel extends Sprite implements IHandler {
 		
 		// ビュアーを生成する。
 		canvasHeader.updateLabel(timelineName);
-		animationViewer = new CheckBox(canvasAnimationViewer, 5, 10, "Animation", changed);
-		animationViewer.selected = if (savedItem != null) savedItem.animation else false;
 		
-		this.sectionViewers = new Array<SectionViewer>();
-		for (index in 0...latestSection.length) {
-			var section:Section = latestSection[index];
-			var viewer:SectionViewer = new SectionViewer(canvasSectionViewer, 5, 30 + 35 * index, section, names, kinds);
-			viewer.addEventListener(SectionViewer.CHANGED, changed);
-			sectionViewers.push(viewer);
-		}
+		var animation:Bool = if (savedItem != null) savedItem.animation else false;
+		canvasContent.update(animation, latestSection, names, kinds);
 		
 	}
 	
@@ -151,12 +110,7 @@ class ExtensionPanel extends Sprite implements IHandler {
 	 * @param	event
 	 */
 	private function changed(event:Event):Void {
-		var sections:Array<Section> = new Array<Section>();
-		for (index in 0...sectionViewers.length) {
-			var viewer:SectionViewer = sectionViewers[index];
-			sections.push(viewer.fetchLatestSection());
-		}
-		connector.send(ScriptApi.Save( { sections: sections, animation: animationViewer.selected } ));
+		connector.send(ScriptApi.Save( canvasContent.toFlatomoItem() ));
 	}
 	
 }
@@ -164,15 +118,25 @@ class ExtensionPanel extends Sprite implements IHandler {
 class Header extends Sprite {
 	
 	private var label:Label;
+	private var button:PushButton;
 	
 	public function new(update:Event -> Void) {
 		super();
-		graphics.beginFill(0x000000, 0.8);
-		graphics.drawRect(0, 0, Lib.current.stage.stageWidth, 30);
+		updateLabel("Flatomo");
+		button = new PushButton(this, 0, 5, "UPDATE", update);
+		resize(null);
+		
+		Lib.current.stage.addEventListener(Event.RESIZE, resize);
+	}
+	
+	private function resize(?e:Event = null):Void {
+		var stageWidth = Lib.current.stage.stageWidth;
+		graphics.clear();
+		graphics.beginFill(0x454545, 1);
+		graphics.drawRect(0, 0, stageWidth, 30);
 		graphics.endFill();
 		
-		updateLabel("Flatomo");
-		new PushButton(this, Lib.current.stage.stageWidth - 120, 5, "UPDATE", update);
+		button.x = stageWidth - 120;
 	}
 	
 	public function updateLabel(name:String):Void {
