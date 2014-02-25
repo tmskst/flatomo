@@ -1,7 +1,4 @@
-cd ./demo
-haxe build.hxml
-
-cd ../extension
+cd ./extension
 haxe build_panel.hxml
 haxe build_script.hxml
 
