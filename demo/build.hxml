@@ -3,7 +3,7 @@
 -cp src
 -cp ../common/src
 -cp ../manager/src
--main Bootstrap
+-main Main
 
 -swf bin/demo.swf
 -swf-lib bin/library.swc
