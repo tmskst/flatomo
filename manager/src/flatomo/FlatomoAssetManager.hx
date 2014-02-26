@@ -43,9 +43,12 @@ class FlatomoAssetManager {
 	private function create(key:String):DisplayObject {
 		var type = meta.get(key);
 		switch (type) {
-			case Meta.Animation(sections) :
+			case Meta.Animation(sections, pivotX, pivotY) :
 				var textures = manager.getTextures(key);
-				return new Animation(textures, sections);
+				var animation = new Animation(textures, sections);
+				animation.pivotX = pivotX;
+				animation.pivotY = pivotY;
+				return animation;
 			case Meta.Container(children, layouts, sections) :
 				var objects = new Array<DisplayObject>();
 				for (child in children) {

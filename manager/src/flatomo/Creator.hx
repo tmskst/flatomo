@@ -65,7 +65,7 @@ class Creator {
 			images.push({ name: '${key} ${index}', image: Blitter.toBitmapData(source, bounds) });
 		}
 		
-		meta.set(key, Meta.Animation(sections));
+		meta.set(key, Meta.Animation(sections, -bounds.x, -bounds.y));
 	}
 	
 	/**
