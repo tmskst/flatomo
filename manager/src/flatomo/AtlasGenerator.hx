@@ -18,7 +18,7 @@ class AtlasGenerator {
 	public static function generate(images:Array<{name:String, image:BitmapData}>):Array<{ image:BitmapData, layout:XML }> {
 		//var LENGTHS = [64, 128, 256, 512, 1024, 2048];
 		
-		var LENGTH = 900;
+		var LENGTH = 2048;
 		images.sort(function (a, b):Int {
 			return Std.int(b.image.height - a.image.height);
 		});
