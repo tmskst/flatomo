@@ -2,34 +2,33 @@ package flatomo;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.xml.XML;
 
+using Lambda;
 using flatomo.AtlasGenerator;
 
 private typedef Piece = { name:String, image:BitmapData };
 private typedef Area = { name:String, rectangle:Rectangle };
 private typedef Layer = { x:Int, y:Int, width:Int, height:Int };
-private typedef TextureAtlas = { image:BitmapData, layout:Xml };
+private typedef TextureAtlas = { image:BitmapData, layout:XML };
 
 class AtlasGenerator {
 	
 	/** テクスチャアトラスを生成する */
-	public static function generate(images:Array<{name:String, image:BitmapData}>):{ image:BitmapData, layout:Xml } {
-		var LENGTHS = [64, 128, 256, 512, 1024, 2048, 4096];
+	public static function generate(images:Array<{name:String, image:BitmapData}>):Array<{ image:BitmapData, layout:XML }> {
+		//var LENGTHS = [64, 128, 256, 512, 1024, 2048];
 		
+		var LENGTH = 900;
 		images.sort(function (a, b):Int {
 			return Std.int(b.image.height - a.image.height);
 		});
-		var size:Int = 0;
-		var areas:Array<Area> = null;
-		for (length in LENGTHS) {
-			var data = pack(images, length);
-			if (data == null) { continue; }
-			
-			size = length;
-			areas = data;
-			break;
+		var packed = new Array<String>();
+		var atlases = new Array<TextureAtlas>();
+		while (packed.length < images.length) {
+			var data = pack(images, LENGTH, packed);
+			atlases.push(generateTextureAtlas(images, data, LENGTH));
 		}
-		return generateTextureAtlas(images, areas, size);
+		return atlases;
 	}
 	
 	/** テクスチャアトラスを生成する */
@@ -44,7 +43,7 @@ class AtlasGenerator {
 			layout.addChild(createSubTextureElement(subTexture.name, area));
 			canvas.blit(subTexture.image, area);
 		}
-		return { image: canvas, layout: layout };
+		return { image: canvas, layout: new flash.xml.XML(layout.toString()) };
 	}
 	
 	/** テクスチャをアトラスに転写する */
@@ -83,14 +82,16 @@ class AtlasGenerator {
 	 * @return テクスチャをどこに敷くかの対応関係の集合。敷き詰められなかった場合は nullが返される。
 	 */
 	@:noUsing
-	private static function pack(pieces:Array<Piece>, length:Int):Null<Array<Area>> {
+	private static function pack(pieces:Array<Piece>, length:Int, packed:Array<String>):Null<Array<Area>> {
 		// HFF ALGORITHM
 		var layers = new Array<Layer>();
 		var areas = new Array<Area>();
 		for (piece in pieces) {
+			if (packed.indexOf(piece.name) != -1) { continue; }
 			var isNewLayer = false;
 			for (layer in layers) {
 				if (layer.x + piece.image.width <= length) {
+					packed.push(piece.name);
 					areas.push({ name: piece.name, rectangle: new Rectangle(layer.x, layer.y, piece.image.width, piece.image.height)} );
 					layer.x = layer.x + piece.image.width;
 					isNewLayer = true;
@@ -101,8 +102,9 @@ class AtlasGenerator {
 				var lastLayer = if (layers.length != 0) layers[layers.length - 1] else { x: 0, y: 0, width: 0, height: 0 };
 				var newLayer = { x: piece.image.width, y: lastLayer.y + lastLayer.height, width: piece.image.width, height: piece.image.height };
 				if (newLayer.y + newLayer.height >= length) {
-					return null;
+					return areas;
 				}
+				packed.push(piece.name);
 				areas.push({ name: piece.name, rectangle: new Rectangle(0, newLayer.y, piece.image.width, piece.image.height) });
 				layers.push(newLayer);
 			}

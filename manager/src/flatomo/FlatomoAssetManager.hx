@@ -9,14 +9,20 @@ import starling.utils.AssetManager;
 
 class FlatomoAssetManager {
 	
-	public static function build(source:{image:BitmapData, layout:XML, metaData:Map<String, Meta>}):FlatomoAssetManager {
-		var texture = Texture.fromBitmapData(source.image);
-		return new FlatomoAssetManager(new TextureAtlas(texture, source.layout), source.metaData);
+	public static function build(source:{atlases:Array<{image:BitmapData, layout:XML}>, metaData:Map<String, Meta>}):FlatomoAssetManager {
+		var atlases = new Array<TextureAtlas>();
+		for (atlas in source.atlases) {
+			atlases.push(new TextureAtlas(Texture.fromBitmapData(atlas.image), atlas.layout));
+		}
+		return new FlatomoAssetManager(atlases, source.metaData);
 	}
 	
-	public function new(atlas:TextureAtlas, meta:Map<String, Meta>) {
+	public function new(atlases:Array<TextureAtlas>, meta:Map<String, Meta>) {
 		this.manager = new AssetManager();
-		this.manager.addTextureAtlas("atlas", atlas);
+		for (index in 0...atlases.length) {
+			var atlas = atlases[index];
+			this.manager.addTextureAtlas('atlas${index}', atlas);
+		}
 		this.meta = meta;
 	}
 	
