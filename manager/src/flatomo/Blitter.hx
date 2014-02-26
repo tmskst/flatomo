@@ -2,6 +2,7 @@ package flatomo;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
 class Blitter {
@@ -36,7 +37,7 @@ class Blitter {
 		}
 		
 		var bitmapData:BitmapData = new BitmapData(width, height, true, 0x0000FFFF);
-		bitmapData.drawWithQuality(source);
+		bitmapData.drawWithQuality(source, new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y));
 		return bitmapData;
 	}
 	
