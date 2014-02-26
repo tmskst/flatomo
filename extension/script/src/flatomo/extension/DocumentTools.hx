@@ -2,6 +2,7 @@ package flatomo.extension;
 
 import jsfl.Document;
 import jsfl.PersistentDataType;
+import jsfl.Lib.fl in fl;
 
 class DocumentTools {
 	
@@ -14,7 +15,7 @@ class DocumentTools {
 	
 	/** 作業中のドキュメントに対しFlatomoを有効にします。 */
 	private static function enableFlatomo(document:Document):Void {
-		var path = jsfl.Lib.prompt("設定シンボルのFQCN", "com.example.Config");
+		var path = jsfl.Lib.prompt("設定シンボルのFQCN", '${document.name}');
 		if (path == null) { return; }
 		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, PersistentDataType.STRING, path);
 	}
