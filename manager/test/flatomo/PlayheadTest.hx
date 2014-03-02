@@ -320,4 +320,19 @@ class PlayheadTest{
 		Assert.areEqual(2, sut.currentFrame);
 	}
 	
+	@Ignore("StandstillのセクションへgotoAndPlayしたときの挙動")
+	public function gotoAndPlay_Standstill():Void {
+		var sections = [
+			{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "b", kind: SectionKind.Standstill, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(function () { }, sections);
+		sut.gotoAndPlay("b");
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame(1);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame(1);
+		Assert.areEqual(4, sut.currentFrame);
+	}
+	
 }
