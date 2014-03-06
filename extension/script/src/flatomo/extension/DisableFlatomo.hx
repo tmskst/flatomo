@@ -21,7 +21,7 @@ class DisableFlatomo {
 		for (item in fl.getDocumentDOM().library.items) {
 			item.removeFlatomoItem();
 		}
-		FlatomoTools.deleteAllElementPersistentData();
+		//FlatomoTools.deleteAllElementPersistentData();
 		fl.getDocumentDOM().disableFlatomo();
 	}
 	

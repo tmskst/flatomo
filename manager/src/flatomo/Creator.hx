@@ -8,38 +8,46 @@ import flash.geom.Rectangle;
 using flatomo.FlatomoTools;
 using flatomo.Creator.DisplayObjectTools;
 
+typedef ElementPath = String;
+typedef Library = { metadata:Map<LibraryPath, FlatomoItem>, libraryPaths:Map<ElementPath, LibraryPath> };
+typedef Image = { name:String, image:BitmapData };
+
 @:allow(flatomo.Flatomo)
 class Creator {
 	
-	public static function create(library:Map<String, FlatomoItem>, classes:Array<Class<DisplayObject>>):{ images:Array<{ name:String, image:BitmapData }>, meta:Map<String, Meta> } {
+	public static function create(library:Library, classes:Array<Class<DisplayObject>>):{ images:Array<{ name:String, image:BitmapData }>, meta:Map<String, Meta> } {
 		var creator:Creator = new Creator(library);
 		for (clazz in classes) {
-			creator.translate(Type.createInstance(clazz, []), "root");
+			creator.translate(Type.createInstance(clazz, []), "F:" + Type.getClassName(clazz));
 		}
 		return { images: creator.images, meta: creator.meta };
 	}
 	
-	private function new(library:Map<String, FlatomoItem>) {
+	private function new(library:Library) {
 		this.library = library;
-		this.images = new Array<{name:String, image:BitmapData}>();
+		this.images = new Array<Image>();
 		this.meta = new Map<String, Meta>();
 	}
 	
-	private var library:Map<String, FlatomoItem>;
-	private var images:Array<{ name:String, image:BitmapData }>;
+	private var library:Library;
+	private var images:Array<Image>;
 	private var meta:Map<String, Meta>;
+	
 	
 	/**
 	 * 表示オブジェクト（flash.display.DisplayObject）を解析します
 	 * @param	source 解析する表示オブジェクト
 	 * @param	path 対象のライブラリパス
 	 */
-	private function translate(source:DisplayObject, path:String):Void {
-		var type = source.fetchDisplayObjectType(library);
+	private function translate(source:DisplayObject, libraryPath:String):Void {
+		// libraryPath = F:MainScene or Game/Foobar etc
+		if (meta.exists(libraryPath)) { return; }
+		
+		var type = source.fetchDisplayObjectType(libraryPath, library);
 		switch (type) {
-			case DisplayObjectType.Animation : translateQuaAnimation(cast(source, MovieClip));
-			case DisplayObjectType.Container : translateQuaContainer(cast(source, MovieClip));
-			case DisplayObjectType.Image : translateQuaImage(source, path);
+			case DisplayObjectType.Animation : translateQuaAnimation(cast(source, MovieClip), libraryPath);
+			case DisplayObjectType.Container : translateQuaContainer(cast(source, MovieClip), libraryPath);
+			case DisplayObjectType.Image : translateQuaImage(source, libraryPath);
 		}
 	}
 	
@@ -47,11 +55,7 @@ class Creator {
 	 * 表示オブジェクトをDisplayObjectType.Animationとして解析します
 	 * @param	source 対象の表示オブジェクト
 	 */
-	private function translateQuaAnimation(source:MovieClip):Void {
-		var key:String = FlatomoTools.fetchLibraryPath(source);
-		if (meta.exists(key)) { return; }
-		var sections = library.fetchItem(source).sections;
-		
+	private function translateQuaAnimation(source:MovieClip, libraryPath:LibraryPath):Void {
 		// ソースの描画領域を計算
 		var bounds:Rectangle = new Rectangle();
 		for (frame in 0...source.totalFrames) {
@@ -62,20 +66,17 @@ class Creator {
 		for (frame in 0...source.totalFrames) {
 			source.gotoAndStop(frame + 1);
 			var index = ("00000" + Std.string(frame)).substr(-5);
-			images.push({ name: '${key} ${index}', image: Blitter.toBitmapData(source, bounds) });
+			images.push({ name: '${libraryPath} ${index}', image: Blitter.toBitmapData(source, bounds) });
 		}
-		
-		meta.set(key, Meta.Animation(sections, -bounds.x, -bounds.y));
+		var sections = library.metadata.get(libraryPath).sections;
+		meta.set(libraryPath, Meta.Animation(sections, -bounds.x, -bounds.y));
 	}
 	
 	/**
 	 * 表示オブジェクトをDisplayObjectType.Containerとして解析します
 	 * @param	source 対象の表示オブジェクト
 	 */
-	private function translateQuaContainer(source:MovieClip):Void {
-		var key:String = FlatomoTools.fetchLibraryPath(source);
-		if (meta.exists(key)) { return; }
-		
+	private function translateQuaContainer(source:MovieClip, libraryPath:LibraryPath):Void {
 		var map = new Map<Int, Array<Layout>>();
 		var children = new Array<{ key:String, instanceName:String }>();
 		
@@ -87,11 +88,11 @@ class Creator {
 			var layouts = new Array<Layout>();
 			for (index in 0...source.numChildren) {
 				var child:DisplayObject = source.getChildAt(index);
-				var childType = child.fetchDisplayObjectType(library);
+				var childType = child.fetchDisplayObjectType(libraryPath, library);
 				var childKey:String = switch (childType) {
-					case DisplayObjectType.Animation : child.fetchLibraryPath();
-					case DisplayObjectType.Container : child.fetchLibraryPath();
-					case DisplayObjectType.Image : '${key}#${child.name}';
+					case DisplayObjectType.Animation : child.fetchLibraryPath(libraryPath, library);
+					case DisplayObjectType.Container : child.fetchLibraryPath(libraryPath, library);
+					case DisplayObjectType.Image : '${libraryPath}#${child.name}';
 				}
 				children.push({ key: childKey, instanceName: child.name });
 				translate(child, childKey);
@@ -107,8 +108,8 @@ class Creator {
 			}
 			map.set(frame + 1, layouts);
 		}
-		var sections = library.fetchItem(source).sections;
-		meta.set(key, Meta.Container(children, map, sections));
+		var sections = library.metadata.get(libraryPath).sections;
+		meta.set(libraryPath, Meta.Container(children, map, sections));
 	}
 	
 	/**
@@ -116,12 +117,9 @@ class Creator {
 	 * @param	source 対象の表示オブジェクト
 	 * @param	path 対象のライブラリパス
 	 */
-	private function translateQuaImage(source:DisplayObject, path:String):Void {
-		var key:String = path;
-		if (meta.exists(key)) { return; }
-		
-		images.push({ name: key, image: Blitter.toBitmapData(source) });
-		meta.set(key, Meta.Image);
+	private function translateQuaImage(source:DisplayObject, libraryPath:LibraryPath):Void {
+		images.push({ name: libraryPath, image: Blitter.toBitmapData(source) });
+		meta.set(libraryPath, Meta.Image);
 	}
 	
 }
@@ -132,11 +130,11 @@ class DisplayObjectTools {
 	/**
 	 * 表示オブジェクトが属するDisplayObjectTypeを返します
 	 */
-	private static function fetchDisplayObjectType(source:DisplayObject, library:Map<String, FlatomoItem>):DisplayObjectType {
-		if (source.isAlliedToAnimation(library)) {
+	private static function fetchDisplayObjectType(source:DisplayObject, libraryPath:LibraryPath, library:Library):DisplayObjectType {
+		if (source.isAlliedToAnimation(libraryPath, library)) {
 			return DisplayObjectType.Animation;
 		}
-		if (source.isAlliedToContainer()) {
+		if (source.isAlliedToContainer(libraryPath, library)) {
 			return DisplayObjectType.Container;
 		}
 		
@@ -148,11 +146,11 @@ class DisplayObjectTools {
 	 * 1. 対象がflash.display.MovieClipであること。
 	 * 2. 対象のアニメーション属性が有効（真）であること。
 	 */
-	private static function isAlliedToAnimation(source:DisplayObject, library:Map<String, FlatomoItem>):Bool {
+	private static function isAlliedToAnimation(source:DisplayObject, libraryPath:LibraryPath, library:Library):Bool {
 		// 式をひとつまとめないでください。
 		if (!Std.is(source, MovieClip)) { return false; }
 		
-		var item:FlatomoItem = library.fetchItem(source);
+		var item = library.metadata.get(libraryPath);
 		return item != null && item.animation;
 	}
 	
@@ -160,7 +158,7 @@ class DisplayObjectTools {
 	 * コンテナである条件は、
 	 * 1. 対象は flash.display.DisplayObjectContainerであること。
 	 */
-	private static function isAlliedToContainer(source:DisplayObject):Bool {
+	private static function isAlliedToContainer(source:DisplayObject, libraryPath:LibraryPath, library:Library):Bool {
 		return Std.is(source, DisplayObjectContainer);
 	}
 	
