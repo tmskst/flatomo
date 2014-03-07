@@ -1,5 +1,6 @@
 package flatomo.extension;
 
+import jsfl.Document;
 import jsfl.Lib.fl;
 
 using flatomo.extension.ItemTools;
@@ -14,12 +15,13 @@ class DisableFlatomo {
 	@:access(flatomo.extension.ItemTools)
 	@:access(flatomo.extension.DocumentTools)
 	private static function main():Void {
-		if (!fl.getDocumentDOM().isFlatomo()) { return; }
+		var document:Document = fl.getDocumentDOM();
+		if (!document.isFlatomo()) { return; }
 		
-		for (item in fl.getDocumentDOM().library.items) {
+		for (item in document.library.items) {
 			item.removeFlatomoItem();
 		}
-		fl.getDocumentDOM().disableFlatomo();
+		document.disableFlatomo();
 	}
 	
 }

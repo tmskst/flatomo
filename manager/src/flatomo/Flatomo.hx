@@ -1,7 +1,7 @@
 package flatomo;
+
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.xml.XML;
 import flatomo.Meta;
 

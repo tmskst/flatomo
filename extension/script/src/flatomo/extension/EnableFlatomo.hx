@@ -2,7 +2,6 @@ package flatomo.extension;
 
 import jsfl.Lib.fl;
 
-using flatomo.extension.ItemTools;
 using flatomo.extension.DocumentTools;
 
 class EnableFlatomo {

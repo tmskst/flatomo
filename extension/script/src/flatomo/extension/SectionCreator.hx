@@ -1,4 +1,5 @@
 package flatomo.extension;
+
 import flatomo.Section;
 import flatomo.SectionKind;
 import jsfl.Frame;

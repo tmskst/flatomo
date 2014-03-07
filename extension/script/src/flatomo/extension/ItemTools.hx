@@ -1,4 +1,5 @@
 package flatomo.extension;
+
 import flatomo.FlatomoItem;
 import haxe.Serializer;
 import haxe.Unserializer;
@@ -29,6 +30,10 @@ class ItemTools {
 		item.addData("f_item", PersistentDataType.STRING, Serializer.run(data));
 	}
 	
+	/**
+	 * ItemからFlatomoItemを削除する
+	 * @param	item 対象のライブラリ項目
+	 */
 	private static function removeFlatomoItem(item:Item):Void {
 		if (item.hasData("f_item")) {
 			item.removeData("f_item");

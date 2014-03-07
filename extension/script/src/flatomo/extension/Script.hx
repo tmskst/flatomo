@@ -1,14 +1,13 @@
 package flatomo.extension;
+
 import flatomo.FlatomoItem;
 import flatomo.Section;
 import haxe.Unserializer;
 import jsfl.EventType;
-import jsfl.Flash;
 import jsfl.Item;
 import jsfl.Lib.fl;
 import jsfl.Library;
 import jsfl.Timeline;
-
 
 using flatomo.extension.DocumentTools;
 using flatomo.extension.ItemTools;
@@ -21,9 +20,7 @@ class Script {
 	
 	public static function main() {
 		send = Connector.send;
-		
-		var flash:Flash = untyped fl;
-		flash.addEventListener(EventType.TIMELINE_CHANGED, refresh);
+		fl.addEventListener(EventType.TIMELINE_CHANGED, refresh);
 	}
 	
 	/**
@@ -31,8 +28,7 @@ class Script {
 	 * パネルに作業タイムラインが変更されたこと（PanelApi.TimlineSelected, PanelApi.DisabledTimlineSelected）を通知する。
 	 */
 	private static function timelineChanged():Void {
-		var flash:Flash = untyped fl;
-		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
+		var timeline:Timeline = fl.getDocumentDOM().getTimeline();
 		
 		// 作業タイムラインがライブラリ内に存在しない場合はFlatomoItemを保存することができない
 		if (timeline.libraryItem == null) {
@@ -42,7 +38,7 @@ class Script {
 		
 		var item:Item = null;
 		{ // initialize item
-			var library:Library = flash.getDocumentDOM().library;
+			var library:Library = fl.getDocumentDOM().library;
 			var index:Int = library.findItemIndex(timeline.libraryItem.name);
 			item = library.items[index];
 		}
@@ -71,15 +67,14 @@ class Script {
 	 */
 	@:access(flatomo.extension.ItemTools)
 	private static function save(data:FlatomoItem):Void {
-		var flash:Flash = untyped fl;
-		if (!flash.getDocumentDOM().isFlatomo()) {
+		if (!fl.getDocumentDOM().isFlatomo()) {
 			return;
 		}
 		
-		var timeline:Timeline = flash.getDocumentDOM().getTimeline();
+		var timeline:Timeline = fl.getDocumentDOM().getTimeline();
 		var item:Item = null;
 		{ // initialize item
-			var library:Library = flash.getDocumentDOM().library;
+			var library:Library = fl.getDocumentDOM().library;
 			var index:Int = library.findItemIndex(timeline.libraryItem.name);
 			item = library.items[index];
 		}

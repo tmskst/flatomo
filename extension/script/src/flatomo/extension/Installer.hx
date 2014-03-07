@@ -2,12 +2,11 @@ package flatomo.extension;
 
 import jsfl.FLfile;
 import jsfl.Lib;
-import jsfl.Lib.fl in fl;
+import jsfl.Lib.fl;
 
 class Installer {
 	
 	public static function main() {
-		
 		var confirm =  Lib.confirm("インストールします");
 		if (!confirm) {
 			fl.trace("インストールを中断しました");

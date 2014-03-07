@@ -2,7 +2,6 @@ package flatomo.extension;
 
 import jsfl.Document;
 import jsfl.PersistentDataType;
-import jsfl.Lib.fl in fl;
 
 class DocumentTools {
 	
@@ -15,9 +14,7 @@ class DocumentTools {
 	
 	/** 作業中のドキュメントに対しFlatomoを有効にします。 */
 	private static function enableFlatomo(document:Document):Void {
-		var path = jsfl.Lib.prompt("設定シンボルのFQCN", '${document.name}');
-		if (path == null) { return; }
-		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, PersistentDataType.STRING, path);
+		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, PersistentDataType.STRING, "flatomo");
 	}
 	
 	/** 作業中のドキュメントに対しFlatomoを無効にします。 */
@@ -25,7 +22,4 @@ class DocumentTools {
 		document.removeDataFromDocument(DOCUMENT_ATTR_FLATOMO);
 	}
 	
-	public static function fetchConfigSymbolClassPath(document:Document):String {
-		return document.getDataFromDocument(DOCUMENT_ATTR_FLATOMO);
-	}
 }
