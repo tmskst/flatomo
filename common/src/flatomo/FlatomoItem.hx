@@ -2,7 +2,7 @@ package flatomo;
 
 /**
  * Flatomoが拡張したItemオブジェクト（ライブラリ項目）。
- * このデータは、Item#addData()を用いて共有されない。"_EMBED_SWF_"を利用するために任意のElementのメタデータとして保存される。
+ * ライブラリ項目1つに対してFlatomoItemが1つ対応する。
  */
 typedef FlatomoItem = {
 	/** セクション情報 */

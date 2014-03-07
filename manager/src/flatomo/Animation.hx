@@ -1,4 +1,5 @@
 package flatomo;
+
 import flash.Vector;
 import starling.animation.IAnimatable;
 import starling.display.Image;
@@ -39,6 +40,7 @@ class Animation extends Image implements IAnimatable implements IPlayhead {
 	/** テクスチャ */
 	private var textures:Vector<Texture>;
 	
+	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
 	
 	public function advanceTime(time:Float):Void {
@@ -48,6 +50,5 @@ class Animation extends Image implements IAnimatable implements IPlayhead {
 	private function update():Void {
 		texture = textures[playhead.currentFrame - 1];
 	}
-	
 	
 }

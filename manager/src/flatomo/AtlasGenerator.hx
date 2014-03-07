@@ -1,4 +1,5 @@
 package flatomo;
+
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;

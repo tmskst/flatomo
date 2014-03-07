@@ -1,6 +1,5 @@
 package flatomo.extension;
 
-import flatomo.FlatomoTools;
 import jsfl.Lib.fl;
 
 using flatomo.extension.ItemTools;

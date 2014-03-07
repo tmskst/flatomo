@@ -5,17 +5,14 @@ import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
 
-using flatomo.FlatomoTools;
 using flatomo.Creator.DisplayObjectTools;
 
-typedef ElementPath = String;
-typedef Library = { metadata:Map<LibraryPath, FlatomoItem>, libraryPaths:Map<ElementPath, LibraryPath> };
 typedef Image = { name:String, image:BitmapData };
 
 @:allow(flatomo.Flatomo)
 class Creator {
 	
-	public static function create(library:Library, classes:Array<Class<DisplayObject>>):{ images:Array<{ name:String, image:BitmapData }>, meta:Map<String, Meta> } {
+	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<{ name:String, image:BitmapData }>, meta:Map<String, Meta> } {
 		var creator:Creator = new Creator(library);
 		for (clazz in classes) {
 			creator.translate(Type.createInstance(clazz, []), "F:" + Type.getClassName(clazz));
@@ -23,13 +20,13 @@ class Creator {
 		return { images: creator.images, meta: creator.meta };
 	}
 	
-	private function new(library:Library) {
+	private function new(library:FlatomoLibrary) {
 		this.library = library;
 		this.images = new Array<Image>();
 		this.meta = new Map<String, Meta>();
 	}
 	
-	private var library:Library;
+	private var library:FlatomoLibrary;
 	private var images:Array<Image>;
 	private var meta:Map<String, Meta>;
 	
@@ -128,9 +125,18 @@ class Creator {
 class DisplayObjectTools {
 	
 	/**
+	 * 対象（Instance)をインスタンス化するために使用されたライブラリパスを取り出す
+	 * @param	instance 対象
+	 * @return 対象をインスタンス化するために使用されたライブラリパス
+	 */
+	public static function fetchLibraryPath(instance:flash.display.DisplayObject, parentLibraryPath:LibraryPath, library:FlatomoLibrary):LibraryPath {
+		return library.libraryPaths.get(parentLibraryPath + "#" +instance.name);
+	}
+	
+	/**
 	 * 表示オブジェクトが属するDisplayObjectTypeを返します
 	 */
-	private static function fetchDisplayObjectType(source:DisplayObject, libraryPath:LibraryPath, library:Library):DisplayObjectType {
+	private static function fetchDisplayObjectType(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):DisplayObjectType {
 		if (source.isAlliedToAnimation(libraryPath, library)) {
 			return DisplayObjectType.Animation;
 		}
@@ -146,7 +152,7 @@ class DisplayObjectTools {
 	 * 1. 対象がflash.display.MovieClipであること。
 	 * 2. 対象のアニメーション属性が有効（真）であること。
 	 */
-	private static function isAlliedToAnimation(source:DisplayObject, libraryPath:LibraryPath, library:Library):Bool {
+	private static function isAlliedToAnimation(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):Bool {
 		// 式をひとつまとめないでください。
 		if (!Std.is(source, MovieClip)) { return false; }
 		
@@ -158,7 +164,7 @@ class DisplayObjectTools {
 	 * コンテナである条件は、
 	 * 1. 対象は flash.display.DisplayObjectContainerであること。
 	 */
-	private static function isAlliedToContainer(source:DisplayObject, libraryPath:LibraryPath, library:Library):Bool {
+	private static function isAlliedToContainer(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):Bool {
 		return Std.is(source, DisplayObjectContainer);
 	}
 	

@@ -10,8 +10,9 @@ using flatomo.SectionTools;
 
 /**
  * フレームとセクションで構成される表示オブジェクトコンテナ機能を提供する。
- * すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。この性質上、子へのアクセスは再生ヘッドの到達を待つ必要がない。
- * ただし、コンテナの中で1つのインスタンス名（InstanceName、Element#name(JSFL)）に対応する表示オブジェクトは、唯一1つだけでなければならない。
+ * すべてのコンテナの子は、コンテナの生成と同時に追加（addChild）される。
+ * また、コンテナ内のインスタンス名（Element#name）は、1つの表示オブジェクトに対応する。
+ * この性質上、再生ヘッドの到達を待つことなく任意の子へのアクセスができる。
  */
 class Container extends DisplayObjectContainer implements IAnimatable implements IPlayhead {
 	
@@ -23,12 +24,12 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 	 */
 	public function new(displayObjects:Array<DisplayObject>, map:Map<Int, Array<Layout>>, sections:Array<Section>) {
 		super();
-		this.map = map;
+		this.layouts = map;
 		this.playhead = new Playhead(update, sections);
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
 		for (object in displayObjects) {
-			// TODO : ジャグラーに登録しないとコンテナは可視状態にならない
+			// FIXME : ジャグラーに登録しないとコンテナは可視状態にならない
 			object.visible = false;
 			this.addChild(object);
 		}
@@ -39,14 +40,16 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 	 * @key 再生ヘッドの位置
 	 * @value 再生ヘッドのいちに対応する配置された表示オブジェクトの配置情報のリスト
 	 */
-	private var map:Map</*Frame*/Int, Array<Layout>>; // TODO : 不適切な命名
+	private var layouts:Map<Int, Array<Layout>>;
 	
+	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
 	
 	public function advanceTime(time:Float):Void {
 		playhead.advanceFrame(Std.int(time));
 	}
 	
+	/** 自身（表示オブジェクト）の更新 */
 	private function update():Void {
 		// すべての表示オブジェクトを不可視状態にする。
 		for (index in 0...numChildren) {
@@ -54,8 +57,8 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 		}
 		
 		// 現在の再生ヘッド位置に対応する表示オブジェクトの位置情報を取得して子に適応する。
-		if (map.exists(playhead.currentFrame)) {
-			var layouts:Array<Layout> = map.get(playhead.currentFrame);
+		if (layouts.exists(playhead.currentFrame)) {
+			var layouts:Array<Layout> = layouts.get(playhead.currentFrame);
 			for (layout in layouts) {
 				var child:DisplayObject = this.getChildByName(layout.instanceName);
 				// TODO : Layout の変更に弱いのでこれを修正する。
