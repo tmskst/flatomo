@@ -7,7 +7,9 @@ class LibraryTools {
 	 */
 	public static function scan_allSymbolItem(library:Library, func:SymbolItem -> Void):Void {
 		for (item in library.items) {
-			func(cast(item, SymbolItem));
+			if (Std.is(item, SymbolItem)) {
+				func(cast(item, SymbolItem));
+			}
 		}
 	}
 	
