@@ -33,8 +33,17 @@ class Publisher {
 		var document:Document = fl.getDocumentDOM();
 		var library = createLibrary(document.library);
 		var swfPath:String = document.getSWFPathFromProfile();
-		var fileUri = swfPath.substring(0, swfPath.lastIndexOf(".")) + "." + "flatomo";
-		FLfile.write(fileUri, Serializer.run(library));
+		{
+			var fileUri = swfPath.substring(0, swfPath.lastIndexOf(".")) + "." + "flatomo";
+			FLfile.write(fileUri, Serializer.run(library));
+		}
+		{
+			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("/"));
+			var files = Exporter.export(library);
+			for (file in files) {
+				FLfile.write(fileUri + "/" + file.name + ".hx", file.value);
+			}
+		}
 	}
 	
 	private static function postPublish():Void {

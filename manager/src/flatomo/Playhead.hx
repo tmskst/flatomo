@@ -40,11 +40,11 @@ class Playhead {
 		isPlaying = false;
 	}
 	
-	public function gotoAndPlay(sectionName:String, ?increment:Int = 0):Void {
+	public function gotoAndPlay(sectionName:Dynamic, ?increment:Int = 0):Void {
 		gotoGlobalAndPlay(findSection(sectionName) + increment);
 	}
 	
-	public function gotoAndStop(sectionName:String, ?increment:Int = 0):Void {
+	public function gotoAndStop(sectionName:Dynamic, ?increment:Int = 0):Void {
 		gotoGlobalAndStop(findSection(sectionName) + increment);
 	}
 	
