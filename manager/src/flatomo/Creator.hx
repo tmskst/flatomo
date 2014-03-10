@@ -6,6 +6,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
 
+using Lambda;
 using flatomo.Creator.DisplayObjectTools;
 
 typedef Image = { name:String, image:BitmapData };
@@ -92,7 +93,11 @@ class Creator {
 					case DisplayObjectType.Container : child.fetchLibraryPath(libraryPath, library);
 					case DisplayObjectType.Image : '${libraryPath}#${child.name}';
 				}
-				children.push({ key: childKey, instanceName: child.name });
+				if (!children.exists(function (x) {
+					return (x.key == childKey && x.instanceName == child.name);
+				})) {
+					children.push({ key: childKey, instanceName: child.name });
+				}
 				translate(child, childKey);
 				
 				layouts.push({
