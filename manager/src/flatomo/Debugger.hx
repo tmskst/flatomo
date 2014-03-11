@@ -1,7 +1,8 @@
 package flatomo;
 
 class Debugger {
-	
+
+	#if flatomo_debug_export_atlas
 	public static function export(atlases:Array<{ image:flash.display.BitmapData, layout:flash.xml.XML }>):Void {
 		var entries:List<format.zip.Data.Entry> = new List();
 		for (index in 0...atlases.length) {
@@ -36,5 +37,6 @@ class Debugger {
 			extraFields : new List()
 		};
 	}
+	#end
 	
 }
