@@ -83,7 +83,7 @@ class AtlasGenerator {
 	 * @return テクスチャをどこに敷くかの対応関係の集合。敷き詰められなかった場合は nullが返される。
 	 */
 	@:noUsing
-	private static function pack(pieces:Array<Piece>, length:Int, packed:Array<String>):Null<Array<Area>> {
+	private static function pack(pieces:Array<Piece>, length:Int, packed:Array<String>, ?padding:Int = 2):Null<Array<Area>> {
 		// HFF ALGORITHM
 		var layers = new Array<Layer>();
 		var areas = new Array<Area>();
@@ -91,17 +91,17 @@ class AtlasGenerator {
 			if (packed.indexOf(piece.name) != -1) { continue; }
 			var isNewLayer = false;
 			for (layer in layers) {
-				if (layer.x + piece.image.width <= length) {
+				if (layer.x + piece.image.width + padding <= length) {
 					packed.push(piece.name);
 					areas.push({ name: piece.name, rectangle: new Rectangle(layer.x, layer.y, piece.image.width, piece.image.height)} );
-					layer.x = layer.x + piece.image.width;
+					layer.x = layer.x + piece.image.width + padding;
 					isNewLayer = true;
 					break;
 				}
 			}
 			if (!isNewLayer) {
 				var lastLayer = if (layers.length != 0) layers[layers.length - 1] else { x: 0, y: 0, width: 0, height: 0 };
-				var newLayer = { x: piece.image.width, y: lastLayer.y + lastLayer.height, width: piece.image.width, height: piece.image.height };
+				var newLayer = { x: piece.image.width + padding, y: lastLayer.y + lastLayer.height + padding, width: piece.image.width, height: piece.image.height };
 				if (newLayer.y + newLayer.height >= length) {
 					return areas;
 				}
