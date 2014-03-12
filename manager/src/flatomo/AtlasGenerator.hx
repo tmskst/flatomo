@@ -4,11 +4,12 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.xml.XML;
+import flatomo.Creator.Image;
 
 using Lambda;
 using flatomo.AtlasGenerator;
 
-private typedef Piece = { name:String, image:BitmapData };
+private typedef Piece = /*{ name:String, image:BitmapData }*/flatomo.Creator.Image;
 private typedef Area = { name:String, rectangle:Rectangle };
 private typedef Layer = { x:Int, y:Int, width:Int, height:Int };
 private typedef TextureAtlas = { image:BitmapData, layout:XML };
@@ -16,7 +17,7 @@ private typedef TextureAtlas = { image:BitmapData, layout:XML };
 class AtlasGenerator {
 	
 	/** テクスチャアトラスを生成する */
-	public static function generate(images:Array<{name:String, image:BitmapData}>):Array<{ image:BitmapData, layout:XML }> {
+	public static function generate(images:Array<Image>):Array<{ image:BitmapData, layout:XML }> {
 		var lengths = [64, 128, 256, 512, 1024, 2048];
 		images.sort(function (a, b):Int {
 			return Std.int(b.image.height - a.image.height);
@@ -54,7 +55,7 @@ class AtlasGenerator {
 		
 		for (area in areas) {
 			var subTexture = textures.findTexture(area.name);
-			layout.addChild(createSubTextureElement(subTexture.name, area));
+			layout.addChild(createSubTextureElement(subTexture, area));
 			canvas.blit(subTexture.image, area);
 		}
 		return { image: canvas, layout: new flash.xml.XML(layout.toString()) };
@@ -66,13 +67,19 @@ class AtlasGenerator {
 	}
 	
 	/** SubTexture要素を生成する */
-	private static function createSubTextureElement(name:String, area:Area):Xml {
+	private static function createSubTextureElement(piece:Piece, area:Area):Xml {
 		var subTexture = Xml.createElement("SubTexture");
-		subTexture.set("name", name);
+		subTexture.set("name", piece.name);
 		subTexture.set("x", Std.string(area.rectangle.x));
 		subTexture.set("y", Std.string(area.rectangle.y));
 		subTexture.set("width", Std.string(area.rectangle.width));
 		subTexture.set("height", Std.string(area.rectangle.height));
+		if (piece.frame != null) {
+			subTexture.set("frameX", Std.string(piece.frame.x));
+			subTexture.set("frameY", Std.string(piece.frame.y));
+			subTexture.set("frameWidth", Std.string(piece.frame.width));
+			subTexture.set("frameHeight", Std.string(piece.frame.height));
+		}
 		return subTexture;
 	}
 	

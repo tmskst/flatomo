@@ -9,12 +9,12 @@ import flash.geom.Rectangle;
 using Lambda;
 using flatomo.Creator.DisplayObjectTools;
 
-typedef Image = { name:String, image:BitmapData };
+typedef Image = { name:String, image:BitmapData, frame:Rectangle };
 
 @:allow(flatomo.Flatomo)
 class Creator {
 	
-	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<{ name:String, image:BitmapData }>, meta:Map<String, Meta> } {
+	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<Image>, meta:Map<String, Meta> } {
 		var creator:Creator = new Creator(library);
 		for (clazz in classes) {
 			creator.translate(Type.createInstance(clazz, []), "F:" + Type.getClassName(clazz));
@@ -56,19 +56,21 @@ class Creator {
 	 */
 	private function translateQuaAnimation(source:MovieClip, libraryPath:LibraryPath):Void {
 		// ソースの描画領域を計算
-		var bounds:Rectangle = new Rectangle();
-		for (frame in 0...source.totalFrames) {
-			source.gotoAndStop(frame + 1);
-			bounds = bounds.union(source.getBounds(source));
-		}
+		var unionBounds = Blitter.getUnionBound(source);
+		
 		// テクスチャを生成
 		for (frame in 0...source.totalFrames) {
 			source.gotoAndStop(frame + 1);
 			var index = ("00000" + Std.string(frame)).substr(-5);
-			images.push({ name: '${libraryPath} ${index}', image: Blitter.toBitmapData(source, bounds) });
+			var bounds = Blitter.getBounds(source);
+			images.push( {
+				name: '${libraryPath} ${index}',
+				image: Blitter.toBitmapData(source),
+				frame: new Rectangle( -bounds.x, -bounds.y, unionBounds.width, unionBounds.height)
+			});
 		}
 		var sections = library.metadata.get(libraryPath).sections;
-		meta.set(libraryPath, Meta.Animation(sections, -bounds.x, -bounds.y));
+		meta.set(libraryPath, Meta.Animation(sections, -unionBounds.x, -unionBounds.y));
 	}
 	
 	/**
@@ -121,7 +123,7 @@ class Creator {
 	 * @param	path 対象のライブラリパス
 	 */
 	private function translateQuaImage(source:DisplayObject, libraryPath:LibraryPath):Void {
-		images.push({ name: libraryPath, image: Blitter.toBitmapData(source) });
+		images.push({ name: libraryPath, image: Blitter.toBitmapData(source), frame: null });
 		meta.set(libraryPath, Meta.Image);
 	}
 	

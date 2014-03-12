@@ -3,6 +3,7 @@ package flatomo;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
@@ -18,6 +19,20 @@ class Blitter {
 		return new Bitmap(toBitmapData(source, bounds));
 	}
 	
+	public static function getUnionBound(movie:MovieClip):Rectangle {
+		var unionBounds = new Rectangle();
+		for (frameIndex in 1...movie.totalFrames) {
+			movie.gotoAndStop(frameIndex);
+			unionBounds = unionBounds.union(Blitter.getBounds(movie));
+		}
+		return unionBounds;
+	}
+	
+	public static function getBounds(source:DisplayObject):Rectangle {
+		var bounds = source.getBounds(source);
+		return new Rectangle(Math.round(bounds.x), Math.round(bounds.y), Math.ceil(bounds.width), Math.ceil(bounds.height));
+	}
+	
 	/**
 	 * 表示オブジェクトをビットマップデータに変換する。
 	 * @param	source ビットマップデータに変換する表示オブジェクト。
@@ -25,19 +40,15 @@ class Blitter {
 	 * @return 生成したビットマップデータ。
 	 */
 	public static function toBitmapData(source:DisplayObject, ?bounds:Rectangle = null):BitmapData {
-		// TODO : この実装は完全ではありません。Shapeオブジェクト(JSFL)に対して意図した結果が得られないことがあります。
 		if (bounds == null) {
-			bounds = source.getBounds(source);
+			bounds = Blitter.getBounds(source);
 		}
 		
-		var width:Int = Std.int(bounds.width);
-		var height:Int = Std.int(bounds.height);
-		
-		if (width == 0 || height == 0) {
+		if (bounds.width == 0 || bounds.height == 0) {
 			return new BitmapData(1, 1, true, 0x00000000);
 		}
 		
-		var bitmapData:BitmapData = new BitmapData(width, height, true, 0x0000FFFF);
+		var bitmapData:BitmapData = new BitmapData(cast bounds.width, cast bounds.height, true, 0xFF00FFFF);
 		bitmapData.drawWithQuality(source, new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y));
 		return bitmapData;
 	}
