@@ -114,11 +114,10 @@ class AtlasGenerator {
 			if (!isNewLayer) {
 				var lastLayer = if (layers.length != 0) layers[layers.length - 1] else { x: 0, y: 0, width: 0, height: 0 };
 				var newLayer = { x: piece.image.width + padding, y: lastLayer.y + lastLayer.height + padding, width: piece.image.width, height: piece.image.height };
-				if (newLayer.y + newLayer.height >= length) {
-					return areas;
+				if (newLayer.y + newLayer.height < length) {
+					areas.push({ name: piece.name, rectangle: new Rectangle(0, newLayer.y, piece.image.width, piece.image.height) });
+					layers.push(newLayer);
 				}
-				areas.push({ name: piece.name, rectangle: new Rectangle(0, newLayer.y, piece.image.width, piece.image.height) });
-				layers.push(newLayer);
 			}
 		}
 		return areas;
