@@ -48,7 +48,7 @@ class Blitter {
 			return new BitmapData(1, 1, true, 0x00000000);
 		}
 		
-		var bitmapData:BitmapData = new BitmapData(cast bounds.width, cast bounds.height, true, 0xFF00FFFF);
+		var bitmapData:BitmapData = new BitmapData(cast bounds.width, cast bounds.height, true, 0x00000000);
 		bitmapData.drawWithQuality(source, new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y));
 		return bitmapData;
 	}
