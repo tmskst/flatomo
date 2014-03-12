@@ -17,17 +17,30 @@ class AtlasGenerator {
 	
 	/** テクスチャアトラスを生成する */
 	public static function generate(images:Array<{name:String, image:BitmapData}>):Array<{ image:BitmapData, layout:XML }> {
-		//var LENGTHS = [64, 128, 256, 512, 1024, 2048];
-		
-		var LENGTH = 2048;
+		var lengths = [64, 128, 256, 512, 1024, 2048];
 		images.sort(function (a, b):Int {
 			return Std.int(b.image.height - a.image.height);
 		});
-		var packed = new Array<String>();
+		var packedNameList = new List<String>();
+		var v = new Array<{ areas:Array<Area>, imageSize:Int }>();
+		
+		while (packedNameList.length < images.length) {
+			var areas:Array<Area> = null;
+			var imageSize:Int = 0;
+			for (length in lengths) {
+				areas = pack(images, length, packedNameList);
+				imageSize = length;
+				if (packedNameList.length + areas.length == images.length) { break; }
+			}
+			for (area in areas) {
+				packedNameList.add(area.name);
+			}
+			v.push( { areas: areas, imageSize: imageSize } );
+		}
+		
 		var atlases = new Array<TextureAtlas>();
-		while (packed.length < images.length) {
-			var data = pack(images, LENGTH, packed);
-			atlases.push(generateTextureAtlas(images, data, LENGTH));
+		for (n in v) {
+			atlases.push(generateTextureAtlas(images, n.areas, n.imageSize));
 		}
 		return atlases;
 	}
@@ -83,16 +96,15 @@ class AtlasGenerator {
 	 * @return テクスチャをどこに敷くかの対応関係の集合。敷き詰められなかった場合は nullが返される。
 	 */
 	@:noUsing
-	private static function pack(pieces:Array<Piece>, length:Int, packed:Array<String>, ?padding:Int = 2):Null<Array<Area>> {
+	private static function pack(pieces:Array<Piece>, length:Int, packedNameList:List<String>, ?padding:Int = 2):Array<Area> {
 		// HFF ALGORITHM
 		var layers = new Array<Layer>();
 		var areas = new Array<Area>();
 		for (piece in pieces) {
-			if (packed.indexOf(piece.name) != -1) { continue; }
+			if (packedNameList.exists(function (p) { return p == piece.name; } )) { continue; }
 			var isNewLayer = false;
 			for (layer in layers) {
 				if (layer.x + piece.image.width + padding <= length) {
-					packed.push(piece.name);
 					areas.push({ name: piece.name, rectangle: new Rectangle(layer.x, layer.y, piece.image.width, piece.image.height)} );
 					layer.x = layer.x + piece.image.width + padding;
 					isNewLayer = true;
@@ -105,7 +117,6 @@ class AtlasGenerator {
 				if (newLayer.y + newLayer.height >= length) {
 					return areas;
 				}
-				packed.push(piece.name);
 				areas.push({ name: piece.name, rectangle: new Rectangle(0, newLayer.y, piece.image.width, piece.image.height) });
 				layers.push(newLayer);
 			}
