@@ -4,12 +4,14 @@ import flatomo.FlatomoLibrary;
 import flatomo.LibraryPath;
 import haxe.Serializer;
 import jsfl.Document;
+import jsfl.Element;
 import jsfl.EventType;
 import jsfl.FLfile;
 import jsfl.Instance;
 import jsfl.Item;
 import jsfl.Lib.fl;
 import jsfl.Library;
+import jsfl.Shape;
 import jsfl.SymbolItem;
 
 using jsfl.LibraryTools;
@@ -64,24 +66,54 @@ class Publisher {
 			metadata.set(libraryPath, flatomoItem);
 			
 			var id:Int = 0;
-			item.timeline.scan_allInstance(function (instance:Instance) {
-				var libPath:LibraryPath = getLibraryPath(instance.libraryItem);
-				var instanceName:String = libraryPath + "#";
-				if (instance.name == "") {
-					instance.name = '_FLATOMO_SYMBOL_INSTANCE_${id++}_';
+			item.timeline.scan_allElement(function (element:Element) {
+				if (Std.is(element, Shape)) {
+					var shape:Shape = cast element;
+					if (shape.isGroup) {
+						var members = shape.members;
+						for (member in members) {
+							setLibraryPath(libraryPaths, libraryPath, cast member, id++);
+						}
+					}
 				}
-				instanceName +=  instance.name;
-				libraryPaths.set(instanceName, libPath);
+				if (Std.is(element, Instance)) {
+					setLibraryPath(libraryPaths, libraryPath, cast element, id++);
+				}
 			});
 		});
 		return { metadata : metadata, libraryPaths : libraryPaths };
 	}
 	
+	private static function setLibraryPath(libraryPaths:Map<String, LibraryPath>, libraryPath:String, instance:Instance, id:Int):Void {
+		var libPath:LibraryPath = getLibraryPath(instance.libraryItem);
+		var instanceName:String = libraryPath + "#";
+		if (instance.name == "") {
+			instance.name = '_FLATOMO_SYMBOL_INSTANCE_${id}_';
+		}
+		instanceName +=  instance.name;
+		libraryPaths.set(instanceName, libPath);
+	}
+	
 	private static function clean(library:Library):Void {
+		var apply = function (instance:Instance) {
+			if (StringTools.startsWith(instance.name, "_FLATOMO_SYMBOL_INSTANCE_")) {
+				instance.name = "";
+			}
+		};
+		
 		library.scan_allSymbolItem(function (item:SymbolItem) {
-			item.timeline.scan_allInstance(function (instance:Instance) {
-				if (StringTools.startsWith(instance.name, "_FLATOMO_SYMBOL_INSTANCE_")) {
-					instance.name = "";
+			item.timeline.scan_allElement(function (element:Element) {
+				if (Std.is(element, Shape)) {
+					var shape:Shape = cast element;
+					if (shape.isGroup) {
+						var members = shape.members;
+						for (member in members) {
+							apply(member);
+						}
+					}
+				}
+				if (Std.is(element, Instance)) {
+					apply(cast element);
 				}
 			});
 		});
