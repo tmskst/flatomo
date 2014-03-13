@@ -3,16 +3,26 @@ package flatomo;
 class Debugger {
 
 	#if flatomo_debug_export_atlas
-	public static function export(atlases:Array<{ image:flash.display.BitmapData, layout:flash.xml.XML }>):Void {
+	public static function export(data: { atlases:Array<{image:flash.display.BitmapData, layout:flash.xml.XML}>, metaData:Map<String, Meta> } ):Void {
 		var entries:List<format.zip.Data.Entry> = new List();
-		for (index in 0...atlases.length) {
-			var atlas = atlases[index];
+		for (index in 0...data.atlases.length) {
+			var atlas = data.atlases[index];
 			entries.add(ofImage(atlas.image, 'atlas${index}.png'));
 			entries.add(ofXml(atlas.layout, 'atlas${index}.xml'));
 		}
+		entries.add(ofMetadata(data.metaData));
 		var output = new haxe.io.BytesOutput();
 		new haxe.zip.Writer(output).write(entries);
 		new flash.net.FileReference().save(output.getBytes().getData(), "atlas.zip");
+	}
+	
+	static private function ofMetadata(metadata:Map<String, Meta>) {
+		var buf = new StringBuf();
+		for (key in metadata.keys()) {
+			var value:Meta = metadata.get(key);
+			buf.add('${key} : ${value}\r\n');
+		}
+		return toEntry(haxe.io.Bytes.ofString(buf.toString()), "metadata.txt");
 	}
 	
 	private static function ofXml(xml:flash.xml.XML, fileName:String):haxe.zip.Entry {
