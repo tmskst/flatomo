@@ -1,5 +1,6 @@
 package flatomo.extension;
 
+import flatomo.FlatomoLibrary;
 import flatomo.LibraryPath;
 import haxe.Serializer;
 import jsfl.Document;
@@ -49,7 +50,7 @@ class Publisher {
 	 * @param	library 元となるライブラリ。
 	 * @return 生成されたライブラリ。
 	 */
-	public static function createLibrary(library:Library):{ metadata:Map<LibraryPath, FlatomoItem>, libraryPaths:Map<String, LibraryPath> } {
+	public static function createLibrary(library:Library):FlatomoLibrary {
 		var metadata = new Map<LibraryPath, FlatomoItem>();
 		var libraryPaths = new Map<String, LibraryPath>();
 		
