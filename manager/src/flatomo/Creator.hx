@@ -66,7 +66,7 @@ class Creator {
 			images.push( {
 				name: '${libraryPath} ${index}',
 				image: Blitter.toBitmapData(source),
-				frame: new Rectangle( -bounds.x, -bounds.y, unionBounds.width, unionBounds.height)
+				frame: new Rectangle(unionBounds.x - bounds.x, unionBounds.y - bounds.y, unionBounds.width, unionBounds.height)
 			});
 		}
 		var sections = library.metadata.get(libraryPath).sections;
