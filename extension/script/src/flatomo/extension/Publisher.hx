@@ -21,7 +21,7 @@ using flatomo.extension.DocumentTools;
 
 class Publisher {
 	
-	private static var id:Int;
+	private static var id:Int = 0;
 	
 	public static function main() {
 		var document:Document = fl.getDocumentDOM();
@@ -65,30 +65,34 @@ class Publisher {
 			}
 			metadata.set(libraryPath, flatomoItem);
 			
-			var id:Int = 0;
+			//var id:Int = 0;
 			item.timeline.scan_allElement(function (element:Element) {
-				if (Std.is(element, Shape)) {
-					var shape:Shape = cast element;
-					if (shape.isGroup) {
-						var members = shape.members;
-						for (member in members) {
-							setLibraryPath(libraryPaths, libraryPath, cast member, id++);
-						}
-					}
-				}
-				if (Std.is(element, Instance)) {
-					setLibraryPath(libraryPaths, libraryPath, cast element, id++);
-				}
+				setElement(libraryPaths, element, libraryPath);
 			});
 		});
 		return { metadata : metadata, libraryPaths : libraryPaths };
 	}
 	
-	private static function setLibraryPath(libraryPaths:Map<String, LibraryPath>, libraryPath:String, instance:Instance, id:Int):Void {
+	private static function setElement(libraryPaths:Map<String, LibraryPath>, element:Element, libraryPath:LibraryPath):Void {
+		if (Std.is(element, Shape)) {
+			var shape:Shape = cast element;
+			if (shape.isGroup) {
+				for (member in shape.members) {
+					setElement(libraryPaths, member, libraryPath);
+				}
+			}
+		}
+		if (Std.is(element, Instance)) {
+			var instance:Instance = cast element;
+			setLibraryPath(libraryPaths, libraryPath, instance);
+		}
+	}
+	
+	private static function setLibraryPath(libraryPaths:Map <String, LibraryPath> , libraryPath:String, instance:Instance):Void {
 		var libPath:LibraryPath = getLibraryPath(instance.libraryItem);
 		var instanceName:String = libraryPath + "#";
 		if (instance.name == "") {
-			instance.name = '_FLATOMO_SYMBOL_INSTANCE_${id}_';
+			instance.name = '_FLATOMO_SYMBOL_INSTANCE_${id++}_';
 		}
 		instanceName +=  instance.name;
 		libraryPaths.set(instanceName, libPath);
@@ -103,20 +107,31 @@ class Publisher {
 		
 		library.scan_allSymbolItem(function (item:SymbolItem) {
 			item.timeline.scan_allElement(function (element:Element) {
-				if (Std.is(element, Shape)) {
-					var shape:Shape = cast element;
-					if (shape.isGroup) {
-						var members = shape.members;
-						for (member in members) {
-							apply(member);
-						}
-					}
-				}
-				if (Std.is(element, Instance)) {
-					apply(cast element);
-				}
+				removeElement(element);
 			});
 		});
+	}
+	
+	private static function removeElement(element:Element):Void {
+		
+		var apply = function (instance:Instance) {
+			if (StringTools.startsWith(instance.name, "_FLATOMO_SYMBOL_INSTANCE_")) {
+				instance.name = "";
+			}
+		};
+		
+		if (Std.is(element, Shape)) {
+			var shape:Shape = cast element;
+			if (shape.isGroup) {
+				for (member in shape.members) {
+					removeElement(member);
+				}
+			}
+		}
+		if (Std.is(element, Instance)) {
+			var instance:Instance = cast element;
+			apply(instance);
+		}
 	}
 	
 	private static function getLibraryPath(item:Item):String {
