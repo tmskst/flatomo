@@ -21,8 +21,8 @@ class Blitter {
 	
 	public static function getUnionBound(movie:MovieClip):Rectangle {
 		var unionBounds = new Rectangle();
-		for (frameIndex in 1...movie.totalFrames) {
-			movie.gotoAndStop(frameIndex);
+		for (frameIndex in 0...movie.totalFrames) {
+			movie.gotoAndStop(frameIndex + 1);
 			unionBounds = unionBounds.union(Blitter.getBounds(movie));
 		}
 		return unionBounds;
