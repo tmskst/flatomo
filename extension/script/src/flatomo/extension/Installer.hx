@@ -30,6 +30,10 @@ class Installer {
 		if (!FLfile.exists(fileURI)) {
 			Lib.throwError('ファイル${fileURI}が見つかりません');
 		}
+		if (FLfile.exists(copyURI)) {
+			FLfile.remove(copyURI);
+			fl.trace('${copyURI}を削除しました');
+		}
 		fl.trace('${fileURI}を${copyURI}にコピーしました');
 		FLfile.copy(fileURI, copyURI);
 	}
