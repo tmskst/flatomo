@@ -13,6 +13,7 @@ import jsfl.Lib.fl;
 import jsfl.Library;
 import jsfl.Shape;
 import jsfl.SymbolItem;
+import jsfl.Text;
 
 using jsfl.LibraryTools;
 using jsfl.TimelineTools;
@@ -93,27 +94,24 @@ class Publisher {
 		}
 		if (Std.is(element, Instance)) {
 			var instance:Instance = cast element;
-			setLibraryPath(libraryPaths, libraryPath, instance);
+			setLibraryPath(libraryPaths, libraryPath, instance, getLibraryPath(instance.libraryItem));
+		}
+		if (Std.is(element, Text)) {
+			var text:Text = cast element;
+			setLibraryPath(libraryPaths, libraryPath, text, "TextField");
 		}
 	}
 	
-	private static function setLibraryPath(libraryPaths:Map <String, LibraryPath> , libraryPath:String, instance:Instance):Void {
-		var libPath:LibraryPath = getLibraryPath(instance.libraryItem);
-		var instanceName:String = libraryPath + "#";
-		if (instance.name == "") {
-			instance.name = '_FLATOMO_SYMBOL_INSTANCE_${id++}_';
+	private static function setLibraryPath(libraryPaths:Map<String, LibraryPath>, libraryPath:String, element:Element, libPath:LibraryPath):Void {
+		var elementName:String = libraryPath + "#";
+		if (element.name == "") {
+			element.name = '_FLATOMO_SYMBOL_INSTANCE_${id++}_';
 		}
-		instanceName +=  instance.name;
-		libraryPaths.set(instanceName, libPath);
+		elementName +=  element.name;
+		libraryPaths.set(elementName, libPath);
 	}
 	
 	private static function clean(library:Library):Void {
-		var apply = function (instance:Instance) {
-			if (StringTools.startsWith(instance.name, "_FLATOMO_SYMBOL_INSTANCE_")) {
-				instance.name = "";
-			}
-		};
-		
 		library.scan_allSymbolItem(function (item:SymbolItem) {
 			item.timeline.scan_allElement(function (element:Element) {
 				removeElement(element);
@@ -122,8 +120,7 @@ class Publisher {
 	}
 	
 	private static function removeElement(element:Element):Void {
-		
-		var apply = function (instance:Instance) {
+		var apply = function (instance:Element) {
 			if (StringTools.startsWith(instance.name, "_FLATOMO_SYMBOL_INSTANCE_")) {
 				instance.name = "";
 			}
@@ -137,10 +134,7 @@ class Publisher {
 				}
 			}
 		}
-		if (Std.is(element, Instance)) {
-			var instance:Instance = cast element;
-			apply(instance);
-		}
+		apply(element);
 	}
 	
 	private static function getLibraryPath(item:Item):String {

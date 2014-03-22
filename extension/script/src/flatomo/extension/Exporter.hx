@@ -73,6 +73,8 @@ class AbstractTemplate {
 package ;
 import ::SUPER_CLASS_NAME::;
 
+private typedef FTextField = starling.text.TextField;
+
 abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	
 	public function new(content:::SUPER_CLASS_NAME::) {
