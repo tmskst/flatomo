@@ -42,6 +42,7 @@ class Exporter {
 		for (libraryPath in libraryPaths.keys()) {
 			if (StringTools.startsWith(libraryPath, targetLibraryPath)) {
 				var name = libraryPath.substring(libraryPath.indexOf("#") + 1);
+				if (StringTools.startsWith(name, "_FLATOMO_SYMBOL_INSTANCE_")) { continue; }
 				var className = "F" + getClassName(libraryPaths.get(libraryPath));
 				fields.push({ NAME : name, CLASS_NAME : className }); 
 			}
