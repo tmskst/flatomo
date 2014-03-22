@@ -87,11 +87,13 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 		this.playhead.gotoAndStop(untyped section, increment);
 	}
 	
+	::if (SUPER_CLASS_NAME == "flatomo.Container")::
 	::foreach FIELDS::
 	public var ::NAME::(get, never):::CLASS_NAME::;
 	private function get_::NAME::():::CLASS_NAME:: {
 		return untyped this.getChildByName("::NAME::");
 	}
+	::end::
 	::end::
 }
 
