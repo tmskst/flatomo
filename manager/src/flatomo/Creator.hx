@@ -5,6 +5,7 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
+import flash.text.TextField;
 
 using Lambda;
 using flatomo.Creator.DisplayObjectTools;
@@ -46,6 +47,7 @@ class Creator {
 		switch (type) {
 			case DisplayObjectType.Animation : translateQuaAnimation(cast(source, MovieClip), libraryPath);
 			case DisplayObjectType.Container : translateQuaContainer(cast(source, MovieClip), libraryPath);
+			case DisplayObjectType.TextField : translateTextField(cast(source, TextField), libraryPath);
 			case DisplayObjectType.Image : translateQuaImage(source, libraryPath);
 		}
 	}
@@ -93,6 +95,7 @@ class Creator {
 				var childKey:String = switch (childType) {
 					case DisplayObjectType.Animation : child.fetchLibraryPath(libraryPath, library);
 					case DisplayObjectType.Container : child.fetchLibraryPath(libraryPath, library);
+					case DisplayObjectType.TextField : '${libraryPath}#${child.name}';
 					case DisplayObjectType.Image : '${libraryPath}#${child.name}';
 				}
 				if (!children.exists(function (x) {
@@ -127,6 +130,11 @@ class Creator {
 		meta.set(libraryPath, Meta.Image);
 	}
 	
+	private function translateTextField(source:TextField, libraryPath:LibraryPath):Void {
+		var textFormat = source.getTextFormat();
+		meta.set(libraryPath, Meta.TextField(Std.int(source.width), Std.int(source.height), source.text, textFormat.font, textFormat.size, textFormat.color, textFormat.bold));
+	}
+	
 }
 
 @:allow(flatomo.Creator)
@@ -151,8 +159,15 @@ class DisplayObjectTools {
 		if (source.isAlliedToContainer(libraryPath, library)) {
 			return DisplayObjectType.Container;
 		}
+		if (source.isAlliedToTextField(libraryPath, library)) {
+			return DisplayObjectType.TextField;
+		}
 		
 		return DisplayObjectType.Image;
+	}
+	
+	private static function isAlliedToTextField(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):Bool {
+		return Std.is(source, flash.text.TextField);
 	}
 	
 	/*
@@ -182,4 +197,5 @@ private enum DisplayObjectType {
 	Animation;
 	Container;
 	Image;
+	TextField;
 }
