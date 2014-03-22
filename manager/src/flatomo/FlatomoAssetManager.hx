@@ -4,6 +4,7 @@ import flash.display.BitmapData;
 import flash.xml.XML;
 import starling.display.DisplayObject;
 import starling.display.Image;
+import starling.text.TextField;
 import starling.textures.Texture;
 import starling.textures.TextureAtlas;
 import starling.utils.AssetManager;
@@ -58,6 +59,8 @@ class FlatomoAssetManager {
 					objects.push(object);
 				}
 				return new Container(objects, layouts, sections);
+			case Meta.TextField(width, height, text, fontName, fontSize, color, bold) : 
+				return new TextField(width, height, text, fontName, fontSize, color, bold);
 			case Meta.Image :
 				return new Image(manager.getTexture(key));
 		}
