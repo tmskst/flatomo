@@ -87,6 +87,11 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 		this.playhead.gotoAndStop(untyped section, increment);
 	}
 	
+	public var body(get, never):::SUPER_CLASS_NAME::;
+	public function get_body():::SUPER_CLASS_NAME:: {
+		return cast this;
+	}
+	
 	::if (SUPER_CLASS_NAME == "flatomo.Container")::
 	::foreach FIELDS::
 	public var ::NAME::(get, never):::CLASS_NAME::;
