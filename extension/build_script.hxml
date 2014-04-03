@@ -39,6 +39,8 @@
 -cp common/src
 -cp ../common/src
 
+-resource script/res/Abstract.hx.template@template
+
 # libraries
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
 
