@@ -9,26 +9,18 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 		this = content;
 	}
 	
-	public function gotoAndPlay(section:::FULL_CLASS_NAME::SectionName, ?increment:Int = 0):Void {
+	public function gotoAndPlay(section:::CLASS_NAME::SectionName, ?increment:Int = 0):Void {
 		this.playhead.gotoAndPlay(untyped section, increment);
 	}
 	
-	public function gotoAndStop(section:::FULL_CLASS_NAME::SectionName, ?increment:Int = 0):Void {
+	public function gotoAndStop(section:::CLASS_NAME::SectionName, ?increment:Int = 0):Void {
 		this.playhead.gotoAndStop(untyped section, increment);
 	}
 	
-	::if (SUPER_CLASS_NAME == "flatomo.Container")::
-	public var containerApi(get, never):::SUPER_CLASS_NAME::;
-	private function get_containerApi():::SUPER_CLASS_NAME:: {
+	public var ::API_NAME::(get, never):::SUPER_CLASS_NAME::;
+	private function get_::API_NAME::():::SUPER_CLASS_NAME:: {
 		return cast this;
 	}
-	::end::
-	::if (SUPER_CLASS_NAME == "flatomo.Animation")::
-	public var animationApi(get, never):::SUPER_CLASS_NAME::;
-	private function get_animationApi():::SUPER_CLASS_NAME:: {
-		return cast this;
-	}
-	::end::
 	
 	::if (SUPER_CLASS_NAME == "flatomo.Container")::
 	::foreach FIELDS::

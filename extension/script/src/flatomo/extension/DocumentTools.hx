@@ -19,7 +19,9 @@ class DocumentTools {
 	
 	/** 作業中のドキュメントに対しFlatomoを無効にします。 */
 	private static function disableFlatomo(document:Document):Void {
-		document.removeDataFromDocument(DOCUMENT_ATTR_FLATOMO);
+		if (document.documentHasData(DOCUMENT_ATTR_FLATOMO)) {
+			document.removeDataFromDocument(DOCUMENT_ATTR_FLATOMO);
+		}
 	}
 	
 }

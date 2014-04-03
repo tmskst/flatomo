@@ -8,14 +8,16 @@ import jsfl.PersistentDataType;
 
 class ItemTools {
 	
+	private static inline var DATA_NAME:String = "f_item";
+	
 	/**
 	 * ItemからFlatomoItemを取り出す
 	 * @param	item ライブラリ項目
 	 * @return 取得したFlatomoItem
 	 */
 	public static function getFlatomoItem(item:Item):FlatomoItem {
-		if (!item.hasData("f_item")) { return null; }
-		return Unserializer.run(item.getData("f_item"));
+		if (!item.hasData(DATA_NAME)) { return null; }
+		return Unserializer.run(item.getData(DATA_NAME));
 	}
 	
 	/**
@@ -24,10 +26,8 @@ class ItemTools {
 	 * @param	data 保存するデータ
 	 */
 	private static function setFlatomoItem(item:Item, data:FlatomoItem):Void {
-		if (item.hasData("f_item")) {
-			item.removeData("f_item");
-		}
-		item.addData("f_item", PersistentDataType.STRING, Serializer.run(data));
+		removeFlatomoItem(item);
+		item.addData(DATA_NAME, PersistentDataType.STRING, Serializer.run(data));
 	}
 	
 	/**
@@ -35,8 +35,8 @@ class ItemTools {
 	 * @param	item 対象のライブラリ項目
 	 */
 	private static function removeFlatomoItem(item:Item):Void {
-		if (item.hasData("f_item")) {
-			item.removeData("f_item");
+		if (item.hasData(DATA_NAME)) {
+			item.removeData(DATA_NAME);
 		}
 	}
 	

@@ -1,144 +1,152 @@
 package flatomo.extension;
 
+import flatomo.FlatomoItem;
 import flatomo.FlatomoLibrary;
 import flatomo.LibraryPath;
-import haxe.Serializer;
 import jsfl.Document;
 import jsfl.Element;
+import jsfl.ElementType;
 import jsfl.EventType;
-import jsfl.FLfile;
 import jsfl.Instance;
 import jsfl.Item;
 import jsfl.Lib.fl;
 import jsfl.Library;
 import jsfl.Shape;
 import jsfl.SymbolItem;
-import jsfl.Text;
 
+using Lambda;
+using StringTools;
 using jsfl.LibraryTools;
 using jsfl.TimelineTools;
 using flatomo.extension.ItemTools;
 using flatomo.extension.DocumentTools;
+using flatomo.extension.FlatomoLibraryTools;
 
 class Publisher {
 	
-	private static var id:Int = 0;
+	private static var listenerId:Int;
 	
+	@:access(FlatomoLibraryTools)
 	public static function main() {
 		var document:Document = fl.getDocumentDOM();
 		if (!document.isFlatomo()) { return; }
-		writeLibrary();
 		
-		id = fl.addEventListener(EventType.POST_PUBLISH, postPublish);
+		var flatomoLibrary = FlatomoLibraryCreator.create(document.library);
+		flatomoLibrary.publish(document);
+		
+		listenerId = fl.addEventListener(EventType.POST_PUBLISH, postPublish);
 		document.publish();
 	}
 	
-	private static function writeLibrary():Void {
-		var document:Document = fl.getDocumentDOM();
-		var library = createLibrary(document.library);
-		var swfPath:String = document.getSWFPathFromProfile();
-		{
-			var fileUri = swfPath.substring(0, swfPath.lastIndexOf(".")) + "." + "flatomo";
-			FLfile.write(fileUri, Serializer.run(library));
-		}
-		{
-			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("/"));
-			var files = Exporter.export(library);
-			for (file in files) {
-				FLfile.write(fileUri + "/" + file.name + ".hx", file.value);
-			}
-		}
-	}
-	
 	private static function postPublish():Void {
-		clean(fl.getDocumentDOM().library);
-		fl.removeEventListener(EventType.POST_PUBLISH, id);
+		Cleaner.clean(fl.getDocumentDOM().library);
+		fl.removeEventListener(EventType.POST_PUBLISH, listenerId);
 	}
 	
-	// --------------------------------------------------------------------------------------------------
+}
+
+private class FlatomoLibraryCreator {
 	
-	/**
-	 * マネージャーで使用するライブラリを生成する。
-	 * @param	library 元となるライブラリ。
-	 * @return 生成されたライブラリ。
-	 */
-	public static function createLibrary(library:Library):FlatomoLibrary {
-		var metadata = new Map<LibraryPath, FlatomoItem>();
-		var libraryPaths = new Map<String, LibraryPath>();
-		
+	/** マネージャで使用するライブラリを生成します */
+	public static function create(library:Library):FlatomoLibrary {
+		return new FlatomoLibraryCreator().createFlatomoLibrary(library);
+	}
+	
+	/* ------------------------------------------------------------------------------------------------ */
+	
+	private function new() {
+		this.id = 0;
+		this.metadata = new Map<LibraryPath, FlatomoItem>();
+		this.libraryPaths = new Map<String, LibraryPath>();
+	}
+	
+	private var id:Int;
+	
+	/** ライブラリパスとFlatomoItem（アニメーション指定とセクション情報）の対応関係 */
+	private var metadata:Map<LibraryPath, FlatomoItem>;
+	
+	private var libraryPaths:Map<String, LibraryPath>;
+	
+	private function createFlatomoLibrary(library:Library):FlatomoLibrary {
+		// ライブラリ項目すべてについて走査
 		library.scan_allSymbolItem(function (item:SymbolItem) {
 			var libraryPath:String = getLibraryPath(item);
 			var flatomoItem:FlatomoItem = item.getFlatomoItem();
+			// TODO : getFlatomoItem は NullObjectを返しても良いかも
 			if (flatomoItem == null) {
 				var sections = SectionCreator.fetchSections(item.timeline);
 				flatomoItem = { sections: sections, animation: false };
 			}
 			metadata.set(libraryPath, flatomoItem);
 			
-			//var id:Int = 0;
+			// すべての Elementについて走査
 			item.timeline.scan_allElement(function (element:Element) {
-				setElement(libraryPaths, element, libraryPath);
+				analyzeElement(element, libraryPath);
 			});
 		});
 		return { metadata : metadata, libraryPaths : libraryPaths };
 	}
 	
-	private static function setElement(libraryPaths:Map<String, LibraryPath>, element:Element, libraryPath:LibraryPath):Void {
-		if (Std.is(element, Shape)) {
-			var shape:Shape = cast element;
-			if (shape.isGroup) {
-				for (member in shape.members) {
-					setElement(libraryPaths, member, libraryPath);
+	private function analyzeElement(element:Element, libraryPath:LibraryPath):Void {
+		switch (element.elementType) {
+			case ElementType.SHAPE : 
+				var shape:Shape = cast element;
+				if (shape.isGroup) {
+					for (member in shape.members) {
+						analyzeElement(member, libraryPath);
+					}
 				}
-			}
-		}
-		if (Std.is(element, Instance)) {
-			var instance:Instance = cast element;
-			setLibraryPath(libraryPaths, libraryPath, instance, getLibraryPath(instance.libraryItem));
-		}
-		if (Std.is(element, Text)) {
-			var text:Text = cast element;
-			setLibraryPath(libraryPaths, libraryPath, text, "TextField");
+			case ElementType.INSTANCE :
+				var instance:Instance = cast element;
+				setLibraryPath(libraryPath, instance, getLibraryPath(instance.libraryItem));
+			case ElementType.TEXT : 
+				setLibraryPath(libraryPath, element, "TextField");
 		}
 	}
 	
-	private static function setLibraryPath(libraryPaths:Map<String, LibraryPath>, libraryPath:String, element:Element, libPath:LibraryPath):Void {
-		var elementName:String = libraryPath + "#";
+	private function setLibraryPath(libraryPath:String, element:Element, libPath:LibraryPath):Void {
 		if (element.name == "") {
 			element.name = '_FLATOMO_SYMBOL_INSTANCE_${id++}_';
 		}
-		elementName +=  element.name;
-		libraryPaths.set(elementName, libPath);
+		libraryPaths.set(libraryPath + "#" + element.name, libPath);
 	}
 	
-	private static function clean(library:Library):Void {
+	/**
+	 * ライブラリ項目からライブラリパスを取り出す
+	 * @param	item ライブラリ項目
+	 * @return ライブラリ項目から取り出したライブラリパス。
+	 * リンケージ設定が有効な場合は、'PREFIX + FQCN'。無効であれば、'Item.name'。
+	 */
+	private static function getLibraryPath(item:Item):String {
+		return if (item.linkageExportForAS) "F:" + item.linkageClassName else item.name;
+	}
+	
+}
+
+/** ドキュメントを元に戻す責務 */
+private class Cleaner {
+	
+	/** パブリッシュ時に変更したドキュメントを元に戻します */
+	public static function clean(library:Library):Void {
 		library.scan_allSymbolItem(function (item:SymbolItem) {
 			item.timeline.scan_allElement(function (element:Element) {
-				removeElement(element);
+				revertInstanceName(element);
 			});
 		});
 	}
 	
-	private static function removeElement(element:Element):Void {
-		var apply = function (instance:Element) {
-			if (StringTools.startsWith(instance.name, "_FLATOMO_SYMBOL_INSTANCE_")) {
-				instance.name = "";
-			}
-		};
-		
-		if (Std.is(element, Shape)) {
+	/** パブリッシュ時に書き換えたインスタンス名を元に戻します */
+	private static function revertInstanceName(element:Element):Void {
+		if (element.elementType == ElementType.SHAPE) {
 			var shape:Shape = cast element;
 			if (shape.isGroup) {
-				for (member in shape.members) {
-					removeElement(member);
-				}
+				shape.members.iter(revertInstanceName);
 			}
 		}
-		apply(element);
-	}
-	
-	private static function getLibraryPath(item:Item):String {
-		return if (item.linkageExportForAS) "F:" + item.linkageClassName else item.name;
+		
+		if (element.name.startsWith("_FLATOMO_SYMBOL_INSTANCE_")) {
+			element.name = "";
+		}
 	}
 	
 }
