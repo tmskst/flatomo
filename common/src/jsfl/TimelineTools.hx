@@ -7,6 +7,7 @@ class TimelineTools {
 	 */
 	public static function scan_allElement(timeline:Timeline, func:Element -> Void):Void {
 		for (layer in timeline.layers) {
+			if (layer.layerType == LayerType.GUIDE) { continue; }
 			for (frame in layer.frames) {
 				for (element in frame.elements) {
 					func(element);
