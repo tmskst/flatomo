@@ -29,7 +29,7 @@ class Publisher {
 	@:access(FlatomoLibraryTools)
 	public static function main() {
 		var document:Document = fl.getDocumentDOM();
-		if (!document.isFlatomo()) { return; }
+		if (document == null || !document.isFlatomo()) { return; }
 		
 		var flatomoLibrary = FlatomoLibraryCreator.create(document.library);
 		flatomoLibrary.publish(document);

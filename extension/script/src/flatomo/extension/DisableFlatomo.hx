@@ -16,7 +16,7 @@ class DisableFlatomo {
 	@:access(flatomo.extension.DocumentTools)
 	private static function main():Void {
 		var document:Document = fl.getDocumentDOM();
-		if (!document.isFlatomo()) { return; }
+		if (document == null || !document.isFlatomo()) { return; }
 		
 		for (item in document.library.items) {
 			item.removeFlatomoItem();

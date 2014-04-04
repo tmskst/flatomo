@@ -85,7 +85,8 @@ class Script {
 	 * 現在（最新）のタイムラインを元にセクション情報を生成しパネルに送信します。
 	 */
 	private static function refresh():Void {
-		if (!fl.getDocumentDOM().isFlatomo()) {
+		var document = fl.getDocumentDOM();
+		if (document == null || !document.isFlatomo()) {
 			send(PanelApi.FlatomoDisabled);
 		} else {
 			timelineChanged();
