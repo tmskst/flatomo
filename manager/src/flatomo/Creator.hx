@@ -126,13 +126,13 @@ class Creator {
 	 * @param	path 対象のライブラリパス
 	 */
 	private function translateQuaImage(source:DisplayObject, libraryPath:LibraryPath):Void {
-		images.push({ name: libraryPath, image: Blitter.toBitmapData(source), frame: null });
-		meta.set(libraryPath, Meta.Image);
+		var bounds = Blitter.getBounds(source);
+		images.push({ name: libraryPath, image: Blitter.toBitmapData(source, bounds), frame: null });
+		meta.set(libraryPath, Meta.Image(-bounds.x, -bounds.y));
 	}
 	
 	private function translateTextField(source:TextField, libraryPath:LibraryPath):Void {
-		var textFormat = source.getTextFormat();
-		meta.set(libraryPath, Meta.TextField(Std.int(source.width), Std.int(source.height), source.text, textFormat.font, textFormat.size, textFormat.color, textFormat.bold));
+		meta.set(libraryPath, Meta.TextField(Std.int(source.width), Std.int(source.height), source.text, source.getTextFormat()));
 	}
 	
 }

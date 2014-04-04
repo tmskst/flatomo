@@ -1,6 +1,7 @@
 package flatomo;
 
 import flash.display.BitmapData;
+import flash.text.TextFormatAlign;
 import flash.xml.XML;
 import starling.display.DisplayObject;
 import starling.display.Image;
@@ -8,6 +9,8 @@ import starling.text.TextField;
 import starling.textures.Texture;
 import starling.textures.TextureAtlas;
 import starling.utils.AssetManager;
+import starling.utils.HAlign;
+import starling.utils.VAlign;
 
 class FlatomoAssetManager {
 	
@@ -45,12 +48,14 @@ class FlatomoAssetManager {
 	private function create(key:String):DisplayObject {
 		var type = meta.get(key);
 		switch (type) {
+			/* Animation */
 			case Meta.Animation(sections, pivotX, pivotY) :
 				var textures = manager.getTextures(key);
 				var animation = new Animation(textures, sections);
 				animation.pivotX = pivotX;
 				animation.pivotY = pivotY;
 				return animation;
+			/* Container */
 			case Meta.Container(children, layouts, sections) :
 				var objects = new Array<DisplayObject>();
 				for (child in children) {
@@ -59,10 +64,22 @@ class FlatomoAssetManager {
 					objects.push(object);
 				}
 				return new Container(objects, layouts, sections);
-			case Meta.TextField(width, height, text, fontName, fontSize, color, bold) : 
-				return new TextField(width, height, text, fontName, fontSize, color, bold);
-			case Meta.Image :
-				return new Image(manager.getTexture(key));
+			/* TextField */
+			case Meta.TextField(width, height, text, textFormat) : 
+				var textField = new TextField(width, height, text, textFormat.font, textFormat.size, textFormat.color, textFormat.bold);
+				textField.vAlign = VAlign.TOP;
+				textField.hAlign = switch (textFormat.align) {
+					case TextFormatAlign.CENTER	: HAlign.CENTER;
+					case TextFormatAlign.LEFT	: HAlign.LEFT;
+					case TextFormatAlign.RIGHT	: HAlign.RIGHT;
+				};
+				return textField;
+			/* Image */
+			case Meta.Image(pivotX, pivotY) :
+				var image = new Image(manager.getTexture(key));
+				image.pivotX = pivotX;
+				image.pivotY = pivotY;
+				return image;
 		}
 	}
 	
