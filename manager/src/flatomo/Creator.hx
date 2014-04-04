@@ -10,8 +10,6 @@ import flash.text.TextField;
 using Lambda;
 using flatomo.Creator.DisplayObjectTools;
 
-typedef Image = { name:String, image:BitmapData, frame:Rectangle };
-
 @:allow(flatomo.Flatomo)
 class Creator {
 	
@@ -20,7 +18,7 @@ class Creator {
 	 * @param	library ライブラリ
 	 * @param	classes 解析する（表示オブジェクトを親に持つ）クラスの列挙
 	 */
-	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<Image>, meta:Map<String, Meta> } {
+	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<RawTexture>, meta:Map<String, Meta> } {
 		var creator:Creator = new Creator(library);
 		for (clazz in classes) {
 			// 表示オブジェクトのインスタンスを生成して解析をする
@@ -31,12 +29,12 @@ class Creator {
 	
 	private function new(library:FlatomoLibrary) {
 		this.library = library;
-		this.images = new Array<Image>();
+		this.images = new Array<RawTexture>();
 		this.meta = new Map<String, Meta>();
 	}
 	
 	private var library:FlatomoLibrary;
-	private var images:Array<Image>;
+	private var images:Array<RawTexture>;
 	private var meta:Map<String, Meta>;
 	
 	

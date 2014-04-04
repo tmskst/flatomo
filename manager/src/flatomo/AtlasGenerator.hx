@@ -4,20 +4,28 @@ import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.xml.XML;
-import flatomo.Creator.Image;
 
 using Lambda;
 using flatomo.AtlasGenerator;
 
-private typedef Piece = /*{ name:String, image:BitmapData }*/flatomo.Creator.Image;
-private typedef Area = { name:String, rectangle:Rectangle };
-private typedef Layer = { x:Int, y:Int, width:Int, height:Int };
-private typedef TextureAtlas = { image:BitmapData, layout:XML };
+/** テクスチャを敷く領域 */
+private typedef Area = {
+	var name:String;
+	var rectangle:Rectangle;
+};
+
+/** 充填計算用 */
+private typedef Layer = {
+	var x:Int;
+	var y:Int;
+	var width:Int;
+	var height:Int;
+};
 
 class AtlasGenerator {
 	
 	/** テクスチャアトラスを生成する */
-	public static function generate(images:Array<Image>):Array<{ image:BitmapData, layout:XML }> {
+	public static function generate(images:Array<RawTexture>):Array<RawTextureAtlas> {
 		var lengths = [64, 128, 256, 512, 1024, 2048];
 		images.sort(function (a, b):Int {
 			return Std.int(b.image.height - a.image.height);
@@ -39,7 +47,7 @@ class AtlasGenerator {
 			v.push( { areas: areas, imageSize: imageSize } );
 		}
 		
-		var atlases = new Array<TextureAtlas>();
+		var atlases = new Array<RawTextureAtlas>();
 		for (n in v) {
 			atlases.push(generateTextureAtlas(images, n.areas, n.imageSize));
 		}
@@ -48,7 +56,7 @@ class AtlasGenerator {
 	
 	/** テクスチャアトラスを生成する */
 	@:noUsing
-	private static function generateTextureAtlas(textures:Array<Piece>, areas:Array<Area>, size:Int):TextureAtlas {
+	private static function generateTextureAtlas(textures:Array<RawTexture>, areas:Array<Area>, size:Int):RawTextureAtlas {
 		var canvas = new BitmapData(size, size, true, 0x00000000);
 		var layout = Xml.createElement("TextureAtlas");
 		layout.set("imagePath", "atlas.png");
@@ -67,7 +75,7 @@ class AtlasGenerator {
 	}
 	
 	/** SubTexture要素を生成する */
-	private static function createSubTextureElement(piece:Piece, area:Area):Xml {
+	private static function createSubTextureElement(piece:RawTexture, area:Area):Xml {
 		var subTexture = Xml.createElement("SubTexture");
 		subTexture.set("name", piece.name);
 		subTexture.set("x", Std.string(area.rectangle.x));
@@ -89,7 +97,7 @@ class AtlasGenerator {
 	 * @param	textures
 	 * @return
 	 */
-	private static function findTexture(textures:Array<Piece>, name:String):Piece {
+	private static function findTexture(textures:Array<RawTexture>, name:String):RawTexture {
 		for (texture in  textures) {
 			if (texture.name == name) { return texture; }
 		}
@@ -103,7 +111,7 @@ class AtlasGenerator {
 	 * @return テクスチャをどこに敷くかの対応関係の集合。敷き詰められなかった場合は nullが返される。
 	 */
 	@:noUsing
-	private static function pack(pieces:Array<Piece>, length:Int, packedNameList:List<String>, ?padding:Int = 2):Array<Area> {
+	private static function pack(pieces:Array<RawTexture>, length:Int, packedNameList:List<String>, ?padding:Int = 2):Array<Area> {
 		// HFF ALGORITHM
 		var layers = new Array<Layer>();
 		var areas = new Array<Area>();

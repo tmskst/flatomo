@@ -12,7 +12,7 @@ class Flatomo {
 	 * @param	library ライブラリ
 	 * @param	classes 解析する（表示オブジェクトを親に持つ）クラスの列挙
 	 */
-	public static function createTextureAtlas(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ atlases:Array<{image:BitmapData, layout:XML}>, metaData:Map<String, Meta>} {
+	public static function createTextureAtlas(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ atlases:Array<RawTextureAtlas>, metaData:Map<String, Meta>} {
 		var source = Creator.create(library, classes);
 		var atlases = AtlasGenerator.generate(source.images);
 		return { atlases: atlases, metaData: source.meta };
