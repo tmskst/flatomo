@@ -13,6 +13,8 @@ import jsfl.Lib.fl;
 import jsfl.Library;
 import jsfl.Shape;
 import jsfl.SymbolItem;
+import jsfl.Text;
+import jsfl.Text.TextType;
 
 using Lambda;
 using StringTools;
@@ -100,7 +102,10 @@ private class FlatomoLibraryCreator {
 				var instance:Instance = cast element;
 				setLibraryPath(libraryPath, instance, getLibraryPath(instance.libraryItem));
 			case ElementType.TEXT : 
-				setLibraryPath(libraryPath, element, "TextField");
+				var text:Text = cast element;
+				if (text.textType != TextType.STATIC) {
+					setLibraryPath(libraryPath, element, "TextField");
+				}
 		}
 	}
 	
