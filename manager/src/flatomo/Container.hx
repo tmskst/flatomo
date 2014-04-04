@@ -18,11 +18,13 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 	
 	/**
 	 * コンテナを生成する。
+	 * 呼び出しは flatomo.FlatomoAssetManager に制限される。
 	 * @param	displayObjects コンテナに配置される表示オブジェクトのリスト。
 	 * @param	map 「再生ヘッドの位置」と「そのフレームに配置された表示オブジェクトの配置情報のリスト」の対応関係。
 	 * @param	sections セクション情報。
 	 */
-	public function new(displayObjects:Array<DisplayObject>, map:Map<Int, Array<Layout>>, sections:Array<Section>) {
+	@:allow(flatomo.FlatomoAssetManager)
+	private function new(displayObjects:Array<DisplayObject>, map:Map<Int, Array<Layout>>, sections:Array<Section>) {
 		super();
 		this.layouts = map;
 		this.playhead = new Playhead(update, sections);
@@ -45,6 +47,10 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
 	
+	/**
+	 * 再生ヘッドを進める
+	 * @param	time 今は使用しない
+	 */
 	public function advanceTime(time:Float):Void {
 		playhead.advanceFrame(Std.int(time));
 	}

@@ -15,9 +15,15 @@ typedef Image = { name:String, image:BitmapData, frame:Rectangle };
 @:allow(flatomo.Flatomo)
 class Creator {
 	
+	/**
+	 * 表示オブジェクトを解析してテクスチャとメタデータを生成します
+	 * @param	library ライブラリ
+	 * @param	classes 解析する（表示オブジェクトを親に持つ）クラスの列挙
+	 */
 	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<Image>, meta:Map<String, Meta> } {
 		var creator:Creator = new Creator(library);
 		for (clazz in classes) {
+			// 表示オブジェクトのインスタンスを生成して解析をする
 			creator.translate(Type.createInstance(clazz, []), "F:" + Type.getClassName(clazz));
 		}
 		return { images: creator.images, meta: creator.meta };
@@ -55,6 +61,7 @@ class Creator {
 	/**
 	 * 表示オブジェクトをDisplayObjectType.Animationとして解析します
 	 * @param	source 対象の表示オブジェクト
+	 * @param	libraryPath ライブラリパス
 	 */
 	private function translateQuaAnimation(source:MovieClip, libraryPath:LibraryPath):Void {
 		// ソースの描画領域を計算
@@ -131,6 +138,11 @@ class Creator {
 		meta.set(libraryPath, Meta.Image(-bounds.x, -bounds.y));
 	}
 	
+	/**
+	 * 表示オブジェクトをDisplayObjectType.TextFieldとして解析します
+	 * @param	source 対象の表示オブジェクト
+	 * @param	libraryPath 対象のライブラリパス
+	 */
 	private function translateTextField(source:TextField, libraryPath:LibraryPath):Void {
 		meta.set(libraryPath, Meta.TextField(Std.int(source.width), Std.int(source.height), source.text, source.getTextFormat()));
 	}
@@ -149,31 +161,38 @@ class DisplayObjectTools {
 		return library.libraryPaths.get(parentLibraryPath + "#" +instance.name);
 	}
 	
-	/**
-	 * 表示オブジェクトが属するDisplayObjectTypeを返します
-	 */
+	/** 表示オブジェクトが属するDisplayObjectTypeを返します。 */
 	private static function fetchDisplayObjectType(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):DisplayObjectType {
 		if (source.isAlliedToAnimation(libraryPath, library)) {
 			return DisplayObjectType.Animation;
 		}
-		if (source.isAlliedToContainer(libraryPath, library)) {
+		if (source.isAlliedToContainer()) {
 			return DisplayObjectType.Container;
 		}
-		if (source.isAlliedToTextField(libraryPath, library)) {
+		if (source.isAlliedToTextField()) {
 			return DisplayObjectType.TextField;
 		}
 		
 		return DisplayObjectType.Image;
 	}
 	
-	private static function isAlliedToTextField(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):Bool {
+	/**
+	 * 表示オブジェクトがテキストフィールドかどうか
+	 * @param	source 対象の表示オブジェクト
+	 * @return 対象がテキストフィールドかどうか
+	 */
+	private static function isAlliedToTextField(source:DisplayObject):Bool {
 		return Std.is(source, flash.text.TextField);
 	}
 	
-	/*
-	 * アニメーションである条件は、
+	/**
+	 * 表示オブジェクトがアニメーションかどうか
 	 * 1. 対象がflash.display.MovieClipであること。
 	 * 2. 対象のアニメーション属性が有効（真）であること。
+	 * @param	source 対象の表示オブジェクト
+	 * @param	libraryPath 対象のライブラリパス
+	 * @param	library ライブラリ
+	 * @return 対象がアニメーションかどうか
 	 */
 	private static function isAlliedToAnimation(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):Bool {
 		// 式をひとつまとめないでください。
@@ -183,11 +202,12 @@ class DisplayObjectTools {
 		return item != null && item.animation;
 	}
 	
-	/*
-	 * コンテナである条件は、
-	 * 1. 対象は flash.display.DisplayObjectContainerであること。
+	/**
+	 * 表示オブジェクトがコンテナがどうか
+	 * @param	source 対象の表示オブジェクト
+	 * @return 対象がコンテナかどうか
 	 */
-	private static function isAlliedToContainer(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):Bool {
+	private static function isAlliedToContainer(source:DisplayObject):Bool {
 		return Std.is(source, DisplayObjectContainer);
 	}
 	

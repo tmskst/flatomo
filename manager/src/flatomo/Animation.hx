@@ -15,16 +15,12 @@ using flatomo.SectionTools;
  * アニメーションの再生ヘッドは、セクションによって制御される。
  */
 class Animation extends Image implements IAnimatable implements IPlayhead {
-	/*
-	 * Animationクラスの責務は、セクション情報を元に再生ヘッドを制御することです。
-	 * テクスチャの管理と描画は親の starling.display.MovieClipに任せます。
-	 */
 	
 	/**
 	 * アニメーションを生成する。
-	 * 呼び出しは flatomo.AnimationCreator に制限される。
+	 * 呼び出しは flatomo.FlatomoAssetManager に制限される。
 	 * @param	textures テクスチャ
-	 * @param	sections　セクション
+	 * @param	sections　セクション情報
 	 */
 	@:allow(flatomo.FlatomoAssetManager)
 	private function new(textures:Vector<Texture>, sections:Array<Section>) {
@@ -43,10 +39,15 @@ class Animation extends Image implements IAnimatable implements IPlayhead {
 	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
 	
+	/**
+	 * 再生ヘッドを進める
+	 * @param	time 今は使用しない
+	 */
 	public function advanceTime(time:Float):Void {
 		playhead.advanceFrame(Std.int(time));
 	}
 	
+	/** 描画処理 */
 	private function update():Void {
 		texture = textures[playhead.currentFrame - 1];
 	}

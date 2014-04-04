@@ -14,6 +14,7 @@ import starling.utils.VAlign;
 
 class FlatomoAssetManager {
 	
+	/** テクスチャアトラスとメタデータを元に FlatomoAssetManagerを生成する */
 	public static function build(source:{atlases:Array<{image:BitmapData, layout:XML}>, metaData:Map<String, Meta>}):FlatomoAssetManager {
 		var atlases = new Array<TextureAtlas>();
 		for (atlas in source.atlases) {
@@ -44,6 +45,8 @@ class FlatomoAssetManager {
 	
 	/**
 	 * キー（ライブラリパス）を元に表示オブジェクトを生成します
+	 * @param	key キー（ライブラリパス）
+	 * @return 生成（構築）された表示オブジェクト
 	 */
 	private function create(key:String):DisplayObject {
 		var type = meta.get(key);

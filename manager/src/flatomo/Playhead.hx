@@ -2,8 +2,14 @@ package flatomo;
 
 using flatomo.SectionTools;
 
+/** セクション情報に対応した再生ヘッド */
 class Playhead {
 
+	/**
+	 * 再生ヘッドを生成
+	 * @param	update 再生ヘッドが移動したとき（フレームが更新されたとき）に呼び出されるメソッド
+	 * @param	sections セクション情報
+	 */
 	public function new(update:Void -> Void, sections:Array<Section>) {
 		this.update = update;
 		this.sections = sections;
@@ -32,18 +38,30 @@ class Playhead {
 	/** 再生中かどうか */
 	public var isPlaying(default, null):Bool;
 	
+	/** 再生ヘッドを動作させる */
 	public function play():Void {
 		isPlaying = true;
 	}
 	
+	/** 再生ヘッドを停止させる */
 	public function stop():Void {
 		isPlaying = false;
 	}
 	
+	/**
+	 * 指定したセクションで再生ヘッドを再生します。
+	 * @param	sectionName 遷移先のセクション名
+	 * @param	?increment 差分（frame）
+	 */
 	public function gotoAndPlay(sectionName:Dynamic, ?increment:Int = 0):Void {
 		gotoGlobalAndPlay(findSection(sectionName) + increment);
 	}
 	
+	/**
+	 * 指定したセクションで再生ヘッドを停止します。
+	 * @param	sectionName 遷移先のセクション名
+	 * @param	?increment 差分（frame）
+	 */
 	public function gotoAndStop(sectionName:Dynamic, ?increment:Int = 0):Void {
 		gotoGlobalAndStop(findSection(sectionName) + increment);
 	}
@@ -57,6 +75,10 @@ class Playhead {
 		throw 'セクション ${sectionName} が見つかりません。';
 	}
 	
+	/**
+	 * 指定したフレームで再生ヘッドを再生します。
+	 * @param	frame 遷移先フレーム
+	 */
 	public function gotoGlobalAndPlay(frame:Int):Void {
 		isPlaying = true;
 		currentFrame = frame;
@@ -64,6 +86,10 @@ class Playhead {
 		update();
 	}
 	
+	/**
+	 * 指定したフレームで再生ヘッドを停止します。
+	 * @param	frame 遷移先フレーム
+	 */
 	public function gotoGlobalAndStop(frame:Int):Void {
 		isPlaying = false;
 		currentFrame = frame;
