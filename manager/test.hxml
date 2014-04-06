@@ -2,6 +2,7 @@
 -main TestMain
 -lib munit
 -lib hamcrest
+-lib polygonal-ds
 -cp src
 -cp ../common/src
 -cp lib/starling/hxclasses

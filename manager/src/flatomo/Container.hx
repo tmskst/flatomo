@@ -1,5 +1,7 @@
 package flatomo;
 
+import de.polygonal.ds.ListSet;
+import de.polygonal.ds.Set;
 import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
@@ -24,9 +26,10 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 	 * @param	sections セクション情報。
 	 */
 	@:allow(flatomo.FlatomoAssetManager)
-	private function new(displayObjects:Array<DisplayObject>, map:Map<Int, Array<Layout>>, sections:Array<Section>) {
+	private function new(displayObjects:Array<DisplayObject>, layouts:Map<Int, Array<Layout>>, sections:Array<Section>) {
 		super();
-		this.layouts = map;
+		this.layouts = layouts;
+		this.locked = new ListSet</*InstanceName*/String>();
 		this.playhead = new Playhead(update, sections);
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
@@ -43,6 +46,9 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 	 * @value 再生ヘッドのいちに対応する配置された表示オブジェクトの配置情報のリスト
 	 */
 	private var layouts:Map<Int, Array<Layout>>;
+	
+	/** 更新された表示オブジェクトの列挙。 */
+	private var locked:Set</*InstanceName*/String>;
 	
 	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
@@ -69,11 +75,15 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 				var child:DisplayObject = this.getChildByName(layout.instanceName);
 				// TODO : Layout の変更に弱いのでこれを修正する。
 				child.visible = true;
-				child.x = layout.x;
-				child.y = layout.y;
-				child.rotation = layout.rotation;
-				child.scaleX = layout.scaleX;
-				child.scaleY= layout.scaleY;
+				
+				/* ロックされた表示オブジェクトは更新しない。 */
+				if (!locked.has(layout.instanceName)) {
+					child.x = layout.x;
+					child.y = layout.y;
+					child.rotation = layout.rotation;
+					child.scaleX = layout.scaleX;
+					child.scaleY = layout.scaleY;
+				}
 			}
 		}
 	}
