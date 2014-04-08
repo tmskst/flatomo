@@ -1,10 +1,15 @@
 package flatomo;
 import flash.text.TextFormat;
+import haxe.ds.Vector.Vector;
 
-/** 表示オブジェクトを構築するために必要なメタデータ */
+/** 表示オブジェクトを再構築するために必要な情報 */
 enum Meta {
 	Animation(sections:Array<Section>, pivotX:Float, pivotY:Float);
-	Container(children:Array<{ key:String, instanceName:String }>, layouts:Map <Int, Array<Layout>>, sections:Array<Section>);
+	/**
+	 * @param layouts コンテナの直接の子の配置情報
+	 */
+	Container(children:Map</*InstanceName*/String, { path:String, layouts:Vector<Layout> }>, sections:Array<Section>);
+	//Container(children:Array<{ key:String, instanceName:String }>, layouts:Vector<Layout>, sections:Array<Section>);
 	Image(pivotX:Float, pivotY:Float);
 	TextField(width:Int, height:Int, text:String, textFormat:TextFormat);
 }

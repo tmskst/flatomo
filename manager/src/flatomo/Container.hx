@@ -2,6 +2,9 @@ package flatomo;
 
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;
+import flatomo.display.ILayoutAdjusted;
+import flatomo.display.LayoutAdjustedTools;
+import haxe.ds.Vector;
 import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
@@ -16,7 +19,7 @@ using flatomo.SectionTools;
  * また、コンテナ内のインスタンス名（Element#name）は、1つの表示オブジェクトに対応する。
  * この性質上、再生ヘッドの到達を待つことなく任意の子へのアクセスができる。
  */
-class Container extends DisplayObjectContainer implements IAnimatable implements IPlayhead {
+class Container extends DisplayObjectContainer implements ILayoutAdjusted implements IAnimatable implements IPlayhead {
 	
 	/**
 	 * コンテナを生成する。
@@ -26,10 +29,10 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 	 * @param	sections セクション情報。
 	 */
 	@:allow(flatomo.FlatomoAssetManager)
-	private function new(displayObjects:Array<DisplayObject>, layouts:Map<Int, Array<Layout>>, sections:Array<Section>) {
+	private function new(layouts:Vector<Layout>, displayObjects:Array<DisplayObject>, sections:Array<Section>) {
 		super();
+		this.locked = false;
 		this.layouts = layouts;
-		this.locked = new ListSet</*InstanceName*/String>();
 		this.playhead = new Playhead(update, sections);
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
@@ -40,15 +43,8 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 		}
 	}
 	
-	/**
-	 * 「再生ヘッドの位置」と「そのフレームに配置された表示オブジェクトの配置情報のリスト」の対応関係。
-	 * @key 再生ヘッドの位置
-	 * @value 再生ヘッドのいちに対応する配置された表示オブジェクトの配置情報のリスト
-	 */
-	private var layouts:Map<Int, Array<Layout>>;
-	
-	/** 更新された表示オブジェクトの列挙。 */
-	private var locked:Set</*InstanceName*/String>;
+	private var locked:Bool;
+	private var layouts:Vector<Layout>;
 	
 	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
@@ -68,6 +64,12 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 			this.getChildAt(index).visible = false;
 		}
 		
+		for (childIndex in 0...numChildren) {
+			var child = this.getChildAt(childIndex);
+			LayoutAdjustedTools.update(cast child, playhead.currentFrame);
+		}
+		
+		/*
 		// 現在の再生ヘッド位置に対応する表示オブジェクトの位置情報を取得して子に適応する。
 		if (layouts.exists(playhead.currentFrame)) {
 			var layouts:Array<Layout> = layouts.get(playhead.currentFrame);
@@ -76,7 +78,7 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 				// TODO : Layout の変更に弱いのでこれを修正する。
 				child.visible = true;
 				
-				/* ロックされた表示オブジェクトは更新しない。 */
+				// ロックされた表示オブジェクトは更新しない。
 				if (!locked.has(layout.instanceName)) {
 					child.x = layout.x;
 					child.y = layout.y;
@@ -86,6 +88,7 @@ class Container extends DisplayObjectContainer implements IAnimatable implements
 				}
 			}
 		}
+		*/
 	}
 	
 }

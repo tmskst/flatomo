@@ -10,7 +10,7 @@ class ContainerTest {
 	
 	@Test("生成直後は可視状態にある")
 	public function afterConstruct_visible():Void {
-		var sut = new Container([], new Map <Int, Array<Layout>>(), []);
+		var sut = new Container([], new Array<Layout>(), []);
 		Assert.areEqual(true, sut.visible);
 	}
 	

@@ -1,6 +1,6 @@
 package flatomo;
 
-import flash.Vector;
+import flatomo.display.ILayoutAdjusted;
 import starling.animation.IAnimatable;
 import starling.display.Image;
 import starling.textures.Texture;
@@ -14,7 +14,7 @@ using flatomo.SectionTools;
  * FPSの指定はできない。呼び出し元（Flatomo#juggler）の更新頻度に依存する。
  * アニメーションの再生ヘッドは、セクションによって制御される。
  */
-class Animation extends Image implements IAnimatable implements IPlayhead {
+class Animation extends Image implements ILayoutAdjusted implements IAnimatable implements IPlayhead {
 	
 	/**
 	 * アニメーションを生成する。
@@ -23,18 +23,23 @@ class Animation extends Image implements IAnimatable implements IPlayhead {
 	 * @param	sections　セクション情報
 	 */
 	@:allow(flatomo.FlatomoAssetManager)
-	private function new(textures:Vector<Texture>, sections:Array<Section>) {
+	private function new(layouts:haxe.ds.Vector<Layout>, textures:flash.Vector<Texture>, sections:Array<Section>) {
 		if (textures.length == 0) {
 			throw '少なくとも一つのテクスチャが必要です。';
 		}
 		
 		super(textures[0]);
+		this.locked = false;
+		this.layouts = layouts;
 		this.textures = textures;
 		this.playhead = new Playhead(update, sections);
 	}
 	
+	private var locked:Bool;
+	private var layouts:haxe.ds.Vector<Layout>;
+	
 	/** テクスチャ */
-	private var textures:Vector<Texture>;
+	private var textures:flash.Vector<Texture>;
 	
 	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;

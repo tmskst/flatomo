@@ -6,6 +6,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
 import flash.text.TextField;
+import haxe.ds.Vector.Vector;
 
 using Lambda;
 using flatomo.Creator.DisplayObjectTools;
@@ -33,8 +34,11 @@ class Creator {
 		this.meta = new Map<String, Meta>();
 	}
 	
+	/* ライブラリは参照のみが許される。ライブラリが持つマップの変更は許されない。 */
 	private var library:FlatomoLibrary;
+	/* 表示オブジェクトをビットマップデータに転写したものの列挙。 */
 	private var images:Array<RawTexture>;
+	/* 任意の表示オブジェクトを再構築するために必要な情報。 */
 	private var meta:Map<String, Meta>;
 	
 	
@@ -42,6 +46,11 @@ class Creator {
 	 * 表示オブジェクト（flash.display.DisplayObject）を解析します
 	 * @param	source 解析する表示オブジェクト
 	 * @param	path 対象のライブラリパス
+	 */
+	/**
+	 * 表示オブジェクトを解析して再構築に必要な情報（RawTexture, Meta）を取得します。
+	 * @param	source
+	 * @param	libraryPath
 	 */
 	private function translate(source:DisplayObject, libraryPath:String):Void {
 		// libraryPath = F:MainScene or Game/Foobar etc
@@ -57,7 +66,8 @@ class Creator {
 	}
 	
 	/**
-	 * 表示オブジェクトをDisplayObjectType.Animationとして解析します
+	 * 表示オブジェクトをDisplayObjectType.Animationとして解析します。
+	 * フレームは適切にカットされビットマップデータに転写されます。
 	 * @param	source 対象の表示オブジェクト
 	 * @param	libraryPath ライブラリパス
 	 */
@@ -81,11 +91,59 @@ class Creator {
 	}
 	
 	/**
-	 * 表示オブジェクトをDisplayObjectType.Containerとして解析します
+	 * 表示オブジェクトをDisplayObjectType.Containerとして解析します。
+	 * コンテナは、表示オブジェクトコンテナで実際に目に見える表示オブジェクトではないため、
+	 * このメソッド内でビットマップデータに転写することしません。
+	 * コンテナ直下に配置された表示オブジェクト（直接の子）の配置情報を記録します。
 	 * @param	source 対象の表示オブジェクト
 	 */
 	private function translateQuaContainer(source:MovieClip, libraryPath:LibraryPath):Void {
-		var map = new Map<Int, Array<Layout>>();
+		//var children = new Array<{ key:String, instanceName:String }>();
+		//var allLayouts = new Map < String, Vector<Layout> > ();
+		
+		var children = new Map</*InstanceName*/String, { path:String, layouts:Vector<Layout> }>();
+		
+		// 全フレームを走査して対象の直接の子の配置情報を収集する
+		for (frame in 0...source.totalFrames) {
+			source.gotoAndStop(frame + 1);
+			
+			// 現在のフレームの対象に追加されている直接の子を走査する
+			for (childIndex in 0...source.numChildren) {
+				var object = source.getChildAt(childIndex);
+				if (!children.exists(object.name)) {
+					var type = object.fetchDisplayObjectType(libraryPath, library);
+					var key = switch (type) {
+						case DisplayObjectType.Animation : object.fetchLibraryPath(libraryPath, library);
+						case DisplayObjectType.Container : object.fetchLibraryPath(libraryPath, library);
+						case DisplayObjectType.TextField : '${libraryPath}#${object.name}';
+						case DisplayObjectType.Image	 : '${libraryPath}#${object.name}';
+					};
+					children.set(object.name, {
+						path	: key,
+						layouts	: new Vector<Layout>(source.totalFrames + 1),
+					});
+					// translate?
+					translate(object, key);
+					trace(children.get(object.name).path);
+				}
+				
+				var child = children.get(object.name);
+				child.layouts.set(frame, {
+					x: object.x,
+					y: object.y,
+					rotation: untyped { __global__["starling.utils.deg2rad"](object.rotation); } ,
+					scaleX: object.scaleX,
+					scaleY: object.scaleY,
+				});
+				
+			}
+		}
+		
+		var sections = library.metadata.get(libraryPath).sections;
+		meta.set(libraryPath, Meta.Container(children, sections));
+		
+		/*
+		var layouts = new Vector<Layout>(source.totalFrames);
 		var children = new Array<{ key:String, instanceName:String }>();
 		
 		// 全フレームを走査
@@ -119,11 +177,13 @@ class Creator {
 					scaleY: child.scaleY
 				});
 			}
-			map.set(frame + 1, layouts);
+			layouts.set(frame + 1, layouts);
 		}
 		var sections = library.metadata.get(libraryPath).sections;
-		meta.set(libraryPath, Meta.Container(children, map, sections));
+		meta.set(libraryPath, Meta.Container(children, layouts, sections));
+		*/
 	}
+	
 	
 	/**
 	 * 表示オブジェクトをDisplayObjectType.Imageとして解析します
