@@ -1,7 +1,5 @@
 package flatomo.display;
 
-import de.polygonal.ds.ListSet;
-import de.polygonal.ds.Set;
 import flatomo.display.ILayoutAdjusted;
 import flatomo.display.LayoutAdjustedTools;
 import haxe.ds.Vector;
@@ -66,6 +64,9 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		
 		for (childIndex in 0...numChildren) {
 			var child = this.getChildAt(childIndex);
+			if (Std.is(child, Animation)) {
+				cast (child, IAnimatable).advanceTime(1.0);
+			}
 			LayoutAdjustedTools.update(cast child, playhead.currentFrame);
 		}
 		
