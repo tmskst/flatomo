@@ -1,4 +1,4 @@
-package flatomo;
+package flatomo.display;
 
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;

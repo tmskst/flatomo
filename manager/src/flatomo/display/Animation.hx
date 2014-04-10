@@ -1,4 +1,4 @@
-package flatomo;
+package flatomo.display;
 
 import flatomo.display.ILayoutAdjusted;
 import starling.animation.IAnimatable;

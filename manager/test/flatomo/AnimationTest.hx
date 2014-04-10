@@ -1,24 +1,26 @@
 package flatomo;
 import flash.Vector;
+
+import flatomo.display.Animation;
 import massive.munit.Assert;
 import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
 
-@:access(flatomo.Animation)
+@:access(flatomo.display.Animation)
 class AnimationTest {
 
 	public function new() { }
 	
 	@Test("生成直後は可視状態にある")
 	public function afterConstruct_visible():Void {
-		var sut = new Animation(createTextures(1), []); 
+		var sut = new Animation(new haxe.ds.Vector<Layout>(0), createTextures(1), []); 
 		Assert.areEqual(true, sut.visible);
 	}
 	
 	@Test("生成直後のテクスチャはテクスチャ集合の最初のもの")
 	public function afterConstruct_texture():Void {
 		var textures:Vector<Texture> = createTextures(3);
-		var sut = new Animation(textures, [{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }]);
+		var sut = new Animation(new haxe.ds.Vector<Layout>(0), textures, [{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }]);
 		Assert.areEqual(textures[0], sut.texture);
 	}
 	
@@ -26,7 +28,7 @@ class AnimationTest {
 	@Test("advanceTimeの呼び出しとテクスチャの対応関係")
 	public function afterAdvanceTime_texture():Void {
 		var textures:Vector<Texture> = createTextures(3);
-		var sut = new Animation(textures, []);
+		var sut = new Animation(new haxe.ds.Vector<Layout>(0), textures, []);
 		/*
 		 * 生成直後のテクスチャは textures[0]
 		 * このタイミングで実際に描画されているかどうかは分からない

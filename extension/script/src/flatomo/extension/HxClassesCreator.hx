@@ -30,7 +30,7 @@ class HxClassesCreator {
 			var item = data.metadata.get(libraryPath);
 			var salt:Salt = {
 				CLASS_NAME	: "F" + getClassName(libraryPath),
-				SUPER_CLASS_NAME	: if (item.animation) "flatomo.Animation" else "flatomo.Container",
+				SUPER_CLASS_NAME	: if (item.animation) "flatomo.display.Animation" else "flatomo.display.Container",
 				FIELDS		: getFields(libraryPath, data.libraryPaths),
 				SECTIONS	: getSections(item),
 				API_NAME	: if (item.animation) "animationApi" else "containerApi",

@@ -1,4 +1,4 @@
-package flatomo;
+package flatomo.display;
 
 /** 再生ヘッドを持つことを保証する */
 interface IPlayhead {

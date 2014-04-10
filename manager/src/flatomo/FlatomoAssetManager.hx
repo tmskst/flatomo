@@ -3,6 +3,8 @@ package flatomo;
 import flash.display.BitmapData;
 import flash.text.TextFormatAlign;
 import flash.xml.XML;
+import flatomo.display.Animation;
+import flatomo.display.Container;
 import flatomo.display.FlatomoImage;
 import flatomo.display.FlatomoTextField;
 import haxe.ds.Vector;
