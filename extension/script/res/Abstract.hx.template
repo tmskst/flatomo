@@ -22,7 +22,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 		return cast this;
 	}
 	
-	::if (SUPER_CLASS_NAME == "flatomo.Container")::
+	::if (SUPER_CLASS_NAME == "flatomo.display.Container")::
 	::foreach FIELDS::
 	public var ::NAME::(get, never):::CLASS_NAME::;
 	private function get_::NAME::():::CLASS_NAME:: {
