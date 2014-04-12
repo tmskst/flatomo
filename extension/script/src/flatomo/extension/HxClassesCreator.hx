@@ -59,11 +59,13 @@ class HxClassesCreator {
 		 * 	1. '_' -> '__'
 		 * 	2. '%' -> '_p'
 		 * 	3. '/' -> '____'
+		 * 	4. '-' -> '_h'
 		 */
 		var name = ~/^F:/.replace(libraryPath, "");
 			name = StringTools.urlEncode(name);
 			name = ~/_/g.replace(name, "__");
 			name = ~/%/g.replace(name, "_p");
+			name = ~/-/g.replace(name, "_h");
 		return ~/\//g.replace(name, "____");
 	}
 	
