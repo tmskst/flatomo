@@ -7,15 +7,15 @@ import starling.text.TextField;
 
 class FlatomoTextField extends TextField implements ILayoutAdjusted {
 	
-	public function new(layouts:Vector<Layout>, p1:Int, p2:Int, p3:String, ?p4:String, ?p5:Float = 12, ?p6:UInt = 0, ?p7:Bool = false) {
-		super(p1, p2, p3, p4, p5, p6, p7);
+	public function new(layouts:Vector<Layout>, width:Int, height:Int, text:String, fontName:String, ?fontSize:Float = 12, ?color:UInt = 0x0, ?bold:Bool = false) {
+		super(width, height, text, fontName, fontSize, color, bold);
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
 	}
 	
-	public var layouts:Vector<Layout>;
-	public var layoutPropertiesOverwrited:Bool;
-	public var visiblePropertyOverwrited:Bool;
+	private var layouts:Vector<Layout>;
+	private var layoutPropertiesOverwrited:Bool;
+	private var visiblePropertyOverwrited:Bool;
 	
 }

@@ -1,15 +1,22 @@
-package flatomo;
+package flatomo.creator;
 
-import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
 import flash.text.TextField;
-import haxe.ds.Vector.Vector;
+import flatomo.InstanceName;
+import haxe.ds.Vector;
 
 using Lambda;
-using flatomo.Creator.DisplayObjectTools;
+using flatomo.creator.Creator.DisplayObjectTools;
+
+private enum DisplayObjectType {
+	Animation;
+	Container;
+	Image;
+	TextField;
+}
 
 @:allow(flatomo.Flatomo)
 class Creator {
@@ -42,11 +49,6 @@ class Creator {
 	private var meta:Map<String, Meta>;
 	
 	
-	/**
-	 * 表示オブジェクト（flash.display.DisplayObject）を解析します
-	 * @param	source 解析する表示オブジェクト
-	 * @param	path 対象のライブラリパス
-	 */
 	/**
 	 * 表示オブジェクトを解析して再構築に必要な情報（RawTexture, Meta）を取得します。
 	 * @param	source
@@ -98,10 +100,7 @@ class Creator {
 	 * @param	source 対象の表示オブジェクト
 	 */
 	private function translateQuaContainer(source:MovieClip, libraryPath:LibraryPath):Void {
-		//var children = new Array<{ key:String, instanceName:String }>();
-		//var allLayouts = new Map < String, Vector<Layout> > ();
-		
-		var children = new Map</*InstanceName*/String, { path:String, layouts:Vector<Layout> }>();
+		var children = new Map<InstanceName, { path:String, layouts:Vector<Layout> }>();
 		
 		// 全フレームを走査して対象の直接の子の配置情報を収集する
 		for (frame in 0...source.totalFrames) {
@@ -122,9 +121,7 @@ class Creator {
 						path	: key,
 						layouts	: new Vector<Layout>(source.totalFrames + 1),
 					});
-					// translate?
 					translate(object, key);
-					trace(children.get(object.name).path);
 				}
 				
 				var child = children.get(object.name);
@@ -141,47 +138,6 @@ class Creator {
 		
 		var sections = library.metadata.get(libraryPath).sections;
 		meta.set(libraryPath, Meta.Container(children, sections));
-		
-		/*
-		var layouts = new Vector<Layout>(source.totalFrames);
-		var children = new Array<{ key:String, instanceName:String }>();
-		
-		// 全フレームを走査
-		for (frame in 0...source.totalFrames) {
-			source.gotoAndStop(frame + 1);
-			
-			// フレーム中の全ての表示オブジェクトを走査
-			var layouts = new Array<Layout>();
-			for (index in 0...source.numChildren) {
-				var child:DisplayObject = source.getChildAt(index);
-				var childType = child.fetchDisplayObjectType(libraryPath, library);
-				var childKey:String = switch (childType) {
-					case DisplayObjectType.Animation : child.fetchLibraryPath(libraryPath, library);
-					case DisplayObjectType.Container : child.fetchLibraryPath(libraryPath, library);
-					case DisplayObjectType.TextField : '${libraryPath}#${child.name}';
-					case DisplayObjectType.Image : '${libraryPath}#${child.name}';
-				}
-				if (!children.exists(function (x) {
-					return (x.instanceName == child.name);
-				})) {
-					children.push({ key: childKey, instanceName: child.name });
-					translate(child, childKey);
-				}
-				
-				layouts.push({
-					instanceName: child.name,
-					x: child.x,
-					y: child.y,
-					rotation: untyped { __global__["starling.utils.deg2rad"](child.rotation); } ,
-					scaleX: child.scaleX,
-					scaleY: child.scaleY
-				});
-			}
-			layouts.set(frame + 1, layouts);
-		}
-		var sections = library.metadata.get(libraryPath).sections;
-		meta.set(libraryPath, Meta.Container(children, layouts, sections));
-		*/
 	}
 	
 	
@@ -269,11 +225,4 @@ class DisplayObjectTools {
 		return Std.is(source, DisplayObjectContainer);
 	}
 	
-}
-
-private enum DisplayObjectType {
-	Animation;
-	Container;
-	Image;
-	TextField;
 }

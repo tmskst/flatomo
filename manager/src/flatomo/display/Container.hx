@@ -2,12 +2,14 @@ package flatomo.display;
 
 import flatomo.display.ILayoutAdjusted;
 import flatomo.display.LayoutAdjustedTools;
+import flatomo.Layout;
 import haxe.ds.Vector;
 import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 
-using flatomo.SectionTools;
+using flatomo.display.SectionTools;
+using flatomo.display.LayoutAdjustedTools;
 
 // TODO : 将来、コンテナの親（継承関係）は starling.display.Sprite に置き換わる可能性があります。
 
@@ -29,9 +31,9 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 	@:allow(flatomo.FlatomoAssetManager)
 	private function new(layouts:Vector<Layout>, displayObjects:Array<DisplayObject>, sections:Array<Section>) {
 		super();
+		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
-		this.layouts = layouts;
 		this.playhead = new Playhead(update, sections);
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
@@ -42,9 +44,9 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		}
 	}
 	
-	public var layoutPropertiesOverwrited:Bool;
-	public var visiblePropertyOverwrited:Bool;
-	public var layouts:Vector<Layout>;
+	private var layouts:Vector<Layout>;
+	private var layoutPropertiesOverwrited:Bool;
+	private var visiblePropertyOverwrited:Bool;
 	
 	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
@@ -60,41 +62,18 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 	/** 自身（表示オブジェクト）の更新 */
 	private function update():Void {
 		// すべての表示オブジェクトを不可視状態にする。
-		/*
-		for (index in 0...numChildren) {
-			this.getChildAt(index).visible = false;
-		}
-		*/
 		for (childIndex in 0...numChildren) {
 			var child = this.getChildAt(childIndex);
 			if (Std.is(child, Animation)) {
-				cast (child, IAnimatable).advanceTime(1.0);
+				var object:IAnimatable = cast child;
+				object.advanceTime(1.0);
 			}
 			if (Std.is(child, ILayoutAdjusted)) {
-				LayoutAdjustedTools.update(cast child, playhead.currentFrame);
+				var object:ILayoutAdjusted = cast child;
+				object.update(playhead.currentFrame);
 			}
 		}
 		
-		/*
-		// 現在の再生ヘッド位置に対応する表示オブジェクトの位置情報を取得して子に適応する。
-		if (layouts.exists(playhead.currentFrame)) {
-			var layouts:Array<Layout> = layouts.get(playhead.currentFrame);
-			for (layout in layouts) {
-				var child:DisplayObject = this.getChildByName(layout.instanceName);
-				// TODO : Layout の変更に弱いのでこれを修正する。
-				child.visible = true;
-				
-				// ロックされた表示オブジェクトは更新しない。
-				if (!locked.has(layout.instanceName)) {
-					child.x = layout.x;
-					child.y = layout.y;
-					child.rotation = layout.rotation;
-					child.scaleX = layout.scaleX;
-					child.scaleY = layout.scaleY;
-				}
-			}
-		}
-		*/
 	}
 	
 }

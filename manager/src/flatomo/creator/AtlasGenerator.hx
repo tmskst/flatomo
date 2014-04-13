@@ -1,4 +1,4 @@
-package flatomo;
+package flatomo.creator;
 
 import flash.display.BitmapData;
 import flash.geom.Point;
@@ -6,7 +6,7 @@ import flash.geom.Rectangle;
 import flash.xml.XML;
 
 using Lambda;
-using flatomo.AtlasGenerator;
+using flatomo.creator.AtlasGenerator;
 
 /** テクスチャを敷く領域 */
 private typedef Area = {

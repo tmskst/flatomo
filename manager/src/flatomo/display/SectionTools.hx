@@ -1,4 +1,4 @@
-package flatomo;
+package flatomo.display;
 
 class SectionTools {
 	

@@ -7,7 +7,7 @@ import starling.animation.IAnimatable;
 import starling.display.Image;
 import starling.textures.Texture;
 
-using flatomo.SectionTools;
+using flatomo.display.SectionTools;
 
 /**
  * 連続したビットマップとセクションで構成されるアニメーション機能を提供する。
@@ -31,16 +31,16 @@ class Animation extends Image implements ILayoutAdjusted implements IAnimatable 
 		}
 		
 		super(textures[0]);
+		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
-		this.layouts = layouts;
 		this.textures = textures;
 		this.playhead = new Playhead(update, sections);
 	}
 	
-	public var layoutPropertiesOverwrited:Bool;
-	public var visiblePropertyOverwrited:Bool;
-	public var layouts:Vector<Layout>;
+	private var layouts:Vector<Layout>;
+	private var layoutPropertiesOverwrited:Bool;
+	private var visiblePropertyOverwrited:Bool;
 	
 	/** テクスチャ */
 	private var textures:flash.Vector<Texture>;

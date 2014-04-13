@@ -1,4 +1,5 @@
 package flatomo;
+
 import flash.text.TextFormat;
 import haxe.ds.Vector.Vector;
 
@@ -8,8 +9,7 @@ enum Meta {
 	/**
 	 * @param layouts コンテナの直接の子の配置情報
 	 */
-	Container(children:Map</*InstanceName*/String, { path:String, layouts:Vector<Layout> }>, sections:Array<Section>);
-	//Container(children:Array<{ key:String, instanceName:String }>, layouts:Vector<Layout>, sections:Array<Section>);
+	Container(children:Map<InstanceName, { path:String, layouts:Vector<Layout> }>, sections:Array<Section>);
 	Image(pivotX:Float, pivotY:Float);
 	TextField(width:Int, height:Int, text:String, textFormat:TextFormat);
 }

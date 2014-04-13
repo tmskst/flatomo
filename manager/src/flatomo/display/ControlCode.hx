@@ -1,4 +1,4 @@
-package flatomo;
+package flatomo.display;
 
 /** 再生ヘッドを制御するための制御コードの列挙。 */
 enum ControlCode {

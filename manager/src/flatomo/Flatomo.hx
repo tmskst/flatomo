@@ -1,8 +1,9 @@
 package flatomo;
 
-import flash.display.BitmapData;
 import flash.display.DisplayObject;
-import flash.xml.XML;
+import flatomo.creator.AtlasGenerator;
+import flatomo.creator.Creator;
+import flatomo.creator.RawTextureAtlas;
 import flatomo.Meta;
 
 class Flatomo {

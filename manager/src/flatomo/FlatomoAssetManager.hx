@@ -1,8 +1,7 @@
 package flatomo;
 
-import flash.display.BitmapData;
 import flash.text.TextFormatAlign;
-import flash.xml.XML;
+import flatomo.creator.RawTextureAtlas;
 import flatomo.display.Animation;
 import flatomo.display.Container;
 import flatomo.display.FlatomoImage;
@@ -75,13 +74,6 @@ class FlatomoAssetManager {
 					object.name = instanceName;
 					objects.push(object);
 				}
-				/*
-				for (child in children) {
-					var object = create(child.key);
-					object.name = child.instanceName;
-					objects.push(object);
-				}
-				*/
 				return new Container(layouts, objects, sections);
 			/* TextField */
 			case Meta.TextField(width, height, text, textFormat) : 

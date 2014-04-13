@@ -8,15 +8,15 @@ import starling.textures.Texture;
 
 class FlatomoImage extends Image implements ILayoutAdjusted {
 
-	public function new(layouts:Vector<Layout>, p1:Texture) {
-		super(p1);
+	public function new(layouts:Vector<Layout>, texture:Texture) {
+		super(texture);
+		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
-		this.layouts = layouts;
 	}
 	
-	public var layoutPropertiesOverwrited:Bool;
-	public var visiblePropertyOverwrited:Bool;
-	public var layouts:Vector<Layout>;
+	private var layouts:Vector<Layout>;
+	private var layoutPropertiesOverwrited:Bool;
+	private var visiblePropertyOverwrited:Bool;
 	
 }

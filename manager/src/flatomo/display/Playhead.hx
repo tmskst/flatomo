@@ -1,6 +1,8 @@
-package flatomo;
+package flatomo.display;
 
-using flatomo.SectionTools;
+import flatomo.Section;
+
+using flatomo.display.SectionTools;
 
 /** セクション情報に対応した再生ヘッド */
 class Playhead {
