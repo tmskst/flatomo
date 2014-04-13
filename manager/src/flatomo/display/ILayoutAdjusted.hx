@@ -3,8 +3,16 @@ package flatomo.display;
 import haxe.ds.Vector;
 import flatomo.Layout;
 
-@:allow(flatomo.display.LayoutAdjustedTools)
 interface ILayoutAdjusted {
-	private var locked:Bool;
+	/* Layout */
+	private var x:Float;
+	private var y:Float;
+	private var rotation:Float;
+	private var scaleX:Float;
+	private var scaleY:Float;
+	private var visible:Bool;
+	
+	private var layoutPropertiesOverwrited:Bool;
+	private var visiblePropertyOverwrited:Bool;
 	private var layouts:Vector<Layout>;
 }

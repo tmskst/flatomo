@@ -29,7 +29,8 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 	@:allow(flatomo.FlatomoAssetManager)
 	private function new(layouts:Vector<Layout>, displayObjects:Array<DisplayObject>, sections:Array<Section>) {
 		super();
-		this.locked = false;
+		this.layoutPropertiesOverwrited = false;
+		this.visiblePropertyOverwrited = false;
 		this.layouts = layouts;
 		this.playhead = new Playhead(update, sections);
 		
@@ -41,8 +42,9 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		}
 	}
 	
-	private var locked:Bool;
-	private var layouts:Vector<Layout>;
+	public var layoutPropertiesOverwrited:Bool;
+	public var visiblePropertyOverwrited:Bool;
+	public var layouts:Vector<Layout>;
 	
 	/** 再生ヘッド */
 	public var playhead(default, null):Playhead;
@@ -58,16 +60,19 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 	/** 自身（表示オブジェクト）の更新 */
 	private function update():Void {
 		// すべての表示オブジェクトを不可視状態にする。
+		/*
 		for (index in 0...numChildren) {
 			this.getChildAt(index).visible = false;
 		}
-		
+		*/
 		for (childIndex in 0...numChildren) {
 			var child = this.getChildAt(childIndex);
 			if (Std.is(child, Animation)) {
 				cast (child, IAnimatable).advanceTime(1.0);
 			}
-			LayoutAdjustedTools.update(cast child, playhead.currentFrame);
+			if (Std.is(child, ILayoutAdjusted)) {
+				LayoutAdjustedTools.update(cast child, playhead.currentFrame);
+			}
 		}
 		
 		/*

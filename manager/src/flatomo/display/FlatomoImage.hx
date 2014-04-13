@@ -10,11 +10,13 @@ class FlatomoImage extends Image implements ILayoutAdjusted {
 
 	public function new(layouts:Vector<Layout>, p1:Texture) {
 		super(p1);
-		this.locked = false;
+		this.layoutPropertiesOverwrited = false;
+		this.visiblePropertyOverwrited = false;
 		this.layouts = layouts;
 	}
 	
-	private var locked:Bool;
-	private var layouts:Vector<Layout>;
+	public var layoutPropertiesOverwrited:Bool;
+	public var visiblePropertyOverwrited:Bool;
+	public var layouts:Vector<Layout>;
 	
 }

@@ -1,6 +1,8 @@
 package flatomo.display;
 
 import flatomo.display.ILayoutAdjusted;
+import flatomo.Layout;
+import haxe.ds.Vector;
 import starling.animation.IAnimatable;
 import starling.display.Image;
 import starling.textures.Texture;
@@ -29,14 +31,16 @@ class Animation extends Image implements ILayoutAdjusted implements IAnimatable 
 		}
 		
 		super(textures[0]);
-		this.locked = false;
+		this.layoutPropertiesOverwrited = false;
+		this.visiblePropertyOverwrited = false;
 		this.layouts = layouts;
 		this.textures = textures;
 		this.playhead = new Playhead(update, sections);
 	}
 	
-	private var locked:Bool;
-	private var layouts:haxe.ds.Vector<Layout>;
+	public var layoutPropertiesOverwrited:Bool;
+	public var visiblePropertyOverwrited:Bool;
+	public var layouts:Vector<Layout>;
 	
 	/** テクスチャ */
 	private var textures:flash.Vector<Texture>;
