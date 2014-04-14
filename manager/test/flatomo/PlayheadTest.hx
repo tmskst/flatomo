@@ -1,5 +1,6 @@
 package flatomo;
-import flatomo.Playhead;
+
+import flatomo.display.Playhead;
 import flatomo.SectionKind;
 import massive.munit.Assert;
 

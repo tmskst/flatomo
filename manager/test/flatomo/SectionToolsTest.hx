@@ -1,7 +1,7 @@
 package flatomo;
-import flatomo.ControlCode;
+import flatomo.display.ControlCode;
 import flatomo.SectionKind;
-import flatomo.SectionTools;
+import flatomo.display.SectionTools;
 import massive.munit.Assert;
 
 class SectionToolsTest {
