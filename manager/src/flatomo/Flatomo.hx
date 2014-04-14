@@ -1,9 +1,9 @@
 package flatomo;
 
 import flash.display.DisplayObject;
-import flatomo.creator.AtlasGenerator;
-import flatomo.creator.Creator;
-import flatomo.creator.RawTextureAtlas;
+import flatomo.translator.AtlasGenerator;
+import flatomo.translator.Translator;
+import flatomo.translator.RawTextureAtlas;
 import flatomo.Meta;
 
 class Flatomo {
@@ -14,7 +14,7 @@ class Flatomo {
 	 * @param	classes 解析する（表示オブジェクトを親に持つ）クラスの列挙
 	 */
 	public static function createTextureAtlas(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ atlases:Array<RawTextureAtlas>, metaData:Map<String, Meta>} {
-		var source = Creator.create(library, classes);
+		var source = Translator.create(library, classes);
 		var atlases = AtlasGenerator.generate(source.images);
 		return { atlases: atlases, metaData: source.meta };
 	}

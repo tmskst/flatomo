@@ -1,7 +1,7 @@
 package flatomo;
 
 import flash.text.TextFormatAlign;
-import flatomo.creator.RawTextureAtlas;
+import flatomo.translator.RawTextureAtlas;
 import flatomo.display.Animation;
 import flatomo.display.Container;
 import flatomo.display.FlatomoImage;

@@ -1,4 +1,4 @@
-package flatomo.creator;
+package flatomo.translator;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -9,7 +9,7 @@ import flatomo.InstanceName;
 import haxe.ds.Vector;
 
 using Lambda;
-using flatomo.creator.Creator.DisplayObjectTools;
+using flatomo.translator.Translator.DisplayObjectTools;
 
 private enum DisplayObjectType {
 	Animation;
@@ -19,7 +19,7 @@ private enum DisplayObjectType {
 }
 
 @:allow(flatomo.Flatomo)
-class Creator {
+class Translator {
 	
 	/**
 	 * 表示オブジェクトを解析してテクスチャとメタデータを生成します
@@ -27,7 +27,7 @@ class Creator {
 	 * @param	classes 解析する（表示オブジェクトを親に持つ）クラスの列挙
 	 */
 	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<RawTexture>, meta:Map<String, Meta> } {
-		var creator:Creator = new Creator(library);
+		var creator:Translator = new Translator(library);
 		for (clazz in classes) {
 			// 表示オブジェクトのインスタンスを生成して解析をする
 			creator.translate(Type.createInstance(clazz, []), "F:" + Type.getClassName(clazz));

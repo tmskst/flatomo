@@ -1,4 +1,4 @@
-package flatomo.creator;
+package flatomo.translator;
 
 import flash.display.BitmapData;
 import flash.geom.Rectangle;

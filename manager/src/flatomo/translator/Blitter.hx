@@ -1,4 +1,4 @@
-package flatomo.creator;
+package flatomo.translator;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
