@@ -7,7 +7,8 @@ import starling.text.TextField;
 
 class FlatomoTextField extends TextField implements ILayoutAdjusted {
 	
-	public function new(layouts:Vector<Layout>, width:Int, height:Int, text:String, fontName:String, ?fontSize:Float = 12, ?color:UInt = 0x0, ?bold:Bool = false) {
+	@:allow(flatomo.FlatomoAssetManager)
+	private function new(layouts:Vector<Layout>, width:Int, height:Int, text:String, fontName:String, ?fontSize:Float = 12, ?color:UInt = 0x0, ?bold:Bool = false) {
 		super(width, height, text, fontName, fontSize, color, bold);
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;

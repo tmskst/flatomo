@@ -8,7 +8,8 @@ import starling.textures.Texture;
 
 class FlatomoImage extends Image implements ILayoutAdjusted {
 
-	public function new(layouts:Vector<Layout>, texture:Texture) {
+	@:allow(flatomo.FlatomoAssetManager)
+	private function new(layouts:Vector<Layout>, texture:Texture) {
 		super(texture);
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
