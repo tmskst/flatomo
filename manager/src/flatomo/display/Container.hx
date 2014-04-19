@@ -64,7 +64,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		// すべての表示オブジェクトを不可視状態にする。
 		for (childIndex in 0...numChildren) {
 			var child = this.getChildAt(childIndex);
-			if (Std.is(child, Animation)) {
+			if (Std.is(child, IAnimatable)) {
 				var object:IAnimatable = cast child;
 				object.advanceTime(1.0);
 			}
