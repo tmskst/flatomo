@@ -34,7 +34,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
-		this.playhead = new Playhead(update, sections);
+		this.playhead = new Playhead(function() {}, sections);
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
 		for (object in displayObjects) {
@@ -57,6 +57,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 	 */
 	public function advanceTime(time:Float):Void {
 		playhead.advanceFrame(Std.int(time));
+		this.update();
 	}
 	
 	/** 自身（表示オブジェクト）の更新 */
@@ -65,12 +66,10 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		for (childIndex in 0...numChildren) {
 			var child = this.getChildAt(childIndex);
 			if (Std.is(child, IAnimatable)) {
-				var object:IAnimatable = cast child;
-				object.advanceTime(1.0);
+				cast(child, IAnimatable).advanceTime(1.0);
 			}
 			if (Std.is(child, ILayoutAdjusted)) {
-				var object:ILayoutAdjusted = cast child;
-				object.update(playhead.currentFrame);
+				cast(child, ILayoutAdjusted).update(playhead.currentFrame);
 			}
 		}
 		
