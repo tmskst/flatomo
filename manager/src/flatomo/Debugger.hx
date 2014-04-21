@@ -3,7 +3,7 @@ package flatomo;
 class Debugger {
 
 	#if flatomo_debug_export_atlas
-	public static function export(data: { atlases:Array<{image:flash.display.BitmapData, layout:flash.xml.XML}>, metaData:Map<String, Meta> } ):Void {
+	public static function export(data: { atlases:Array<{image:flash.display.BitmapData, layout:flash.xml.XML}>, metaData:Map<String, Posture> } ):Void {
 		var entries:List<format.zip.Data.Entry> = new List();
 		for (index in 0...data.atlases.length) {
 			var atlas = data.atlases[index];
@@ -16,10 +16,10 @@ class Debugger {
 		new flash.net.FileReference().save(output.getBytes().getData(), "atlas.zip");
 	}
 	
-	static private function ofMetadata(metadata:Map<String, Meta>) {
+	static private function ofMetadata(metadata:Map<String, Posture>) {
 		var buf = new StringBuf();
 		for (key in metadata.keys()) {
-			var value:Meta = metadata.get(key);
+			var value:Posture = metadata.get(key);
 			buf.add('${key} : ${value}\r\n');
 		}
 		return toEntry(haxe.io.Bytes.ofString(buf.toString()), "metadata.txt");

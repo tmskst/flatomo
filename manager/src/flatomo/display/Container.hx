@@ -2,6 +2,7 @@ package flatomo.display;
 
 import flatomo.display.ILayoutAdjusted;
 import flatomo.display.LayoutAdjustedTools;
+import flatomo.GpuOperator;
 import flatomo.Layout;
 import haxe.ds.Vector;
 import starling.animation.IAnimatable;
@@ -23,12 +24,12 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 	
 	/**
 	 * コンテナを生成する。
-	 * 呼び出しは flatomo.FlatomoAssetManager に制限される。
+	 * 呼び出しは flatomo.GpuOperator に制限される。
 	 * @param	displayObjects コンテナに配置される表示オブジェクトのリスト。
 	 * @param	map 「再生ヘッドの位置」と「そのフレームに配置された表示オブジェクトの配置情報のリスト」の対応関係。
 	 * @param	sections セクション情報。
 	 */
-	@:allow(flatomo.FlatomoAssetManager)
+	@:allow(flatomo.GpuOperator)
 	private function new(layouts:Vector<Layout>, displayObjects:Array<DisplayObject>, sections:Array<Section>) {
 		super();
 		this.layouts = layouts;

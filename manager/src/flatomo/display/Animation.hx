@@ -20,11 +20,11 @@ class Animation extends Image implements ILayoutAdjusted implements IAnimatable 
 	
 	/**
 	 * アニメーションを生成する。
-	 * 呼び出しは flatomo.FlatomoAssetManager に制限される。
+	 * 呼び出しは flatomo.GpuOperator に制限される。
 	 * @param	textures テクスチャ
 	 * @param	sections　セクション情報
 	 */
-	@:allow(flatomo.FlatomoAssetManager)
+	@:allow(flatomo.GpuOperator)
 	private function new(layouts:haxe.ds.Vector<Layout>, textures:flash.Vector<Texture>, sections:Array<Section>) {
 		if (textures.length == 0) {
 			throw '少なくとも一つのテクスチャが必要です。';

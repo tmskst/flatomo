@@ -4,7 +4,7 @@ import flash.text.TextFormat;
 import haxe.ds.Vector.Vector;
 
 /** 表示オブジェクトを再構築するために必要な情報 */
-enum Meta {
+enum Posture {
 	Animation(sections:Array<Section>, pivotX:Float, pivotY:Float);
 	/**
 	 * @param layouts コンテナの直接の子の配置情報

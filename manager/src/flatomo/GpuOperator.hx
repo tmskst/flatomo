@@ -1,6 +1,7 @@
 package flatomo;
 
 import flash.text.TextFormatAlign;
+import flatomo.Posture;
 import flatomo.translator.RawTextureAtlas;
 import flatomo.display.Animation;
 import flatomo.display.Container;
@@ -16,18 +17,18 @@ import starling.utils.AssetManager;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
 
-class FlatomoAssetManager {
+class GpuOperator {
 	
 	/** テクスチャアトラスとメタデータを元に FlatomoAssetManagerを生成する */
-	public static function build(source:{atlases:Array<RawTextureAtlas>, metaData:Map<String, Meta>}):FlatomoAssetManager {
+	public static function build(source:{atlases:Array<RawTextureAtlas>, metaData:Map<String, Posture>}):GpuOperator {
 		var atlases = new Array<TextureAtlas>();
 		for (atlas in source.atlases) {
 			atlases.push(new TextureAtlas(Texture.fromBitmapData(atlas.image), atlas.layout));
 		}
-		return new FlatomoAssetManager(atlases, source.metaData);
+		return new GpuOperator(atlases, source.metaData);
 	}
 	
-	public function new(atlases:Array<TextureAtlas>, meta:Map<String, Meta>) {
+	public function new(atlases:Array<TextureAtlas>, meta:Map<String, Posture>) {
 		this.manager = new AssetManager();
 		for (index in 0...atlases.length) {
 			var atlas = atlases[index];
@@ -40,7 +41,7 @@ class FlatomoAssetManager {
 	}
 	
 	private var manager:AssetManager;
-	private var meta:Map<String, Meta>;
+	private var meta:Map<String, Posture>;
 	
 	/**
 	 * クラス（Class<flash.display.DisplayObject>）に対応する
@@ -59,14 +60,14 @@ class FlatomoAssetManager {
 		var type = meta.get(key);
 		switch (type) {
 			/* Animation */
-			case Meta.Animation(sections, pivotX, pivotY) :
+			case Posture.Animation(sections, pivotX, pivotY) :
 				var textures = manager.getTextures(key);
 				var animation = new Animation(layouts, textures, sections);
 				animation.pivotX = pivotX;
 				animation.pivotY = pivotY;
 				return animation;
 			/* Container */
-			case Meta.Container(children, sections) :
+			case Posture.Container(children, sections) :
 				var objects = new Array<DisplayObject>();
 				for (instanceName in children.keys()) {
 					var child = children.get(instanceName);
@@ -76,7 +77,7 @@ class FlatomoAssetManager {
 				}
 				return new Container(layouts, objects, sections);
 			/* TextField */
-			case Meta.TextField(width, height, text, textFormat) : 
+			case Posture.TextField(width, height, text, textFormat) : 
 				var textField = new FlatomoTextField(layouts, width, height, text, textFormat.font, textFormat.size, textFormat.color, textFormat.bold);
 				textField.vAlign = VAlign.TOP;
 				textField.hAlign = switch (textFormat.align) {
@@ -86,7 +87,7 @@ class FlatomoAssetManager {
 				};
 				return textField;
 			/* Image */
-			case Meta.Image(pivotX, pivotY) :
+			case Posture.Image(pivotX, pivotY) :
 				var image = new FlatomoImage(layouts, manager.getTexture(key));
 				image.pivotX = pivotX;
 				image.pivotY = pivotY;

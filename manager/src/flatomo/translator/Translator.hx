@@ -26,7 +26,7 @@ class Translator {
 	 * @param	library ライブラリ
 	 * @param	classes 解析する（表示オブジェクトを親に持つ）クラスの列挙
 	 */
-	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<RawTexture>, meta:Map<String, Meta> } {
+	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<RawTexture>, meta:Map<String, Posture> } {
 		var creator:Translator = new Translator(library);
 		for (clazz in classes) {
 			// 表示オブジェクトのインスタンスを生成して解析をする
@@ -38,7 +38,7 @@ class Translator {
 	private function new(library:FlatomoLibrary) {
 		this.library = library;
 		this.images = new Array<RawTexture>();
-		this.meta = new Map<String, Meta>();
+		this.meta = new Map<String, Posture>();
 	}
 	
 	/* ライブラリは参照のみが許される。ライブラリが持つマップの変更は許されない。 */
@@ -46,7 +46,7 @@ class Translator {
 	/* 表示オブジェクトをビットマップデータに転写したものの列挙。 */
 	private var images:Array<RawTexture>;
 	/* 任意の表示オブジェクトを再構築するために必要な情報。 */
-	private var meta:Map<String, Meta>;
+	private var meta:Map<String, Posture>;
 	
 	
 	/**
@@ -89,7 +89,7 @@ class Translator {
 			});
 		}
 		var sections = library.metadata.get(libraryPath).sections;
-		meta.set(libraryPath, Meta.Animation(sections, -unionBounds.x, -unionBounds.y));
+		meta.set(libraryPath, Posture.Animation(sections, -unionBounds.x, -unionBounds.y));
 	}
 	
 	/**
@@ -137,7 +137,7 @@ class Translator {
 		}
 		
 		var sections = library.metadata.get(libraryPath).sections;
-		meta.set(libraryPath, Meta.Container(children, sections));
+		meta.set(libraryPath, Posture.Container(children, sections));
 	}
 	
 	
@@ -149,7 +149,7 @@ class Translator {
 	private function translateQuaImage(source:DisplayObject, libraryPath:LibraryPath):Void {
 		var bounds = Blitter.getBounds(source);
 		images.push({ name: libraryPath, image: Blitter.toBitmapData(source, bounds), frame: null });
-		meta.set(libraryPath, Meta.Image(-bounds.x, -bounds.y));
+		meta.set(libraryPath, Posture.Image(-bounds.x, -bounds.y));
 	}
 	
 	/**
@@ -158,7 +158,7 @@ class Translator {
 	 * @param	libraryPath 対象のライブラリパス
 	 */
 	private function translateTextField(source:TextField, libraryPath:LibraryPath):Void {
-		meta.set(libraryPath, Meta.TextField(Std.int(source.width), Std.int(source.height), source.text, source.getTextFormat()));
+		meta.set(libraryPath, Posture.TextField(Std.int(source.width), Std.int(source.height), source.text, source.getTextFormat()));
 	}
 	
 }
