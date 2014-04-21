@@ -20,28 +20,25 @@ import starling.utils.VAlign;
 class GpuOperator {
 	
 	/** テクスチャアトラスとメタデータを元に FlatomoAssetManagerを生成する */
-	public static function build(source:{atlases:Array<RawTextureAtlas>, metaData:Map<String, Posture>}):GpuOperator {
+	public static function build(source:{atlases:Array<RawTextureAtlas>, postures:Map<String, Posture>}):GpuOperator {
 		var atlases = new Array<TextureAtlas>();
 		for (atlas in source.atlases) {
 			atlases.push(new TextureAtlas(Texture.fromBitmapData(atlas.image), atlas.layout));
 		}
-		return new GpuOperator(atlases, source.metaData);
+		return new GpuOperator(atlases, source.postures);
 	}
 	
-	public function new(atlases:Array<TextureAtlas>, meta:Map<String, Posture>) {
+	public function new(atlases:Array<TextureAtlas>, postures:Map<String, Posture>) {
 		this.manager = new AssetManager();
 		for (index in 0...atlases.length) {
 			var atlas = atlases[index];
 			this.manager.addTextureAtlas('atlas${index}', atlas);
 		}
-		this.meta = meta;
-		for (key in meta.keys()) {
-			trace(key);
-		}
+		this.postures = postures;
 	}
 	
 	private var manager:AssetManager;
-	private var meta:Map<String, Posture>;
+	private var postures:Map<String, Posture>;
 	
 	/**
 	 * クラス（Class<flash.display.DisplayObject>）に対応する
@@ -57,7 +54,7 @@ class GpuOperator {
 	 * @return 生成（構築）された表示オブジェクト
 	 */
 	private function create(key:String, layouts:Vector<Layout>):DisplayObject {
-		var type = meta.get(key);
+		var type = postures.get(key);
 		switch (type) {
 			/* Animation */
 			case Posture.Animation(sections, pivotX, pivotY) :

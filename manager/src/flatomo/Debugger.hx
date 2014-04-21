@@ -3,26 +3,26 @@ package flatomo;
 class Debugger {
 
 	#if flatomo_debug_export_atlas
-	public static function export(data: { atlases:Array<{image:flash.display.BitmapData, layout:flash.xml.XML}>, metaData:Map<String, Posture> } ):Void {
+	public static function export(data: { atlases:Array<{image:flash.display.BitmapData, layout:flash.xml.XML}>, postures:Map<String, Posture> } ):Void {
 		var entries:List<format.zip.Data.Entry> = new List();
 		for (index in 0...data.atlases.length) {
 			var atlas = data.atlases[index];
 			entries.add(ofImage(atlas.image, 'atlas${index}.png'));
 			entries.add(ofXml(atlas.layout, 'atlas${index}.xml'));
 		}
-		entries.add(ofMetadata(data.metaData));
+		entries.add(ofPostures(data.postures));
 		var output = new haxe.io.BytesOutput();
 		new haxe.zip.Writer(output).write(entries);
 		new flash.net.FileReference().save(output.getBytes().getData(), "atlas.zip");
 	}
 	
-	static private function ofMetadata(metadata:Map<String, Posture>) {
+	static private function ofPostures(postures:Map<String, Posture>) {
 		var buf = new StringBuf();
-		for (key in metadata.keys()) {
-			var value:Posture = metadata.get(key);
+		for (key in postures.keys()) {
+			var value:Posture = postures.get(key);
 			buf.add('${key} : ${value}\r\n');
 		}
-		return toEntry(haxe.io.Bytes.ofString(buf.toString()), "metadata.txt");
+		return toEntry(haxe.io.Bytes.ofString(buf.toString()), "postures.txt");
 	}
 	
 	private static function ofXml(xml:flash.xml.XML, fileName:String):haxe.zip.Entry {
