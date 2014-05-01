@@ -1,41 +1,55 @@
 package flatomo;
 
+#if debugFlatomo
+import flash.display.BitmapData;
+import flash.display.PNGEncoderOptions;
+import flash.net.FileReference;
+import flash.xml.XML;
+import format.zip.Data.Entry;
+import haxe.crypto.Crc32;
+import haxe.io.Bytes;
+import haxe.io.BytesOutput;
+import haxe.zip.Writer;
+#end
+
+import haxe.Unserializer;
+
 class Debugger {
 
-	#if flatomo_debug_export_atlas
-	public static function export(data: { atlases:Array<{image:flash.display.BitmapData, layout:flash.xml.XML}>, postures:Map<String, Posture> } ):Void {
-		var entries:List<format.zip.Data.Entry> = new List();
+	#if debugFlatomo
+	public static function export(data:Asset):Void {
+		var entries:List<Entry> = new List();
 		for (index in 0...data.atlases.length) {
 			var atlas = data.atlases[index];
 			entries.add(ofImage(atlas.image, 'atlas${index}.png'));
 			entries.add(ofXml(atlas.layout, 'atlas${index}.xml'));
 		}
 		entries.add(ofPostures(data.postures));
-		var output = new haxe.io.BytesOutput();
-		new haxe.zip.Writer(output).write(entries);
-		new flash.net.FileReference().save(output.getBytes().getData(), "atlas.zip");
+		var output = new BytesOutput();
+		new Writer(output).write(entries);
+		new FileReference().save(output.getBytes().getData(), "atlas.zip");
 	}
 	
-	static private function ofPostures(postures:Map<String, Posture>) {
+	private static function ofPostures(postures:Map<String, Posture>) {
 		var buf = new StringBuf();
 		for (key in postures.keys()) {
 			var value:Posture = postures.get(key);
 			buf.add('${key} : ${value}\r\n');
 		}
-		return toEntry(haxe.io.Bytes.ofString(buf.toString()), "postures.txt");
+		return toEntry(Bytes.ofString(buf.toString()), "postures.txt");
 	}
 	
-	private static function ofXml(xml:flash.xml.XML, fileName:String):haxe.zip.Entry {
-		var bytes = haxe.io.Bytes.ofString(xml.toXMLString());
+	private static function ofXml(xml:XML, fileName:String):Entry {
+		var bytes = Bytes.ofString(xml.toXMLString());
 		return toEntry(bytes, fileName);
 	}
 	
-	private static function ofImage(image:flash.display.BitmapData, fileName:String):haxe.zip.Entry {
-		var bytes = haxe.io.Bytes.ofData(image.encode(image.rect, new flash.display.PNGEncoderOptions()));
+	private static function ofImage(image:BitmapData, fileName:String):Entry {
+		var bytes = Bytes.ofData(image.encode(image.rect, new PNGEncoderOptions()));
 		return toEntry(bytes, fileName);
 	}
 	
-	private static function toEntry(bytes:haxe.io.Bytes, fileName:String):haxe.zip.Entry {
+	private static function toEntry(bytes:Bytes, fileName:String):Entry {
 		return {
 			fileName : fileName,
 			fileSize : bytes.length,
@@ -43,15 +57,15 @@ class Debugger {
 			compressed : false,
 			dataSize : 0,
 			data : bytes,
-			crc32 : haxe.crypto.Crc32.make(bytes),
+			crc32 : Crc32.make(bytes),
 			extraFields : new List()
 		};
 	}
 	#end
 	
 	public static function decode(flatomo:String):String {
-		var buf:StringBuf = new StringBuf();
-		var data:FlatomoLibrary = haxe.Unserializer.run(flatomo);
+		var buf = new StringBuf();
+		var data:FlatomoLibrary = Unserializer.run(flatomo);
 		
 		buf.add('# extendedItems:Map<ItemPath, FlatomoItem>\r\n');
 		for (key in data.extendedItems.keys()) {
