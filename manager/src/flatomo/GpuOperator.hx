@@ -20,7 +20,7 @@ import starling.utils.VAlign;
 class GpuOperator {
 	
 	/** テクスチャアトラスとメタデータを元に FlatomoAssetManagerを生成する */
-	public static function build(source:{atlases:Array<RawTextureAtlas>, postures:Map<String, Posture>}):GpuOperator {
+	public static function build(source:Asset):GpuOperator {
 		var atlases = new Array<TextureAtlas>();
 		for (atlas in source.atlases) {
 			atlases.push(new TextureAtlas(Texture.fromBitmapData(atlas.image), atlas.layout));
