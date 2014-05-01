@@ -2,7 +2,7 @@ package flatomo.extension;
 
 import flatomo.FlatomoItem;
 import flatomo.FlatomoLibrary;
-import flatomo.LibraryPath;
+import flatomo.ItemPath;
 import jsfl.Document;
 import jsfl.Element;
 import jsfl.ElementType;
@@ -58,62 +58,62 @@ private class FlatomoLibraryCreator {
 	
 	private function new() {
 		this.id = 0;
-		this.metadata = new Map<LibraryPath, FlatomoItem>();
-		this.libraryPaths = new Map<String, LibraryPath>();
+		this.metadata = new Map<ItemPath, FlatomoItem>();
+		this.itemPaths = new Map<String, ItemPath>();
 	}
 	
 	private var id:Int;
 	
 	/** ライブラリパスとFlatomoItem（アニメーション指定とセクション情報）の対応関係 */
-	private var metadata:Map<LibraryPath, FlatomoItem>;
+	private var metadata:Map<ItemPath, FlatomoItem>;
 	
-	private var libraryPaths:Map<String, LibraryPath>;
+	private var itemPaths:Map<String, ItemPath>;
 	
 	private function createFlatomoLibrary(library:Library):FlatomoLibrary {
 		// ライブラリ項目すべてについて走査
 		library.scan_allSymbolItem(function (item:SymbolItem) {
-			var libraryPath:String = getLibraryPath(item);
+			var itemPath:String = getItemPath(item);
 			var flatomoItem:FlatomoItem = item.getFlatomoItem();
 			// TODO : getFlatomoItem は NullObjectを返しても良いかも
 			if (flatomoItem == null) {
 				var sections = SectionCreator.fetchSections(item.timeline);
 				flatomoItem = { sections: sections, animation: false };
 			}
-			metadata.set(libraryPath, flatomoItem);
+			metadata.set(itemPath, flatomoItem);
 			
 			// すべての Elementについて走査
 			item.timeline.scan_allElement(function (element:Element) {
-				analyzeElement(element, libraryPath);
+				analyzeElement(element, itemPath);
 			});
 		});
-		return { metadata : metadata, libraryPaths : libraryPaths };
+		return { metadata : metadata, itemPaths : itemPaths };
 	}
 	
-	private function analyzeElement(element:Element, libraryPath:LibraryPath):Void {
+	private function analyzeElement(element:Element, itemPath:ItemPath):Void {
 		switch (element.elementType) {
 			case ElementType.SHAPE : 
 				var shape:Shape = cast element;
 				if (shape.isGroup) {
 					for (member in shape.members) {
-						analyzeElement(member, libraryPath);
+						analyzeElement(member, itemPath);
 					}
 				}
 			case ElementType.INSTANCE :
 				var instance:Instance = cast element;
-				setLibraryPath(libraryPath, instance, getLibraryPath(instance.libraryItem));
+				setItemPath(itemPath, instance, getItemPath(instance.libraryItem));
 			case ElementType.TEXT : 
 				var text:Text = cast element;
 				if (text.textType != TextType.STATIC) {
-					setLibraryPath(libraryPath, element, "TextField");
+					setItemPath(itemPath, element, "TextField");
 				}
 		}
 	}
 	
-	private function setLibraryPath(libraryPath:String, element:Element, libPath:LibraryPath):Void {
+	private function setItemPath(itemPath:String, element:Element, path:ItemPath):Void {
 		if (element.name == "") {
 			element.name = '_FLATOMO_SYMBOL_INSTANCE_${id++}_';
 		}
-		libraryPaths.set(libraryPath + "#" + element.name, libPath);
+		itemPaths.set(itemPath + "#" + element.name, path);
 	}
 	
 	/**
@@ -122,7 +122,7 @@ private class FlatomoLibraryCreator {
 	 * @return ライブラリ項目から取り出したライブラリパス。
 	 * リンケージ設定が有効な場合は、'PREFIX + FQCN'。無効であれば、'Item.name'。
 	 */
-	private static function getLibraryPath(item:Item):String {
+	private static function getItemPath(item:Item):String {
 		return if (item.linkageExportForAS) "F:" + item.linkageClassName else item.name;
 	}
 	

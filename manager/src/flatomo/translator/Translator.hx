@@ -172,7 +172,7 @@ class DisplayObjectTools {
 	 * @return 対象をインスタンス化するために使用されたライブラリパス
 	 */
 	public static function fetchItemPath(instance:flash.display.DisplayObject, parentItemPath:ItemPath, library:FlatomoLibrary):ItemPath {
-		return library.libraryPaths.get(parentItemPath + "#" + instance.name);
+		return library.itemPaths.get(parentItemPath + "#" + instance.name);
 	}
 	
 	/** 表示オブジェクトが属するDisplayObjectTypeを返します。 */

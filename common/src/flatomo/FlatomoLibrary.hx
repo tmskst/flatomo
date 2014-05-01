@@ -15,5 +15,5 @@ typedef FlatomoLibrary = {
 	 * そのエレメントをインスタンス化するために使われたライブラリアイテムのパスの組。
 	 * 例えば、'F:MyMovie#_FLATOMO_SYMBOL_INSTANCE_261_ => 500x500' など。
 	 */
-	var libraryPaths:Map<ElementPath, ItemPath>;
+	var itemPaths:Map<ElementPath, ItemPath>;
 }

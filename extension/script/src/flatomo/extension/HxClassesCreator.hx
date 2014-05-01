@@ -1,7 +1,7 @@
 package flatomo.extension;
 
 import flatomo.FlatomoItem;
-import flatomo.LibraryPath;
+import flatomo.ItemPath;
 import haxe.Resource;
 import haxe.Template;
 
@@ -23,15 +23,15 @@ private typedef Salt = {
 
 class HxClassesCreator {
 	
-	public static function export(data: { metadata:Map<LibraryPath, FlatomoItem> , libraryPaths:Map<String, LibraryPath> } ):Array<{ name:String, value:String }> {
+	public static function export(data: { metadata:Map<ItemPath, FlatomoItem> , itemPaths:Map<String, ItemPath> } ):Array<{ name:String, value:String }> {
 		var externs = new Array<{ name:String, value:String }>();
 		var template = new Template(Resource.getString("template"));
-		for (libraryPath in data.metadata.keys()) {
-			var item = data.metadata.get(libraryPath);
+		for (itemPath in data.metadata.keys()) {
+			var item = data.metadata.get(itemPath);
 			var salt:Salt = {
-				CLASS_NAME	: "F" + getClassName(libraryPath),
+				CLASS_NAME	: "F" + getClassName(itemPath),
 				SUPER_CLASS_NAME	: if (item.animation) "flatomo.display.Animation" else "flatomo.display.Container",
-				FIELDS		: getFields(libraryPath, data.libraryPaths),
+				FIELDS		: getFields(itemPath, data.itemPaths),
 				SECTIONS	: getSections(item),
 				API_NAME	: if (item.animation) "animationApi" else "containerApi",
 			}
@@ -42,17 +42,17 @@ class HxClassesCreator {
 	
 	/**
 	 * ライブラリパスからクラス名（型の名前）を抽出します
-	 * @param	libraryPath ライブラリパス
+	 * @param	itemPath ライブラリパス
 	 * @return クラス名（型の名前）
 	 */
-	private static function getClassName(libraryPath:String):String {
+	private static function getClassName(itemPath:String):String {
 		// 正規化したライブラリパスについて、後ろからはじめて現れるピリオドまで。
-		var fqcn = getFQCN(libraryPath);
+		var fqcn = getFQCN(itemPath);
 		return fqcn.substring(fqcn.lastIndexOf(".") + 1);
 	}
 	
 	/** ライブラリパスを正規化します */
-	private static function getFQCN(libraryPath:String):String {
+	private static function getFQCN(itemPath:String):String {
 		/*
 		 * 1. PREFIX 'F:' を削除
 		 * 2. URLエンコードされたライブラリパスについて
@@ -61,7 +61,7 @@ class HxClassesCreator {
 		 * 	3. '/' -> '____'
 		 * 	4. '-' -> '_h'
 		 */
-		var name = ~/^F:/.replace(libraryPath, "");
+		var name = ~/^F:/.replace(itemPath, "");
 			name = StringTools.urlEncode(name);
 			name = ~/_/g.replace(name, "__");
 			name = ~/%/g.replace(name, "_p");
@@ -70,16 +70,16 @@ class HxClassesCreator {
 	}
 	
 	/** フィールドを生成します */
-	private static function getFields(targetLibraryPath:String, libraryPaths:Map<String, LibraryPath>):Fields {
+	private static function getFields(targetItemPath:String, itemPaths:Map<String, ItemPath>):Fields {
 		var fields = new Fields();
-		for (libraryPath in libraryPaths.keys()) {
+		for (itemPath in itemPaths.keys()) {
 			// ライブラリパスを比較して自身の子のみを走査する
-			if (StringTools.startsWith(libraryPath, targetLibraryPath)) {
-				var instanceName = libraryPath.substring(libraryPath.indexOf("#") + 1);
+			if (StringTools.startsWith(itemPath, targetItemPath)) {
+				var instanceName = itemPath.substring(itemPath.indexOf("#") + 1);
 				// インスタンス名が 'PREFIX : _FLATOMO_SYMBOL_INSTANCE_' のときは、
 				// 子にアクセスできない（する必要がない）ためフィールドは作らない
 				if (StringTools.startsWith(instanceName, "_FLATOMO_SYMBOL_INSTANCE_")) { continue; }
-				var className = "F" + getClassName(libraryPaths.get(libraryPath));
+				var className = "F" + getClassName(itemPaths.get(itemPath));
 				fields.push({ NAME : instanceName, CLASS_NAME : className }); 
 			}
 		}

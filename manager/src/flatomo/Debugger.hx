@@ -57,9 +57,9 @@ class Debugger {
 		for (key in data.metadata.keys()) {
 			buf.add('${key} : ${data.metadata.get(key)}\r\n');
 		}
-		buf.add('# libraryPaths:Map<ElementPath, ItemPath>\r\n');
-		for (key in data.libraryPaths.keys()) {
-			buf.add('${key} : ${data.libraryPaths.get(key)}\r\n');
+		buf.add('# itemPaths:Map<ElementPath, ItemPath>\r\n');
+		for (key in data.itemPaths.keys()) {
+			buf.add('${key} : ${data.itemPaths.get(key)}\r\n');
 		}
 		return buf.toString();
 	}
