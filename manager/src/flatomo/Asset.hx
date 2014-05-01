@@ -4,5 +4,5 @@ import flatomo.translator.RawTextureAtlas;
 
 typedef Asset = {
 	var atlases:Array<RawTextureAtlas>;
-	var postures:Map<String, Posture>;
+	var postures:Map<ItemPath, Posture>;
 }

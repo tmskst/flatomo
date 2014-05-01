@@ -28,7 +28,7 @@ class GpuOperator {
 		return new GpuOperator(atlases, source.postures);
 	}
 	
-	public function new(atlases:Array<TextureAtlas>, postures:Map<String, Posture>) {
+	public function new(atlases:Array<TextureAtlas>, postures:Map<ItemPath, Posture>) {
 		this.manager = new AssetManager();
 		for (index in 0...atlases.length) {
 			var atlas = atlases[index];
@@ -38,7 +38,7 @@ class GpuOperator {
 	}
 	
 	private var manager:AssetManager;
-	private var postures:Map<String, Posture>;
+	private var postures:Map<ItemPath, Posture>;
 	
 	/**
 	 * クラス（Class<flash.display.DisplayObject>）に対応する

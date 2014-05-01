@@ -26,7 +26,7 @@ class Translator {
 	 * @param	library ライブラリ
 	 * @param	classes 解析する（表示オブジェクトを親に持つ）クラスの列挙
 	 */
-	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<RawTexture>, postures:Map<String, Posture> } {
+	public static function create(library:FlatomoLibrary, classes:Array<Class<DisplayObject>>):{ images:Array<RawTexture>, postures:Map<ItemPath, Posture> } {
 		var creator:Translator = new Translator(library);
 		for (clazz in classes) {
 			// 表示オブジェクトのインスタンスを生成して解析をする
@@ -38,7 +38,7 @@ class Translator {
 	private function new(library:FlatomoLibrary) {
 		this.library = library;
 		this.images = new Array<RawTexture>();
-		this.postures = new Map<String, Posture>();
+		this.postures = new Map<ItemPath, Posture>();
 	}
 	
 	/* ライブラリは参照のみが許される。ライブラリが持つマップの変更は許されない。 */

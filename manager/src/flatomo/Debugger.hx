@@ -30,7 +30,7 @@ class Debugger {
 		new FileReference().save(output.getBytes().getData(), "atlas.zip");
 	}
 	
-	private static function ofPostures(postures:Map<String, Posture>) {
+	private static function ofPostures(postures:Map<ItemPath, Posture>) {
 		var buf = new StringBuf();
 		for (key in postures.keys()) {
 			var value:Posture = postures.get(key);
@@ -69,11 +69,11 @@ class Debugger {
 		
 		buf.add('# extendedItems:Map<ItemPath, FlatomoItem>\r\n');
 		for (key in data.extendedItems.keys()) {
-			buf.add('${key} : ${data.extendedItems.get(key)}\r\n');
+			buf.add('${key} => ${data.extendedItems.get(key)}\r\n');
 		}
 		buf.add('# itemPaths:Map<ElementPath, ItemPath>\r\n');
 		for (key in data.itemPaths.keys()) {
-			buf.add('${key} : ${data.itemPaths.get(key)}\r\n');
+			buf.add('${key} => ${data.itemPaths.get(key)}\r\n');
 		}
 		return buf.toString();
 	}
