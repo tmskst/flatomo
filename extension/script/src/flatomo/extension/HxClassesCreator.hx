@@ -1,6 +1,7 @@
 package flatomo.extension;
 
 import flatomo.FlatomoItem;
+import flatomo.FlatomoLibrary;
 import flatomo.ItemPath;
 import haxe.Resource;
 import haxe.Template;
@@ -23,11 +24,11 @@ private typedef Salt = {
 
 class HxClassesCreator {
 	
-	public static function export(data: { metadata:Map<ItemPath, FlatomoItem> , itemPaths:Map<String, ItemPath> } ):Array<{ name:String, value:String }> {
+	public static function export(data:FlatomoLibrary):Array<{ name:String, value:String }> {
 		var externs = new Array<{ name:String, value:String }>();
 		var template = new Template(Resource.getString("template"));
-		for (itemPath in data.metadata.keys()) {
-			var item = data.metadata.get(itemPath);
+		for (itemPath in data.extendedItems.keys()) {
+			var item = data.extendedItems.get(itemPath);
 			var salt:Salt = {
 				CLASS_NAME	: "F" + getClassName(itemPath),
 				SUPER_CLASS_NAME	: if (item.animation) "flatomo.display.Animation" else "flatomo.display.Container",

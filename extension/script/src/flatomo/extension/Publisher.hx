@@ -58,14 +58,14 @@ private class FlatomoLibraryCreator {
 	
 	private function new() {
 		this.id = 0;
-		this.metadata = new Map<ItemPath, FlatomoItem>();
+		this.extendedItems = new Map<ItemPath, FlatomoItem>();
 		this.itemPaths = new Map<String, ItemPath>();
 	}
 	
 	private var id:Int;
 	
 	/** ライブラリパスとFlatomoItem（アニメーション指定とセクション情報）の対応関係 */
-	private var metadata:Map<ItemPath, FlatomoItem>;
+	private var extendedItems:Map<ItemPath, FlatomoItem>;
 	
 	private var itemPaths:Map<String, ItemPath>;
 	
@@ -79,14 +79,14 @@ private class FlatomoLibraryCreator {
 				var sections = SectionCreator.fetchSections(item.timeline);
 				flatomoItem = { sections: sections, animation: false };
 			}
-			metadata.set(itemPath, flatomoItem);
+			extendedItems.set(itemPath, flatomoItem);
 			
 			// すべての Elementについて走査
 			item.timeline.scan_allElement(function (element:Element) {
 				analyzeElement(element, itemPath);
 			});
 		});
-		return { metadata : metadata, itemPaths : itemPaths };
+		return { extendedItems : extendedItems, itemPaths : itemPaths };
 	}
 	
 	private function analyzeElement(element:Element, itemPath:ItemPath):Void {

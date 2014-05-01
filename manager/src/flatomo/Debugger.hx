@@ -53,9 +53,9 @@ class Debugger {
 		var buf:StringBuf = new StringBuf();
 		var data:FlatomoLibrary = haxe.Unserializer.run(flatomo);
 		
-		buf.add('# metadata:Map<ItemPath, FlatomoItem>\r\n');
-		for (key in data.metadata.keys()) {
-			buf.add('${key} : ${data.metadata.get(key)}\r\n');
+		buf.add('# extendedItems:Map<ItemPath, FlatomoItem>\r\n');
+		for (key in data.extendedItems.keys()) {
+			buf.add('${key} : ${data.extendedItems.get(key)}\r\n');
 		}
 		buf.add('# itemPaths:Map<ElementPath, ItemPath>\r\n');
 		for (key in data.itemPaths.keys()) {

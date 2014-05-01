@@ -88,7 +88,7 @@ class Translator {
 				frame: new Rectangle(unionBounds.x - bounds.x, unionBounds.y - bounds.y, unionBounds.width, unionBounds.height)
 			});
 		}
-		var sections = library.metadata.get(itemPath).sections;
+		var sections = library.extendedItems.get(itemPath).sections;
 		postures.set(itemPath, Posture.Animation(sections, -unionBounds.x, -unionBounds.y));
 	}
 	
@@ -136,7 +136,7 @@ class Translator {
 			}
 		}
 		
-		var sections = library.metadata.get(itemPath).sections;
+		var sections = library.extendedItems.get(itemPath).sections;
 		postures.set(itemPath, Posture.Container(children, sections));
 	}
 	
@@ -212,7 +212,7 @@ class DisplayObjectTools {
 		// 式をひとつまとめないでください。
 		if (!Std.is(source, MovieClip)) { return false; }
 		
-		var item = library.metadata.get(itemPath);
+		var item = library.extendedItems.get(itemPath);
 		return item != null && item.animation;
 	}
 	
