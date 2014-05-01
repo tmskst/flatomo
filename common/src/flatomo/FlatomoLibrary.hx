@@ -9,11 +9,11 @@ typedef FlatomoLibrary = {
 	 * ライブラリパスと拡張ライブラリ項目の組。
 	 * 例えば、'500x500 => { animation : true, sections : [...] } ' など。
 	 */
-	var metadata:Map<LibraryPath, FlatomoItem>;
+	var metadata:Map<ItemPath, FlatomoItem>;
 	/**
 	 * 任意のエレメント(Element)のパスと
 	 * そのエレメントをインスタンス化するために使われたライブラリアイテムのパスの組。
 	 * 例えば、'F:MyMovie#_FLATOMO_SYMBOL_INSTANCE_261_ => 500x500' など。
 	 */
-	var libraryPaths:Map<ElementPath, LibraryPath>;
+	var libraryPaths:Map<ElementPath, ItemPath>;
 }

@@ -52,18 +52,18 @@ class Translator {
 	/**
 	 * 表示オブジェクトを解析して再構築に必要な情報（RawTexture, Meta）を取得します。
 	 * @param	source
-	 * @param	libraryPath
+	 * @param	itemPath
 	 */
-	private function translate(source:DisplayObject, libraryPath:String):Void {
-		// libraryPath = F:MainScene or Game/Foobar etc
-		if (postures.exists(libraryPath)) { return; }
+	private function translate(source:DisplayObject, itemPath:String):Void {
+		// itemPath = F:MainScene or Game/Foobar etc
+		if (postures.exists(itemPath)) { return; }
 		
-		var type = source.fetchDisplayObjectType(libraryPath, library);
+		var type = source.fetchDisplayObjectType(itemPath, library);
 		switch (type) {
-			case DisplayObjectType.Animation : translateQuaAnimation(cast(source, MovieClip), libraryPath);
-			case DisplayObjectType.Container : translateQuaContainer(cast(source, MovieClip), libraryPath);
-			case DisplayObjectType.TextField : translateTextField(cast(source, TextField), libraryPath);
-			case DisplayObjectType.Image : translateQuaImage(source, libraryPath);
+			case DisplayObjectType.Animation : translateQuaAnimation(cast(source, MovieClip), itemPath);
+			case DisplayObjectType.Container : translateQuaContainer(cast(source, MovieClip), itemPath);
+			case DisplayObjectType.TextField : translateTextField(cast(source, TextField), itemPath);
+			case DisplayObjectType.Image : translateQuaImage(source, itemPath);
 		}
 	}
 	
@@ -71,9 +71,9 @@ class Translator {
 	 * 表示オブジェクトをDisplayObjectType.Animationとして解析します。
 	 * フレームは適切にカットされビットマップデータに転写されます。
 	 * @param	source 対象の表示オブジェクト
-	 * @param	libraryPath ライブラリパス
+	 * @param	itemPath ライブラリパス
 	 */
-	private function translateQuaAnimation(source:MovieClip, libraryPath:LibraryPath):Void {
+	private function translateQuaAnimation(source:MovieClip, itemPath:ItemPath):Void {
 		// ソースの描画領域を計算
 		var unionBounds = Blitter.getUnionBound(source);
 		
@@ -83,13 +83,13 @@ class Translator {
 			var index = ("00000" + Std.string(frame)).substr(-5);
 			var bounds = Blitter.getBounds(source);
 			images.push( {
-				name: '${libraryPath} ${index}',
+				name: '${itemPath} ${index}',
 				image: Blitter.toBitmapData(source),
 				frame: new Rectangle(unionBounds.x - bounds.x, unionBounds.y - bounds.y, unionBounds.width, unionBounds.height)
 			});
 		}
-		var sections = library.metadata.get(libraryPath).sections;
-		postures.set(libraryPath, Posture.Animation(sections, -unionBounds.x, -unionBounds.y));
+		var sections = library.metadata.get(itemPath).sections;
+		postures.set(itemPath, Posture.Animation(sections, -unionBounds.x, -unionBounds.y));
 	}
 	
 	/**
@@ -99,7 +99,7 @@ class Translator {
 	 * コンテナ直下に配置された表示オブジェクト（直接の子）の配置情報を記録します。
 	 * @param	source 対象の表示オブジェクト
 	 */
-	private function translateQuaContainer(source:MovieClip, libraryPath:LibraryPath):Void {
+	private function translateQuaContainer(source:MovieClip, itemPath:ItemPath):Void {
 		var children = new Map<InstanceName, { path:String, layouts:Vector<Layout> }>();
 		
 		// 全フレームを走査して対象の直接の子の配置情報を収集する
@@ -110,12 +110,12 @@ class Translator {
 			for (childIndex in 0...source.numChildren) {
 				var object = source.getChildAt(childIndex);
 				if (!children.exists(object.name)) {
-					var type = object.fetchDisplayObjectType(libraryPath, library);
+					var type = object.fetchDisplayObjectType(itemPath, library);
 					var key = switch (type) {
-						case DisplayObjectType.Animation : object.fetchLibraryPath(libraryPath, library);
-						case DisplayObjectType.Container : object.fetchLibraryPath(libraryPath, library);
-						case DisplayObjectType.TextField : '${libraryPath}#${object.name}';
-						case DisplayObjectType.Image	 : '${libraryPath}#${object.name}';
+						case DisplayObjectType.Animation : object.fetchItemPath(itemPath, library);
+						case DisplayObjectType.Container : object.fetchItemPath(itemPath, library);
+						case DisplayObjectType.TextField : '${itemPath}#${object.name}';
+						case DisplayObjectType.Image	 : '${itemPath}#${object.name}';
 					};
 					children.set(object.name, {
 						path	: key,
@@ -136,8 +136,8 @@ class Translator {
 			}
 		}
 		
-		var sections = library.metadata.get(libraryPath).sections;
-		postures.set(libraryPath, Posture.Container(children, sections));
+		var sections = library.metadata.get(itemPath).sections;
+		postures.set(itemPath, Posture.Container(children, sections));
 	}
 	
 	
@@ -146,19 +146,19 @@ class Translator {
 	 * @param	source 対象の表示オブジェクト
 	 * @param	path 対象のライブラリパス
 	 */
-	private function translateQuaImage(source:DisplayObject, libraryPath:LibraryPath):Void {
+	private function translateQuaImage(source:DisplayObject, itemPath:ItemPath):Void {
 		var bounds = Blitter.getBounds(source);
-		images.push({ name: libraryPath, image: Blitter.toBitmapData(source, bounds), frame: null });
-		postures.set(libraryPath, Posture.Image(-bounds.x, -bounds.y));
+		images.push({ name: itemPath, image: Blitter.toBitmapData(source, bounds), frame: null });
+		postures.set(itemPath, Posture.Image(-bounds.x, -bounds.y));
 	}
 	
 	/**
 	 * 表示オブジェクトをDisplayObjectType.TextFieldとして解析します
 	 * @param	source 対象の表示オブジェクト
-	 * @param	libraryPath 対象のライブラリパス
+	 * @param	itemPath 対象のライブラリパス
 	 */
-	private function translateTextField(source:TextField, libraryPath:LibraryPath):Void {
-		postures.set(libraryPath, Posture.TextField(Std.int(source.width), Std.int(source.height), source.text, source.getTextFormat()));
+	private function translateTextField(source:TextField, itemPath:ItemPath):Void {
+		postures.set(itemPath, Posture.TextField(Std.int(source.width), Std.int(source.height), source.text, source.getTextFormat()));
 	}
 	
 }
@@ -171,13 +171,13 @@ class DisplayObjectTools {
 	 * @param	instance 対象
 	 * @return 対象をインスタンス化するために使用されたライブラリパス
 	 */
-	public static function fetchLibraryPath(instance:flash.display.DisplayObject, parentLibraryPath:LibraryPath, library:FlatomoLibrary):LibraryPath {
-		return library.libraryPaths.get(parentLibraryPath + "#" + instance.name);
+	public static function fetchItemPath(instance:flash.display.DisplayObject, parentItemPath:ItemPath, library:FlatomoLibrary):ItemPath {
+		return library.libraryPaths.get(parentItemPath + "#" + instance.name);
 	}
 	
 	/** 表示オブジェクトが属するDisplayObjectTypeを返します。 */
-	private static function fetchDisplayObjectType(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):DisplayObjectType {
-		if (source.isAlliedToAnimation(libraryPath, library)) {
+	private static function fetchDisplayObjectType(source:DisplayObject, itemPath:ItemPath, library:FlatomoLibrary):DisplayObjectType {
+		if (source.isAlliedToAnimation(itemPath, library)) {
 			return DisplayObjectType.Animation;
 		}
 		if (source.isAlliedToContainer()) {
@@ -204,15 +204,15 @@ class DisplayObjectTools {
 	 * 1. 対象がflash.display.MovieClipであること。
 	 * 2. 対象のアニメーション属性が有効（真）であること。
 	 * @param	source 対象の表示オブジェクト
-	 * @param	libraryPath 対象のライブラリパス
+	 * @param	itemPath 対象のライブラリパス
 	 * @param	library ライブラリ
 	 * @return 対象がアニメーションかどうか
 	 */
-	private static function isAlliedToAnimation(source:DisplayObject, libraryPath:LibraryPath, library:FlatomoLibrary):Bool {
+	private static function isAlliedToAnimation(source:DisplayObject, itemPath:ItemPath, library:FlatomoLibrary):Bool {
 		// 式をひとつまとめないでください。
 		if (!Std.is(source, MovieClip)) { return false; }
 		
-		var item = library.metadata.get(libraryPath);
+		var item = library.metadata.get(itemPath);
 		return item != null && item.animation;
 	}
 	
