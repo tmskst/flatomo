@@ -17,14 +17,14 @@ import haxe.Unserializer;
 class Debugger {
 
 	#if debugFlatomo
-	public static function export(data:Asset):Void {
+	public static function export(assetKit:AssetKit):Void {
 		var entries:List<Entry> = new List();
-		for (index in 0...data.atlases.length) {
-			var atlas = data.atlases[index];
+		for (index in 0...assetKit.atlases.length) {
+			var atlas = assetKit.atlases[index];
 			entries.add(ofImage(atlas.image, 'atlas${index}.png'));
 			entries.add(ofXml(atlas.layout, 'atlas${index}.xml'));
 		}
-		entries.add(ofPostures(data.postures));
+		entries.add(ofPostures(assetKit.postures));
 		var output = new BytesOutput();
 		new Writer(output).write(entries);
 		new FileReference().save(output.getBytes().getData(), "atlas.zip");

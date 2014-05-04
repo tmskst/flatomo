@@ -2,7 +2,7 @@ package flatomo;
 
 import flatomo.translator.RawTextureAtlas;
 
-typedef Asset = {
+typedef AssetKit = {
 	var atlases:Array<RawTextureAtlas>;
 	var postures:Map<ItemPath, Posture>;
 }

@@ -20,12 +20,12 @@ import starling.utils.VAlign;
 class GpuOperator {
 	
 	/** テクスチャアトラスとメタデータを元に FlatomoAssetManagerを生成する */
-	public static function build(source:Asset):GpuOperator {
+	public static function build(assetKit:AssetKit):GpuOperator {
 		var atlases = new Array<TextureAtlas>();
-		for (atlas in source.atlases) {
+		for (atlas in assetKit.atlases) {
 			atlases.push(new TextureAtlas(Texture.fromBitmapData(atlas.image), atlas.layout));
 		}
-		return new GpuOperator(atlases, source.postures);
+		return new GpuOperator(atlases, assetKit.postures);
 	}
 	
 	public function new(atlases:Array<TextureAtlas>, postures:Map<ItemPath, Posture>) {
