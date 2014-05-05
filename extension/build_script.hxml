@@ -56,3 +56,14 @@
 
 -main flatomo.extension.Installer
 -js script/bin/Installer.jsfl
+
+--next
+
+-D js-classic
+-cp script/src
+-cp common/src
+-cp ../common/src
+-cp script/lib/haxe-jsfl/jsfl/hxclasses
+-lib polygonal-ds
+-main flatomo.extension.Exporter
+-js script/bin/Exporter.jsfl
