@@ -20,6 +20,7 @@ class Installer {
 		copy(scriptURI + "script/bin/EnableFlatomo.jsfl", configURI + "Commands/Flatomoを有効にする.jsfl");
 		copy(scriptURI + "script/bin/DisableFlatomo.jsfl", configURI + "Commands/Flatomoを無効にする.jsfl");
 		copy(scriptURI + "script/bin/Publisher.jsfl", configURI + "Commands/Flatomo向けにパブリッシュ.jsfl");
+		copy(scriptURI + "script/bin/Exporter.jsfl", configURI + "Commands/Flatomo用スプライトシート書き出し（試験的）.jsfl");
 		
 		// Panel
 		copy(scriptURI + "script/bin/flatomo.jsfl", configURI + "WindowSWF/flatomo.jsfl");
