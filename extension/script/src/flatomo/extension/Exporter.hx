@@ -1,16 +1,16 @@
 package flatomo.extension;
 
-import de.polygonal.ds.ListSet;
-import de.polygonal.ds.Set;
+import flatomo.FlatomoItem;
+import flatomo.ItemPath;
+import haxe.Serializer;
 import haxe.Unserializer;
-import jsfl.ElementType;
-import jsfl.Instance;
+import jsfl.FLfile;
 import jsfl.Lib.fl;
+import jsfl.SpriteSheetExporter;
 import jsfl.SymbolItem;
-import jsfl.Text;
-
 
 using jsfl.TimelineTools;
+using flatomo.extension.ItemTools;
 
 class Exporter {
 
@@ -19,55 +19,60 @@ class Exporter {
 	}
 	
 	public function new() {
-		this.container = new ListSet<String>();
+		exporter = new SpriteSheetExporter();
+		exporter.algorithm = SpriteSheetExporterAlgorithm.MAX_RECTS;
+		exporter.layoutFormat = SpriteSheetExporterLayoutFormat.STARLING;
 		
-		var library = fl.getDocumentDOM().library;
+		extendedItems = new Map<ItemPath, FlatomoItem>();
+		
+		var document = fl.getDocumentDOM();
+		var library = document.library;
 		for (item in library.getSelectedItems()) {
 			analyzeItem(cast item);
 		}
 		
-		for (x in container) { fl.trace(x); }
+		var swfPath:String = document.getSWFPathFromProfile();
+		{ // *.postures を書き出す
+			var postures = new Map<ItemPath, Posture>();
+			for (key in extendedItems.keys()) {
+				var extendedItem:FlatomoItem = extendedItems.get(key);
+				postures.set(key, Posture.Animation(extendedItem.sections, 0, 0));
+			}
+			var fileUri = swfPath.substring(0, swfPath.lastIndexOf(".")) + "." + "postures";
+			FLfile.write(fileUri, Serializer.run(postures));
+		}
+		{ 
+			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("/"));
+			exporter.exportSpriteSheet(fileUri + "/" + "sprite-sheet",  { format: "png", bitDepth: 32, backgroundColor: "#00000000" }, true);
+		}
+		{ // extern定義（*.hx）を書き出す
+			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("/"));
+			var files = HxClassesCreator.export2(extendedItems);
+			for (file in files) {
+				FLfile.write(fileUri + "/" + file.name + ".hx", file.value);
+			}
+		}
+		
+		fl.trace("FIN");
 	}
 	
-	private var container:Set<String>;
+	private var exporter:SpriteSheetExporter;
+	private var extendedItems:Map<ItemPath, FlatomoItem>;
 	
 	private function analyzeItem(symbolItem:SymbolItem):Void {
-		if (container.has(symbolItem.name)) { return; }
+		var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
+		// TODO : Publisher.hx L77
+		if (extendedItem == null) {
+			var sections = SectionCreator.fetchSections(symbolItem.timeline);
+			extendedItem = { sections: sections, animation: false };
+		}
 		
-		symbolItem.timeline.scan_allElement(function (element) {
-			// 深さ優先
-			switch (element.elementType) {
-				// エレメントがシェイプならキャプチャ
-				case ElementType.SHAPE :
-					fl.trace(symbolItem.name + "#" + element.name);
-				 //エレメントがテキストならば
-				case ElementType.TEXT : 
-					var text:Text = cast element;
-					switch (text.textType) {
-						// StaticText のときだけキャプチャ
-						case TextType.STATIC :
-							fl.trace(symbolItem.name + "$" + element.name);
-						// その他のテキストは再構築するのでキャプチャ不要
-						case _ : 
-					}
-				// エレメントがインスタンスならば
-				case ElementType.INSTANCE : 
-					var instance:Instance = cast element;
-					
-					var extendedItem:FlatomoItem = if (instance.libraryItem.hasData("f_item")) {
-						Unserializer.run(instance.libraryItem.getData("f_item"));
-					} else {
-						{ sections: [], animation: false };
-					}
-					if (extendedItem.animation) {
-						fl.trace('quaAnimation : ${element.name}');
-					} else {
-						analyzeItem(cast cast(element, Instance).libraryItem);
-					}
-			}
-		});
+		if (!extendedItem.animation) {
+			throw ("#1 スプライトシート書き出しに指定するアイテムはアニメーション属性が有効でなければなりません。");
+		}
 		
-		container.set(symbolItem.name);
+		exporter.addSymbol(symbolItem);
+		extendedItems.set(symbolItem.name.split("/").pop(), extendedItem);
 	}
 	
 }

@@ -41,6 +41,23 @@ class HxClassesCreator {
 		return externs;
 	}
 	
+	public static function export2(extendedItems:Map<ItemPath, FlatomoItem>):Array<{ name:String, value:String }>  {
+		var externs = new Array<{ name:String, value:String }>();
+		var template = new Template(Resource.getString("template"));
+		for (itemPath in extendedItems.keys()) {
+			var item = extendedItems.get(itemPath);
+			var salt:Salt = {
+				CLASS_NAME	: getClassName(itemPath),
+				SUPER_CLASS_NAME	: "flatomo.display.Animation",
+				FIELDS		: null,
+				SECTIONS	: getSections(item),
+				API_NAME	: "animationApi",
+			}
+			externs.push( { name: salt.CLASS_NAME, value: template.execute(salt) } );
+		}
+		return externs;
+	}
+	
 	/**
 	 * ライブラリパスからクラス名（型の名前）を抽出します
 	 * @param	itemPath ライブラリパス
