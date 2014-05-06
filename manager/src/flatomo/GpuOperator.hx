@@ -53,7 +53,8 @@ class GpuOperator {
 	 * @param	key キー（ライブラリパス）
 	 * @return 生成（構築）された表示オブジェクト
 	 */
-	private function create(key:String, layouts:Vector<Layout>):DisplayObject {
+	// TODO : private
+	public function create(key:String, layouts:Vector<Layout>):DisplayObject {
 		var type = postures.get(key);
 		switch (type) {
 			/* Animation */
