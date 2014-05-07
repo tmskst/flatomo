@@ -42,8 +42,8 @@ class Exporter {
 			FLfile.write(fileUri, Serializer.run(postures));
 		}
 		{ 
-			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("/"));
-			exporter.exportSpriteSheet(fileUri + "/" + "sprite-sheet",  { format: "png", bitDepth: 32, backgroundColor: "#00000000" }, true);
+			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("."));
+			exporter.exportSpriteSheet(fileUri,  { format: "png", bitDepth: 32, backgroundColor: "#00000000" }, true);
 		}
 		{ // extern定義（*.hx）を書き出す
 			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("/"));
