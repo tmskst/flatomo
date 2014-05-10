@@ -54,7 +54,9 @@ class GpuOperator {
 	 * @return 生成（構築）された表示オブジェクト
 	 */
 	// TODO : private
-	public function create(key:String, layouts:Vector<Layout>):DisplayObject {
+	public function create(key:String, layouts:Vector<Layout> = null):DisplayObject {
+		if (layouts == null) { layouts = new Vector<Layout>(0); }
+		
 		var type = postures.get(key);
 		switch (type) {
 			/* Animation */
