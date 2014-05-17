@@ -2,7 +2,9 @@ package flatomo.extension;
 
 import flatomo.FlatomoItem;
 import flatomo.ItemPath;
+import haxe.Resource;
 import haxe.Serializer;
+import haxe.Template;
 import haxe.Unserializer;
 import jsfl.FLfile;
 import jsfl.Lib.fl;
@@ -52,7 +54,14 @@ class Exporter {
 				FLfile.write(fileUri + "/" + file.name + ".hx", file.value);
 			}
 		}
-		
+		{
+			var fileUri = swfPath.substring(0, swfPath.lastIndexOf(".")) + "." + "hx";
+			var tmp = swfPath.substring(0, swfPath.lastIndexOf("."));
+			var fileName:String = tmp.substring(tmp.lastIndexOf("/") + 1);
+			
+			var file = new Template(Resource.getString("template_enum")).execute({ ENUM_NAME: fileName, EXTENDED_ITEMS: extendedItems.keys() });
+			FLfile.write(fileUri, file);
+		}
 		fl.trace("FIN");
 	}
 	

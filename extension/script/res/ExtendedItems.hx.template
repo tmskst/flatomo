@@ -1,0 +1,7 @@
+package ;
+
+@:enum abstract ::ENUM_NAME::(String) {
+	::foreach EXTENDED_ITEMS::
+	var ::__current__:: = "::__current__::";
+	::end::
+}

@@ -65,6 +65,7 @@
 -cp ../common/src
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
 -resource script/res/Abstract.hx.template@template
+-resource script/res/ExtendedItems.hx.template@template_enum
 -lib polygonal-ds
 -main flatomo.extension.Exporter
 -js script/bin/Exporter.jsfl
