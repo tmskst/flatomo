@@ -77,7 +77,7 @@ class Exporter {
 		
 		{
 			var salt = { ENUM_NAME: sourceFileName, EXTENDED_ITEMS: extendedItems.keys(), PACKAGE: packageName };
-			FLfile.write(outputDirectoryPath + sourceFileName + ".hx", template.execute(salt));
+			FLfile.write(outputDirectoryPath + sourceFileName + "Items.hx", template.execute(salt));
 		}
 		
 		fl.trace("FIN");
