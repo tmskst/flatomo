@@ -1,4 +1,4 @@
-package ;
+package ::PACKAGE::;
 import ::SUPER_CLASS_NAME::;
 
 ::if (SUPER_CLASS_NAME == "flatomo.display.Container")::

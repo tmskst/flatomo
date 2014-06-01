@@ -1,4 +1,4 @@
-package ;
+package ::PACKAGE::;
 
 @:enum abstract ::ENUM_NAME::(String) {
 	::foreach EXTENDED_ITEMS::

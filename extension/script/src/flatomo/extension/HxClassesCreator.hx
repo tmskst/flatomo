@@ -20,6 +20,8 @@ private typedef Salt = {
 	var SECTIONS:Sections;
 	/* 基本型への参照を持つフィールド名（'animationApi' か'containerApi'） */
 	var API_NAME:String;
+	
+	var PACKAGE:String;
 }
 
 class HxClassesCreator {
@@ -35,13 +37,14 @@ class HxClassesCreator {
 				FIELDS		: getFields(itemPath, data.itemPaths),
 				SECTIONS	: getSections(item),
 				API_NAME	: if (item.animation) "animationApi" else "containerApi",
+				PACKAGE		: "",
 			}
 			externs.push( { name: salt.CLASS_NAME, value: template.execute(salt) } );
 		}
 		return externs;
 	}
 	
-	public static function export2(extendedItems:Map<ItemPath, FlatomoItem>):Array<{ name:String, value:String }>  {
+	public static function export2(extendedItems:Map<ItemPath, FlatomoItem>, packageName:String):Array<{ name:String, value:String }>  {
 		var externs = new Array<{ name:String, value:String }>();
 		var template = new Template(Resource.getString("template"));
 		for (itemPath in extendedItems.keys()) {
@@ -52,6 +55,7 @@ class HxClassesCreator {
 				FIELDS		: null,
 				SECTIONS	: getSections(item),
 				API_NAME	: "animationApi",
+				PACKAGE		: packageName,
 			}
 			externs.push( { name: salt.CLASS_NAME, value: template.execute(salt) } );
 		}
