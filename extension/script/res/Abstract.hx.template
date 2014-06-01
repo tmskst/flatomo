@@ -1,7 +1,9 @@
 package ;
 import ::SUPER_CLASS_NAME::;
 
+::if (SUPER_CLASS_NAME == "flatomo.display.Container")::
 private typedef FTextField = starling.text.TextField;
+::end::
 
 @:access(::SUPER_CLASS_NAME::)
 abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
@@ -14,6 +16,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	private function get_x():Float {
 		return this.x;
 	}
+	
 	private function set_x(value:Float):Float {
 		this.layoutPropertiesOverwrited = true;
 		return this.x = value;
@@ -23,6 +26,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	private function get_y():Float {
 		return this.y;
 	}
+	
 	private function set_y(value:Float):Float {
 		this.layoutPropertiesOverwrited = true;
 		return this.y = value;
@@ -32,6 +36,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	private function get_rotation():Float {
 		return this.rotation;
 	}
+	
 	private function set_rotation(value:Float):Float {
 		this.layoutPropertiesOverwrited = true;
 		return this.rotation = value;
@@ -41,6 +46,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	private function get_scaleX():Float {
 		return this.scaleX;
 	}
+	
 	private function set_scaleX(value:Float):Float {
 		this.layoutPropertiesOverwrited = true;
 		return this.scaleX = value;
@@ -50,6 +56,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	private function get_scaleY():Float {
 		return this.scaleY;
 	}
+	
 	private function set_scaleY(value:Float):Float {
 		this.layoutPropertiesOverwrited = true;
 		return this.scaleY = value;
@@ -59,6 +66,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	private function get_visible():Bool {
 		return this.visible;
 	}
+	
 	private function set_visible(value:Bool):Bool {
 		this.visiblePropertyOverwrited = true;
 		return this.visible = value;
