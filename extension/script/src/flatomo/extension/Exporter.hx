@@ -43,8 +43,8 @@ class Exporter {
 		}
 		
 		var outputDirectoryPath:String, sourceFileName:String;
-			var swfPath = document.getSWFPathFromProfile();
 		{
+			var swfPath = document.getSWFPathFromProfile();
 			outputDirectoryPath = swfPath.substring(0, swfPath.lastIndexOf("/")) + "/";
 			if (packageName != "") {
 				outputDirectoryPath += ~/\./g.replace(packageName, "/")  + "/";
@@ -54,7 +54,7 @@ class Exporter {
 		}
 		FLfile.createFolder(outputDirectoryPath);
 		
-		{ // *.postures を書き出す
+		{ // *.pos を書き出す
 			var postures = new Map<ItemPath, Posture>();
 			for (key in extendedItems.keys()) {
 				var extendedItem:FlatomoItem = extendedItems.get(key);
