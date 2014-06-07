@@ -5,8 +5,8 @@ import flatomo.ItemPath;
 import haxe.Resource;
 import haxe.Serializer;
 import haxe.Template;
-import haxe.Unserializer;
 import jsfl.FLfile;
+import jsfl.LayerType;
 import jsfl.Lib;
 import jsfl.Lib.fl;
 import jsfl.SpriteSheetExporter;
@@ -14,6 +14,17 @@ import jsfl.SymbolItem;
 
 using jsfl.TimelineTools;
 using flatomo.extension.ItemTools;
+
+private typedef LayerName = String;
+private typedef Marker = {
+	var x:Float;
+	var y:Float;
+	var width:Float;
+	var height:Float;
+	var rotation:Float;
+	var scaleX:Float;
+	var scaleY:Float;
+};
 
 class Exporter {
 
@@ -30,6 +41,8 @@ class Exporter {
 		exporter.layoutFormat = SpriteSheetExporterLayoutFormat.STARLING;
 		
 		extendedItems = new Map<ItemPath, FlatomoItem>();
+		markers = new Map<ItemPath, Map<LayerName, Map<Int, Marker>>>();
+		
 		
 		var template = new Template(Resource.getString("template_enum"));
 		
@@ -63,6 +76,10 @@ class Exporter {
 			FLfile.write(outputDirectoryPath + sourceFileName + ".pos", Serializer.run(postures));
 		}
 		
+		{
+			FLfile.write(outputDirectoryPath + sourceFileName + ".mks", Serializer.run(markers));
+		}
+		
 		{ 
 			var imageFormat = { format: "png", bitDepth: 32, backgroundColor: "#00000000" };
 			exporter.exportSpriteSheet(outputDirectoryPath + sourceFileName, imageFormat, true);
@@ -85,6 +102,7 @@ class Exporter {
 	
 	private var exporter:SpriteSheetExporter;
 	private var extendedItems:Map<ItemPath, FlatomoItem>;
+	private var markers:Map<ItemPath, Map<LayerName, Map<Int, Marker>>>;
 	
 	private function analyzeItem(symbolItem:SymbolItem):Void {
 		var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
@@ -100,6 +118,28 @@ class Exporter {
 		
 		exporter.addSymbol(symbolItem);
 		extendedItems.set(symbolItem.name.split("/").pop(), extendedItem);
+		
+		var m1 = new Map<LayerName, Map<Int, Marker>>();
+		
+		for (layer in symbolItem.timeline.layers) {
+			if (layer.layerType == LayerType.GUIDE && StringTools.startsWith(layer.name, "marker_")) {
+				var m2 = new Map<Int, Marker>();
+				for (f in 0...layer.frameCount) {
+					var frame = layer.frames[f];
+					for (element in frame.elements) {
+						var marker:Marker = {
+							x: element.x, y: element.y,
+							width: element.width, height: element.height,
+							rotation: element.rotation,
+							scaleX: element.scaleX, scaleY: element.scaleY,
+						};
+						m2.set(f, marker);
+					}
+				}
+				m1.set(layer.name, m2);
+			}
+		}
+		markers.set(symbolItem.name, m1);
 	}
 	
 }
