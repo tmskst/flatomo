@@ -39,12 +39,10 @@ class Exporter {
 		exporter = new SpriteSheetExporter();
 		exporter.algorithm = SpriteSheetExporterAlgorithm.MAX_RECTS;
 		exporter.layoutFormat = SpriteSheetExporterLayoutFormat.STARLING;
+		exporter.borderPadding = 2;
 		
 		extendedItems = new Map<ItemPath, FlatomoItem>();
 		markers = new Map<ItemPath, Map<LayerName, Map<Int, Marker>>>();
-		
-		
-		var template = new Template(Resource.getString("template_enum"));
 		
 		var document = fl.getDocumentDOM();
 		var library = document.library;
@@ -56,7 +54,7 @@ class Exporter {
 		}
 		
 		var outputDirectoryPath:String, sourceFileName:String;
-		{
+		{ // outputDirectoryPath, sourceFileName を初期化
 			var swfPath = document.getSWFPathFromProfile();
 			outputDirectoryPath = swfPath.substring(0, swfPath.lastIndexOf("/")) + "/";
 			if (packageName != "") {
@@ -64,8 +62,8 @@ class Exporter {
 			}
 			var path = swfPath.substring(0, swfPath.lastIndexOf("."));
 			sourceFileName = path.substring(path.lastIndexOf("/") + 1);
+			FLfile.createFolder(outputDirectoryPath);
 		}
-		FLfile.createFolder(outputDirectoryPath);
 		
 		{ // *.pos を書き出す
 			var postures = new Map<ItemPath, Posture>();
@@ -76,11 +74,11 @@ class Exporter {
 			FLfile.write(outputDirectoryPath + sourceFileName + ".pos", Serializer.run(postures));
 		}
 		
-		{
+		{ // *.mks を書き出す
 			FLfile.write(outputDirectoryPath + sourceFileName + ".mks", Serializer.run(markers));
 		}
 		
-		{ 
+		{ // スプライトシートの書き出し
 			var imageFormat = { format: "png", bitDepth: 32, backgroundColor: "#00000000" };
 			exporter.exportSpriteSheet(outputDirectoryPath + sourceFileName, imageFormat, true);
 		}
@@ -92,12 +90,11 @@ class Exporter {
 			}
 		}
 		
-		{
+		{ // ExtendedItems の列挙
 			var salt = { ENUM_NAME: sourceFileName, EXTENDED_ITEMS: extendedItems.keys(), PACKAGE: packageName };
-			FLfile.write(outputDirectoryPath + sourceFileName + "Items.hx", template.execute(salt));
+			FLfile.write(outputDirectoryPath + sourceFileName + "Items.hx", new Template(Resource.getString("template_enum")).execute(salt));
 		}
 		
-		fl.trace("FIN");
 	}
 	
 	private var exporter:SpriteSheetExporter;
@@ -110,10 +107,6 @@ class Exporter {
 		if (extendedItem == null) {
 			var sections = SectionCreator.fetchSections(symbolItem.timeline);
 			extendedItem = { sections: sections, animation: false };
-		}
-		
-		if (!extendedItem.animation) {
-			throw ("#1 スプライトシート書き出しに指定するアイテムはアニメーション属性が有効でなければなりません。");
 		}
 		
 		exporter.addSymbol(symbolItem);
