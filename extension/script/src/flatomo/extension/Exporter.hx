@@ -42,6 +42,7 @@ class Exporter {
 		exporter.borderPadding = 2;
 		
 		extendedItems = new Map<ItemPath, FlatomoItem>();
+		postures = new Map<ItemPath, Posture>();
 		markers = new Map<ItemPath, Map<LayerName, Map<Int, Marker>>>();
 		
 		var document = fl.getDocumentDOM();
@@ -66,11 +67,6 @@ class Exporter {
 		}
 		
 		{ // *.pos を書き出す
-			var postures = new Map<ItemPath, Posture>();
-			for (key in extendedItems.keys()) {
-				var extendedItem:FlatomoItem = extendedItems.get(key);
-				postures.set(key, Posture.Animation(extendedItem.sections, 0, 0));
-			}
 			FLfile.write(outputDirectoryPath + sourceFileName + ".pos", Serializer.run(postures));
 		}
 		
@@ -99,6 +95,7 @@ class Exporter {
 	
 	private var exporter:SpriteSheetExporter;
 	private var extendedItems:Map<ItemPath, FlatomoItem>;
+	private var postures:Map<ItemPath, Posture>;
 	private var markers:Map<ItemPath, Map<LayerName, Map<Int, Marker>>>;
 	
 	private function analyzeItem(symbolItem:SymbolItem):Void {
@@ -110,7 +107,14 @@ class Exporter {
 		}
 		
 		exporter.addSymbol(symbolItem);
-		extendedItems.set(symbolItem.name.split("/").pop(), extendedItem);
+		var extendedItemPath = symbolItem.name.split("/").pop();
+		extendedItems.set(extendedItemPath, extendedItem);
+		
+		var unionBounds = TimelineTools.getUnionBounds(symbolItem.timeline, false, false);
+		postures.set(extendedItemPath, Posture.Animation(extendedItem.sections, Math.ceil(-unionBounds.left), Math.ceil(-unionBounds.top)));
+		fl.trace(Math.ceil( -unionBounds.left));
+		fl.trace(Math.ceil( -unionBounds.top));
+		
 		
 		var m1 = new Map<LayerName, Map<Int, Marker>>();
 		
