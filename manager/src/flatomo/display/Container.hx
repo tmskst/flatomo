@@ -35,7 +35,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
-		this.playhead = new Playhead(function() {}, sections);
+		this.playhead = new Playhead(sections);
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
 		for (object in displayObjects) {

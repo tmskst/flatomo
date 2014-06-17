@@ -35,7 +35,7 @@ class Animation extends Image implements ILayoutAdjusted implements IAnimatable 
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
 		this.textures = textures;
-		this.playhead = new Playhead(update, sections);
+		this.playhead = new Playhead(sections);
 	}
 	
 	private var layouts:Vector<Layout>;

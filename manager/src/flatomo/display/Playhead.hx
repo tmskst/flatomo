@@ -9,19 +9,15 @@ class Playhead {
 
 	/**
 	 * 再生ヘッドを生成
-	 * @param	update 再生ヘッドが移動したとき（フレームが更新されたとき）に呼び出されるメソッド
 	 * @param	sections セクション情報
 	 */
-	public function new(update:Void -> Void, sections:Array<Section>) {
-		this.update = update;
+	public function new(sections:Array<Section>) {
 		this.sections = sections;
 		this.codes = sections.toControlCodes();
 		this.isPlaying = true;
 		this.currentFrame = 1;
 		this.nextFrame = 1;
 	}
-	
-	private var update:Void -> Void;
 	
 	/**
 	 * 再生ヘッドを制御するための制御コード
@@ -85,7 +81,6 @@ class Playhead {
 		isPlaying = true;
 		currentFrame = frame;
 		nextFrame = frame + 1;
-		update();
 	}
 	
 	/**
@@ -96,7 +91,6 @@ class Playhead {
 		isPlaying = false;
 		currentFrame = frame;
 		nextFrame = frame + 1;
-		update();
 	}
 	
 	/**
@@ -108,9 +102,6 @@ class Playhead {
 		if (!isPlaying) { return; }
 		
 		currentFrame = nextFrame;
-		
-		// 表示オブジェクトの更新
-		update();
 		
 		// 制御コード処理
 		nextFrame = currentFrame + 1;

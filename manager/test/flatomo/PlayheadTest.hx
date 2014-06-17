@@ -10,13 +10,13 @@ class PlayheadTest{
 	
 	@Test("生成直後のフレームは「1」")
 	public function afterConstruct_currentFrame():Void {
-		var sut = new Playhead(null, []); 
+		var sut = new Playhead([]);
 		Assert.areEqual(1, sut.currentFrame);
 	}
 	
 	@Test("生成直後は再生中の状態にある")
 	public function afterConstruct_isPlaying():Void {
-		var sut = new Playhead(null, []); 
+		var sut = new Playhead([]);
 		Assert.areEqual(true, sut.isPlaying);
 	}
 	
@@ -25,7 +25,7 @@ class PlayheadTest{
 		var sections = [
 			{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceFrame(1);
 		Assert.areEqual(1, sut.currentFrame);
@@ -40,7 +40,7 @@ class PlayheadTest{
 		var sections = [
 			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 }
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceFrame(1);
 		Assert.areEqual(1, sut.currentFrame);
@@ -58,7 +58,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Pass, begin: 4, end: 7 }
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceFrame(1);
 		Assert.areEqual(1, sut.currentFrame);
@@ -77,7 +77,7 @@ class PlayheadTest{
 		var sections = [
 			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 3 }
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceFrame(1);
 		Assert.areEqual(1, sut.currentFrame);
@@ -96,7 +96,7 @@ class PlayheadTest{
 		var sections = [
 			{ name: "a", kind: SectionKind.Standstill, begin: 1, end: 3 }
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceFrame(1);
 		Assert.areEqual(1, sut.currentFrame);
@@ -111,7 +111,7 @@ class PlayheadTest{
 			{ name: "b", kind: SectionKind.Goto("a"), begin: 4, end: 6},
 			{ name: "c", kind: SectionKind.Goto("b"), begin: 7, end: 9}
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceFrame(1);
 		Assert.areEqual(1, sut.currentFrame);
@@ -141,7 +141,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Goto("a"), begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Goto("a"), begin: 4, end: 6}
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.advanceFrame(1);
 		Assert.areEqual(1, sut.currentFrame);
@@ -156,7 +156,7 @@ class PlayheadTest{
 	
 	@Test("生成直後にplayを呼び出したときのフレームの遷移は呼び出さなかったときの遷移に等しい")
 	public function afterConstruct_play():Void {
-		var sut = new Playhead(function () {}, []);
+		var sut = new Playhead([]);
 		Assert.areEqual(1, sut.currentFrame);
 		sut.play();
 		Assert.areEqual(1, sut.currentFrame);
@@ -168,7 +168,7 @@ class PlayheadTest{
 	
 	@Test("生成直後にstopを呼び出すと再生ヘッドは移動しない")
 	public function afterConstruct_apply_stop():Void {
-		var sut = new Playhead(function () {}, [{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }]);
+		var sut = new Playhead([{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }]);
 		sut.stop();
 		sut.advanceFrame(1);
 		sut.advanceFrame(1);
@@ -178,7 +178,7 @@ class PlayheadTest{
 	
 	@Test("playを呼び出すと再生ヘッドは移動し始める")
 	public function play_currentFrame():Void {
-		var sut = new Playhead(function () {}, [{ name: "a", kind: SectionKind.Loop, begin: 1, end: 6 }]); 
+		var sut = new Playhead([{ name: "a", kind: SectionKind.Loop, begin: 1, end: 6 }]); 
 		sut.advanceFrame(1); // 1
 		sut.advanceFrame(1); // 2
 		sut.advanceFrame(1); // 3
@@ -204,7 +204,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		sut.advanceFrame(1); // 1
 		sut.advanceFrame(1); // 1
 		sut.advanceFrame(1); // 2
@@ -228,7 +228,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		// gotoAndPlayを呼び出すと同時にテクスチャが切り替わる（表示は変化しない）
 		sut.gotoGlobalAndPlay(4);
 		Assert.areEqual(4, sut.currentFrame);
@@ -243,7 +243,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		// gotoAndPlayを呼び出すと同時にテクスチャが切り替わる（表示は変化しない）
 		sut.gotoAndPlay("b");
 		Assert.areEqual(4, sut.currentFrame);
@@ -258,7 +258,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		// 生成直後のフレームは「1」
 		Assert.areEqual(1, sut.currentFrame);
 		sut.gotoGlobalAndStop(4);
@@ -273,7 +273,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Once, begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		// 生成直後のフレームは「1」
 		Assert.areEqual(1, sut.currentFrame);
 		sut.gotoAndStop("b");
@@ -287,7 +287,7 @@ class PlayheadTest{
 		var sections = [
 			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 6 }
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
 		
 		sut.gotoGlobalAndStop(4);
@@ -309,7 +309,7 @@ class PlayheadTest{
 		var sections = [
 			{ name: "a", kind: SectionKind.Pass, begin: 1, end: 6 }
 		];
-		var sut = new Playhead(function () {}, sections);
+		var sut = new Playhead(sections);
 		sut.stop();
 		sut.advanceFrame(1);
 		sut.advanceFrame(1);
@@ -327,7 +327,7 @@ class PlayheadTest{
 			{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "b", kind: SectionKind.Standstill, begin: 4, end: 6 }
 		];
-		var sut = new Playhead(function () { }, sections);
+		var sut = new Playhead(sections);
 		sut.gotoAndPlay("b");
 		Assert.areEqual(4, sut.currentFrame);
 		sut.advanceFrame(1);

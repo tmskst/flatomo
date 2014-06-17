@@ -24,6 +24,7 @@ class AnimationTest {
 	}
 	
 	// flash.display.MovieClipの挙動と同じ
+	@:allow(flatomo.Animation)
 	@Test("advanceTimeの呼び出しとテクスチャの対応関係")
 	public function afterAdvanceTime_texture():Void {
 		var textures = createTextures(3);
@@ -42,6 +43,7 @@ class AnimationTest {
 		 * この呼び出しを過ぎてからと同時に1フレーム目が始まる。
 		 */
 		sut.advanceTime(1.0);
+		sut.update();
 		
 		/*
 		 * この段階では1フレーム目のテクスチャ描画されている。
@@ -49,9 +51,11 @@ class AnimationTest {
 		Assert.areEqual(textures[0], sut.texture);
 		
 		sut.advanceTime(1.0);
+		sut.update();
 		Assert.areEqual(textures[1], sut.texture);
 		
 		sut.advanceTime(1.0);
+		sut.update();
 		Assert.areEqual(textures[2], sut.texture);
 	}
 	
