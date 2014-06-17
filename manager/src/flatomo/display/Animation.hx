@@ -16,7 +16,7 @@ using flatomo.display.SectionTools;
  * FPSの指定はできない。呼び出し元（Flatomo#juggler）の更新頻度に依存する。
  * アニメーションの再生ヘッドは、セクションによって制御される。
  */
-class Animation extends Image implements ILayoutAdjusted implements IAnimatable implements IPlayhead {
+class Animation extends Image implements ILayoutAdjusted {
 	
 	/**
 	 * アニメーションを生成する。
@@ -35,7 +35,6 @@ class Animation extends Image implements ILayoutAdjusted implements IAnimatable 
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
 		this.textures = textures;
-		this.playhead = new Playhead(sections);
 	}
 	
 	private var layouts:Vector<Layout>;
@@ -45,20 +44,9 @@ class Animation extends Image implements ILayoutAdjusted implements IAnimatable 
 	/** テクスチャ */
 	private var textures:flash.Vector<Texture>;
 	
-	/** 再生ヘッド */
-	public var playhead(default, null):Playhead;
-	
-	/**
-	 * 再生ヘッドを進める
-	 * @param	time 今は使用しない
-	 */
-	public function advanceTime(time:Float):Void {
-		playhead.advanceFrame(Std.int(time));
-	}
-	
 	/** 描画処理 */
-	private function update():Void {
-		texture = textures[playhead.currentFrame - 1];
+	public function draw(frame:Int):Void {
+		texture = textures[frame];
 	}
 	
 }
