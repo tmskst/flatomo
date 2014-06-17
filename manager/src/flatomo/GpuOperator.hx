@@ -60,9 +60,9 @@ class GpuOperator {
 		var type = postures.get(key);
 		switch (type) {
 			/* Animation */
-			case Posture.Animation(sections, pivotX, pivotY) :
+			case Posture.Animation(_, pivotX, pivotY) :
 				var textures = manager.getTextures(key);
-				var animation = new Animation(layouts, textures, sections);
+				var animation = new Animation(layouts, textures);
 				animation.pivotX = pivotX;
 				animation.pivotY = pivotY;
 				return animation;

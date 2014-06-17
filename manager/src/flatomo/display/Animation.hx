@@ -25,7 +25,7 @@ class Animation extends Image implements ILayoutAdjusted {
 	 * @param	sections　セクション情報
 	 */
 	@:allow(flatomo.GpuOperator)
-	private function new(layouts:haxe.ds.Vector<Layout>, textures:flash.Vector<Texture>, sections:Array<Section>) {
+	private function new(layouts:haxe.ds.Vector<Layout>, textures:flash.Vector<Texture>) {
 		if (textures.length == 0) {
 			throw '少なくとも一つのテクスチャが必要です。';
 		}
