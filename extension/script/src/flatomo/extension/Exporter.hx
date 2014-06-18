@@ -16,15 +16,6 @@ using jsfl.TimelineTools;
 using flatomo.extension.ItemTools;
 
 private typedef LayerName = String;
-private typedef Marker = {
-	var x:Float;
-	var y:Float;
-	var width:Float;
-	var height:Float;
-	var rotation:Float;
-	var scaleX:Float;
-	var scaleY:Float;
-};
 
 class Exporter {
 
