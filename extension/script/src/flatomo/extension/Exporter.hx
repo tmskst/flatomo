@@ -60,7 +60,7 @@ class Exporter {
 		exportPostures(symbolItems);
 		exportMarkers(symbolItems);
 		exportExterns(symbolItems);
-		exportItemKind(symbolItems);
+		exportKey(symbolItems);
 	}
 	
 	/**
@@ -172,7 +172,11 @@ class Exporter {
 		}
 	}
 	
-	private function exportItemKind(symbolItems:Array<SymbolItem>):Void {
+	// TODO: キー列挙の出力先を検討する必要がある。flaファイルの名前空間が必要になる可能性がある。
+	/**
+	 * 表示オブジェクトの再構築をGpuOperatorに命令するためのキーの列挙を出力する。
+	 */
+	private function exportKey(symbolItems:Array<SymbolItem>):Void {
 		var extendedItems = new Map<ItemPath, FlatomoItem>();
 		for (symbolItem in symbolItems) {
 			// extendedItem は animation属性が有効なアイテムに限定される
@@ -186,7 +190,7 @@ class Exporter {
 			EXTENDED_ITEMS: extendedItems.keys(),
 			PACKAGE: "",
 		};
-		FLfile.write(outputDirectoryPath + sourceFileName + "Items.hx", new Template(Resource.getString("template_enum")).execute(salt));
+		FLfile.write(outputDirectoryPath + sourceFileName + "Key.hx", new Template(Resource.getString("template_enum")).execute(salt));
 	}
 }
 
