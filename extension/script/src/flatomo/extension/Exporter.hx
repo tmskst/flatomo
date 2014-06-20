@@ -115,14 +115,21 @@ class Exporter {
 	 * SWFプロファイルに設定されたディレクトリに `flaファイル名 + .pos` が出力される。
 	 */
 	private function exportPostures(symbolItems:Array<SymbolItem>):Void {
-		var postures = new Map<ItemPath, Posture>();
+		/*
+		 * マップのキーはアニメーションのアイテム名（名前）でFQCN（item.linkageClassName）やItemPath（item.name）ではない。
+		 * 表示オブジェクトを再構築するときにGpuOperatorへ命令するキーと
+		 * posturesのキー、スプライトシートのname属性（PREFIX）はすべて一致する必要があるが
+		 * jsfl.SpriteSheetExporter.addSymbolメソッドがnameを受け付けない仕様が原因でこれを満たすことができない。
+		 * 従ってスプライトシート書き出しの対象となるアニメーションは、そのアイテムの名前が識別子の役割を果たすため
+		 * このアイテムの名前はユニークでなければならない。
+		 */
+		var postures = new Map<String, Posture>();
 		// 初期化
 		for (symbolItem in symbolItems) {
-			// extendedItem は animation属性が有効なアイテムに限定される
+			var symbolItemName:String = symbolItem.name.split("/").pop();
 			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
-			var extendedItemPath:String = symbolItem.name.split("/").pop();
 			var unionBounds = TimelineTools.getUnionBounds(symbolItem.timeline, false, false);
-			postures.set(extendedItemPath, Posture.Animation(extendedItem.sections, Math.ceil( -unionBounds.left), Math.ceil( -unionBounds.top)));
+			postures.set(symbolItemName, Posture.Animation(extendedItem.sections, Math.ceil( -unionBounds.left), Math.ceil( -unionBounds.top)));
 		}
 		
 		// 出力
@@ -182,20 +189,18 @@ class Exporter {
 	 * 表示オブジェクトの再構築をGpuOperatorに命令するためのキーの列挙を出力する。
 	 */
 	private function exportKey(symbolItems:Array<SymbolItem>):Void {
-		var extendedItems = new Map<ItemPath, FlatomoItem>();
+		var extendedItems = new Array<String>();
 		for (symbolItem in symbolItems) {
-			// extendedItem は animation属性が有効なアイテムに限定される
-			var extendedItemPath:String = symbolItem.name.split("/").pop();
-			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
-			extendedItems.set(extendedItemPath, extendedItem);
+			extendedItems.push(symbolItem.name.split("/").pop());
 		}
 		
-		var salt = {
-			ENUM_NAME: sourceFileName,
-			EXTENDED_ITEMS: extendedItems.keys(),
+		var context = {
 			PACKAGE: "",
+			ENUM_NAME: sourceFileName,
+			EXTENDED_ITEMS: extendedItems,
 		};
-		FLfile.write(outputDirectoryPath + sourceFileName + "Key.hx", new Template(Resource.getString("template_enum")).execute(salt));
+		var textToWrite = new Template(Resource.getString("template_enum")).execute(context);
+		FLfile.write(outputDirectoryPath + sourceFileName + "Key.hx", textToWrite);
 	}
 }
 
