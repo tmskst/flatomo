@@ -10,6 +10,7 @@ import jsfl.Element;
 import jsfl.FLfile;
 import jsfl.ItemType;
 import jsfl.LayerType;
+import jsfl.Lib;
 import jsfl.Lib.fl;
 import jsfl.SpriteSheetExporter;
 import jsfl.SymbolItem;
@@ -50,7 +51,12 @@ class Exporter {
 			var swfPath = document.getSWFPathFromProfile();
 			outputDirectoryPath = swfPath.substring(0, swfPath.lastIndexOf("/")) + "/";
 			var path = swfPath.substring(0, swfPath.lastIndexOf("."));
-			sourceFileName = path.substring(path.lastIndexOf("/") + 1);	
+			sourceFileName = path.substring(path.lastIndexOf("/") + 1);
+			var fileNameConvention = ~/^[A-Z][a-z0-9]+$/;
+			if (!fileNameConvention.match(sourceFileName)) {
+				Lib.alert("不適切なSWFプロファイル設定 : 出力ファイル名は大文字で始まり、かつ使用できる文字は[a-zA-Z0-9]です。");
+				return;
+			}
 			FLfile.createFolder(outputDirectoryPath);
 		}
 		
@@ -71,7 +77,8 @@ class Exporter {
 	/**
 	 * 出力されるSWFファイルの名前。
 	 * パブリッシュ設定のFlash(.swf)プロファイルから得られる`出力ファイル`で設定されたファイル名。
-	 * 例えば、`library`など。拡張子は含まれない。
+	 * Haxeがクラス名として許可する文字列のみがファイル名として許される。
+	 * 例えば、`Library`など。拡張子は含まれない。
 	 */
 	private var sourceFileName:String;
 	
