@@ -15,8 +15,6 @@ import jsfl.SymbolItem;
 using jsfl.TimelineTools;
 using flatomo.extension.ItemTools;
 
-private typedef LayerName = String;
-
 class Exporter {
 
 	public static function main() {
@@ -33,8 +31,8 @@ class Exporter {
 		exporter.borderPadding = 2;
 		
 		extendedItems = new Map<ItemPath, FlatomoItem>();
-		postures = new Map<ItemPath, Posture>();
-		markers = new Map<ItemPath, Map<LayerName, Map<Int, Marker>>>();
+		postures = new Map<Linkage, Posture>();
+		markers = new Map<Linkage, Map<LayerName, Map<Int, Marker>>>();
 		
 		var document = fl.getDocumentDOM();
 		var library = document.library;
