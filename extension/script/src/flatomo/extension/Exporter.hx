@@ -8,6 +8,7 @@ import haxe.Serializer;
 import haxe.Template;
 import jsfl.Element;
 import jsfl.FLfile;
+import jsfl.ItemType;
 import jsfl.LayerType;
 import jsfl.Lib.fl;
 import jsfl.SpriteSheetExporter;
@@ -29,28 +30,25 @@ class Exporter {
 		 * このスクリプトでは
 		 * スプライトシート、マーカー情報、アニメーションのextern定義、アニメーションの列挙を出力する。
 		 */
-		
-		//var packageName:String = Lib.prompt("PACKAGE-NAME");
-		//if (packageName == null) { packageName = ""; }
-		
 		var document = fl.getDocumentDOM();
 		var library = document.library;
 		
 		var symbolItems = new Array<SymbolItem>();
 		for (item in library.items) {
-			// item は symbolItemでない可能性
-			var flatomoItem = item.getFlatomoItem();
-			if (flatomoItem != null && flatomoItem.animation) {
-				symbolItems.push(cast item);
+			// ActionScript用に書き出しが有効でかつアニメーション属性が有効なアイテムが書き出される。
+			if (item.itemType == ItemType.MOVIE_CLIP) {
+				var symbolItem:SymbolItem = cast item;
+				var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
+				if (symbolItem.linkageExportForAS &&
+					flatomoItem != null && flatomoItem.animation) {
+					symbolItems.push(symbolItem);
+				}
 			}
 		}
 		
 		{ // outputDirectoryPath, sourceFileName を初期化
 			var swfPath = document.getSWFPathFromProfile();
 			outputDirectoryPath = swfPath.substring(0, swfPath.lastIndexOf("/")) + "/";
-			//if (packageName != "") {
-				//outputDirectoryPath += ~/\./g.replace(packageName, "/")  + "/";
-			//}
 			var path = swfPath.substring(0, swfPath.lastIndexOf("."));
 			sourceFileName = path.substring(path.lastIndexOf("/") + 1);	
 			FLfile.createFolder(outputDirectoryPath);
