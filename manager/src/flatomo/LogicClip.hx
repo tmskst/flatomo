@@ -9,17 +9,17 @@ class LogicClip {
 		this.markers = markers;
 	}
 	
-	private var playhead:Playhead;
+	public var playhead(default, null):Playhead;
 	private var markers:Map<LayerName, Map<Int, Marker>>;
 	
-	public function currentMarkers(layerName:LayerName):Marker {
+	private function currentMarkers(layerName:LayerName):Marker {
 		if (markers.exists(layerName)) {
 			var layerMarkers:Map<Int, Marker> = markers.get(layerName);
 			if (layerMarkers.exists(playhead.currentFrame)) {
 				return layerMarkers.get(playhead.currentFrame);
 			}
 		}
-		return null;
+		throw '存在しないレイヤー${layerName}, ${markers}';
 	}
 
 }
