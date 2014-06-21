@@ -56,6 +56,7 @@ class HxClassesCreator {
 			var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
 			var linkageClassName:Linkage = symbolItem.linkageClassName;
 			var context = {
+				KEY					: linkageClassName,
 				CLASS_NAME			: HxClassesCreator.getClassName(linkageClassName),
 				SUPER_CLASS_NAME	: "flatomo.display.Animation",
 				SECTIONS			: HxClassesCreator.getSections(flatomoItem),

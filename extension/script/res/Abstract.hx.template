@@ -8,6 +8,10 @@ private typedef FTextField = starling.text.TextField;
 @:access(::SUPER_CLASS_NAME::)
 abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	
+	::if (KEY != null)::
+	public static inline var Key:String = "::KEY::";
+	::end::
+	
 	public function new(content:::SUPER_CLASS_NAME::) {
 		this = content;
 	}
