@@ -2,6 +2,6 @@ package ::PACKAGE::;
 
 @:enum abstract ::ENUM_NAME::Key(String) to String {
 	::foreach EXTENDED_ITEMS::
-	var ::__current__:: = "::__current__::";
+	var ::NAME:: = "::KEY::";
 	::end::
 }

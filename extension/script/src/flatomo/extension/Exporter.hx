@@ -95,7 +95,8 @@ class Exporter {
 		var spriteSheetExporter = new SpriteSheetExporter();
 		{ // 初期化
 			spriteSheetExporter.algorithm		= SpriteSheetExporterAlgorithm.MAX_RECTS;
-			spriteSheetExporter.layoutFormat	= SpriteSheetExporterLayoutFormat.STARLING;
+			// Flatomo.plugin.jsfl の name属性には`item.linkageExportForAS`が指定される
+			spriteSheetExporter.layoutFormat	= cast "Flatomo";
 			spriteSheetExporter.borderPadding	= 2;
 		}
 		
@@ -115,21 +116,12 @@ class Exporter {
 	 * SWFプロファイルに設定されたディレクトリに `flaファイル名 + .pos` が出力される。
 	 */
 	private function exportPostures(symbolItems:Array<SymbolItem>):Void {
-		/*
-		 * マップのキーはアニメーションのアイテム名（名前）でFQCN（item.linkageClassName）やItemPath（item.name）ではない。
-		 * 表示オブジェクトを再構築するときにGpuOperatorへ命令するキーと
-		 * posturesのキー、スプライトシートのname属性（PREFIX）はすべて一致する必要があるが
-		 * jsfl.SpriteSheetExporter.addSymbolメソッドがnameを受け付けない仕様が原因でこれを満たすことができない。
-		 * 従ってスプライトシート書き出しの対象となるアニメーションは、そのアイテムの名前が識別子の役割を果たすため
-		 * このアイテムの名前はユニークでなければならない。
-		 */
-		var postures = new Map<String, Posture>();
+		var postures = new Map<Linkage, Posture>();
 		// 初期化
 		for (symbolItem in symbolItems) {
-			var symbolItemName:String = symbolItem.name.split("/").pop();
 			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
 			var unionBounds = TimelineTools.getUnionBounds(symbolItem.timeline, false, false);
-			postures.set(symbolItemName, Posture.Animation(extendedItem.sections, Math.ceil( -unionBounds.left), Math.ceil( -unionBounds.top)));
+			postures.set(symbolItem.linkageClassName, Posture.Animation(extendedItem.sections, Math.ceil( -unionBounds.left), Math.ceil( -unionBounds.top)));
 		}
 		
 		// 出力
@@ -189,9 +181,12 @@ class Exporter {
 	 * 表示オブジェクトの再構築をGpuOperatorに命令するためのキーの列挙を出力する。
 	 */
 	private function exportKey(symbolItems:Array<SymbolItem>):Void {
-		var extendedItems = new Array<String>();
+		var extendedItems = new Array<{ NAME:String, KEY:Linkage }>();
 		for (symbolItem in symbolItems) {
-			extendedItems.push(symbolItem.name.split("/").pop());
+			extendedItems.push({
+				NAME:	symbolItem.name.split("/").pop(),
+				KEY:	symbolItem.linkageClassName,
+			});
 		}
 		
 		var context = {
