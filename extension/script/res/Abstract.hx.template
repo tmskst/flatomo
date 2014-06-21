@@ -76,14 +76,6 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 		return this.visible = value;
 	}
 	
-	public function gotoAndPlay(section:::CLASS_NAME::SectionName, ?increment:Int = 0):Void {
-		this.playhead.gotoAndPlay(untyped section, increment);
-	}
-	
-	public function gotoAndStop(section:::CLASS_NAME::SectionName, ?increment:Int = 0):Void {
-		this.playhead.gotoAndStop(untyped section, increment);
-	}
-	
 	public var ::API_NAME::(get, never):::SUPER_CLASS_NAME::;
 	private function get_::API_NAME::():::SUPER_CLASS_NAME:: {
 		return cast this;
