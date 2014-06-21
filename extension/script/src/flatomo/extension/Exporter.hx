@@ -52,7 +52,7 @@ class Exporter {
 			outputDirectoryPath = swfPath.substring(0, swfPath.lastIndexOf("/")) + "/";
 			var path = swfPath.substring(0, swfPath.lastIndexOf("."));
 			sourceFileName = path.substring(path.lastIndexOf("/") + 1);
-			var fileNameConvention = ~/^[A-Z][a-z0-9]+$/;
+			var fileNameConvention = ~/^[A-Z][a-zA-Z0-9]+$/;
 			if (!fileNameConvention.match(sourceFileName)) {
 				Lib.alert("不適切なSWFプロファイル設定 : 出力ファイル名は大文字で始まり、かつ使用できる文字は[a-zA-Z0-9]です。");
 				return;
