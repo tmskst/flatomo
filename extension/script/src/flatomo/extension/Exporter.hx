@@ -163,7 +163,9 @@ class Exporter {
 	private function exportExterns(symbolItems:Array<SymbolItem>):Void {
 		var files = HxClassesCreator.export2(symbolItems);
 		for (file in files) {
-			FLfile.write(outputDirectoryPath + file.name + ".hx", file.content);
+			var path:String = if (file.packageName != "") ~/\./g.replace(file.packageName, "/") + "/" else "";
+			FLfile.createFolder(outputDirectoryPath + path);
+			FLfile.write(outputDirectoryPath + path + file.name + ".hx", file.content);
 		}
 	}
 	

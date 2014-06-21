@@ -48,9 +48,9 @@ class HxClassesCreator {
 		return externs;
 	}
 	
-	public static function export2(symbolItems:Array<SymbolItem>):Array<{ name:String, content:String }> {
+	public static function export2(symbolItems:Array<SymbolItem>):Array<{ name:String, packageName:String, content:String }> {
 		var template = new Template(Resource.getString("template"));
-		var externs = new Array<{ name:String, content:String }>();
+		var externs = new Array<{ name:String, packageName:String, content:String }>();
 		
 		for (symbolItem in symbolItems) {
 			var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
@@ -64,8 +64,9 @@ class HxClassesCreator {
 				PACKAGE				: linkageClassName.substring(0, linkageClassName.lastIndexOf(".")),
 			};
 			externs.push({
-				name:		context.CLASS_NAME,
-				content:	template.execute(context),
+				name:			context.CLASS_NAME,
+				packageName:	context.PACKAGE,
+				content:		template.execute(context),
 			});
 		}
 		return externs;
