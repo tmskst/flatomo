@@ -162,17 +162,9 @@ class Exporter {
 	 * アニメーションのextern定義を出力する。
 	 */
 	private function exportExterns(symbolItems:Array<SymbolItem>):Void {
-		var extendedItems = new Map<ItemPath, FlatomoItem>();
-		for (symbolItem in symbolItems) {
-			// extendedItem は animation属性が有効なアイテムに限定される
-			var extendedItemPath:String = symbolItem.name.split("/").pop();
-			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
-			extendedItems.set(extendedItemPath, extendedItem);
-		}
-		
-		var files = HxClassesCreator.export2(extendedItems, "");
+		var files = HxClassesCreator.export2(symbolItems);
 		for (file in files) {
-			FLfile.write(outputDirectoryPath + file.name + ".hx", file.value);
+			FLfile.write(outputDirectoryPath + file.name + ".hx", file.content);
 		}
 	}
 	

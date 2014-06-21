@@ -3,8 +3,12 @@ package flatomo.extension;
 import flatomo.FlatomoItem;
 import flatomo.FlatomoLibrary;
 import flatomo.ItemPath;
+import flatomo.Linkage;
 import haxe.Resource;
 import haxe.Template;
+import jsfl.SymbolItem;
+
+using flatomo.extension.ItemTools;
 
 private typedef Fields = Array<{ NAME:String , CLASS_NAME:String }>;
 private typedef Sections = Array<{ NAME:String }>;
@@ -44,20 +48,24 @@ class HxClassesCreator {
 		return externs;
 	}
 	
-	public static function export2(extendedItems:Map<ItemPath, FlatomoItem>, packageName:String):Array<{ name:String, value:String }>  {
-		var externs = new Array<{ name:String, value:String }>();
+	public static function export2(symbolItems:Array<SymbolItem>):Array<{ name:String, content:String }> {
 		var template = new Template(Resource.getString("template"));
-		for (itemPath in extendedItems.keys()) {
-			var item = extendedItems.get(itemPath);
-			var salt:Salt = {
-				CLASS_NAME	: getClassName(itemPath),
+		var externs = new Array<{ name:String, content:String }>();
+		
+		for (symbolItem in symbolItems) {
+			var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
+			var linkageClassName:Linkage = symbolItem.linkageClassName;
+			var context = {
+				CLASS_NAME			: HxClassesCreator.getClassName(linkageClassName),
 				SUPER_CLASS_NAME	: "flatomo.display.Animation",
-				FIELDS		: null,
-				SECTIONS	: getSections(item),
-				API_NAME	: "animationApi",
-				PACKAGE		: packageName,
-			}
-			externs.push( { name: salt.CLASS_NAME, value: template.execute(salt) } );
+				SECTIONS			: HxClassesCreator.getSections(flatomoItem),
+				API_NAME			: "animationApi",
+				PACKAGE				: linkageClassName.substring(0, linkageClassName.lastIndexOf(".")),
+			};
+			externs.push({
+				name:		context.CLASS_NAME,
+				content:	template.execute(context),
+			});
 		}
 		return externs;
 	}
