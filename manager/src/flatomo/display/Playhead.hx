@@ -96,9 +96,8 @@ class Playhead {
 	/**
 	 * アニメーションの再生ヘッドを1フレーム進める。
 	 * 制御コードによって再生ヘッドが移動したり停止する可能性がある。
-	 * @param	time 利用しない
 	 */
-	public function advanceFrame(frame:Int):Void {
+	public function advanceFrame():Void {
 		if (!isPlaying) { return; }
 		
 		currentFrame = nextFrame;

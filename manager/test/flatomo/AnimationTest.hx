@@ -46,7 +46,7 @@ class AnimationTest {
 		 * 初めてのEvent.ENTER_FRAME送出に相当する。
 		 * この呼び出しを過ぎてからと同時に1フレーム目が始まる。
 		 */
-		playhead.advanceFrame(1);
+		playhead.advanceFrame();
 		sut.draw(playhead.currentFrame);
 		
 		/*
@@ -54,11 +54,11 @@ class AnimationTest {
 		 */
 		Assert.areEqual(textures[0], sut.texture);
 		
-		playhead.advanceFrame(1);
+		playhead.advanceFrame();
 		sut.draw(playhead.currentFrame);
 		Assert.areEqual(textures[1], sut.texture);
 		
-		playhead.advanceFrame(1);
+		playhead.advanceFrame();
 		sut.draw(playhead.currentFrame);
 		Assert.areEqual(textures[2], sut.texture);
 	}

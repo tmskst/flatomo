@@ -27,11 +27,11 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
 	}
 	
@@ -42,13 +42,13 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
 	}
 	
@@ -60,15 +60,15 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
@@ -79,15 +79,15 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
 	}
 	
@@ -98,9 +98,9 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
 	}
 	
@@ -113,25 +113,25 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(7, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(8, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(9, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(5, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(6, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
 	}
 	
@@ -143,15 +143,15 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 	}
 	
 	@Test("生成直後にplayを呼び出したときのフレームの遷移は呼び出さなかったときの遷移に等しい")
@@ -160,9 +160,9 @@ class PlayheadTest{
 		Assert.areEqual(1, sut.currentFrame);
 		sut.play();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
 	}
 	
@@ -170,31 +170,31 @@ class PlayheadTest{
 	public function afterConstruct_apply_stop():Void {
 		var sut = new Playhead([{ name: "a", kind: SectionKind.Loop, begin: 1, end: 3 }]);
 		sut.stop();
-		sut.advanceFrame(1);
-		sut.advanceFrame(1);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
+		sut.advanceFrame();
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
 	}
 	
 	@Test("playを呼び出すと再生ヘッドは移動し始める")
 	public function play_currentFrame():Void {
 		var sut = new Playhead([{ name: "a", kind: SectionKind.Loop, begin: 1, end: 6 }]); 
-		sut.advanceFrame(1); // 1
-		sut.advanceFrame(1); // 2
-		sut.advanceFrame(1); // 3
+		sut.advanceFrame(); // 1
+		sut.advanceFrame(); // 2
+		sut.advanceFrame(); // 3
 		Assert.areEqual(3, sut.currentFrame);
 		
 		sut.stop();
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(3, sut.currentFrame);
 		
 		sut.play();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
@@ -205,20 +205,20 @@ class PlayheadTest{
 			{ name: "b", kind: SectionKind.Once, begin: 4, end: 6}
 		];
 		var sut = new Playhead(sections);
-		sut.advanceFrame(1); // 1
-		sut.advanceFrame(1); // 1
-		sut.advanceFrame(1); // 2
-		sut.advanceFrame(1); // 3
+		sut.advanceFrame(); // 1
+		sut.advanceFrame(); // 1
+		sut.advanceFrame(); // 2
+		sut.advanceFrame(); // 3
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		// 制御コード Stopにより再生ヘッドは停止した
 		Assert.areEqual(3, sut.currentFrame);
 		
 		sut.play();
 		Assert.areEqual(3, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
@@ -233,7 +233,7 @@ class PlayheadTest{
 		sut.gotoGlobalAndPlay(4);
 		Assert.areEqual(4, sut.currentFrame);
 		// gotoAndPlay呼び出し後、初めて描画されるテクスチャは「5」
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
@@ -248,7 +248,7 @@ class PlayheadTest{
 		sut.gotoAndPlay("b");
 		Assert.areEqual(4, sut.currentFrame);
 		// gotoAndPlay呼び出し後、初めて描画されるテクスチャは「5」
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
@@ -263,7 +263,7 @@ class PlayheadTest{
 		Assert.areEqual(1, sut.currentFrame);
 		sut.gotoGlobalAndStop(4);
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
 	}
 	
@@ -278,7 +278,7 @@ class PlayheadTest{
 		Assert.areEqual(1, sut.currentFrame);
 		sut.gotoAndStop("b");
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
 	}
 	
@@ -292,14 +292,14 @@ class PlayheadTest{
 		
 		sut.gotoGlobalAndStop(4);
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
 		
 		sut.play();
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(5, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(6, sut.currentFrame);
 	}
 	
@@ -311,13 +311,13 @@ class PlayheadTest{
 		];
 		var sut = new Playhead(sections);
 		sut.stop();
-		sut.advanceFrame(1);
-		sut.advanceFrame(1);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
+		sut.advanceFrame();
+		sut.advanceFrame();
 		Assert.areEqual(1, sut.currentFrame);
 		sut.play();
 		Assert.areEqual(1, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(2, sut.currentFrame);
 	}
 	
@@ -330,9 +330,9 @@ class PlayheadTest{
 		var sut = new Playhead(sections);
 		sut.gotoAndPlay("b");
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
-		sut.advanceFrame(1);
+		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
 	}
 	
