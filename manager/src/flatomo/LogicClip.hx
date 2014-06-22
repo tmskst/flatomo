@@ -12,7 +12,7 @@ class LogicClip {
 	public var playhead(default, null):Playhead;
 	private var markers:Map<LayerName, Map<Int, Marker>>;
 	
-	private function currentMarkers(layerName:LayerName):Marker {
+	public function getCurrentMarker(layerName:LayerName):Marker {
 		if (markers.exists(layerName)) {
 			var layerMarkers:Map<Int, Marker> = markers.get(layerName);
 			if (layerMarkers.exists(playhead.currentFrame)) {
