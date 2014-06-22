@@ -145,6 +145,7 @@ class Exporter {
 				var markers = new Map<Int, Marker>();
 				for (frameIndex in 0...markerLayer.frameCount) {
 					var frame = markerLayer.frames[frameIndex];
+					symbolItem.timeline.setSelectedFrames(frameIndex, frameIndex);
 					for (element in frame.elements) {
 						markers.set(frameIndex, MarkerTools.fromElement(element));
 					}
