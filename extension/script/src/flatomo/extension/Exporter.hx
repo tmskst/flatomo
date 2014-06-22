@@ -151,7 +151,7 @@ class Exporter {
 				}
 				packedMarker.set(markerLayer.name, markers);
 			}
-			packedMarkers.set(symbolItem.name, packedMarker);
+			packedMarkers.set(symbolItem.linkageClassName, packedMarker);
 		}
 		FLfile.write(outputDirectoryPath + sourceFileName + "." + EXTENSION_MARKERS, Serializer.run(packedMarkers));
 	}
