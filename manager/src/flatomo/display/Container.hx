@@ -57,7 +57,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 	 * @param	time 今は使用しない
 	 */
 	public function advanceTime(time:Float):Void {
-		playhead.advanceFrame(Std.int(time));
+		playhead.advanceFrame();
 		this.update();
 	}
 	

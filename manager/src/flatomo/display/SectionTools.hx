@@ -22,7 +22,9 @@ class SectionTools {
 			case SectionKind.Pass, SectionKind.Default : 
 				// 追加するコードはない
 			case SectionKind.Standstill : 
-				codes.set(section.begin, ControlCode.Stop);
+				for (index in section.begin...(section.end + 1)) {
+					codes.set(index, ControlCode.Stop);
+				}
 			case SectionKind.Goto(destinationSectionName) : 
 				var destination = Lambda.filter(sections, function(s:Section):Bool {
 					return s.name == destinationSectionName;
