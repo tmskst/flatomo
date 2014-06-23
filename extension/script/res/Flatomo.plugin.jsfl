@@ -2,6 +2,10 @@
 
 function getPluginInfo(lang)
 {
+//	fl.trace("==== getPluginInfo");
+//	fl.trace(lang);
+//	fl.trace("---- getPluginInfo");
+
 	pluginInfo = new Object();
 	pluginInfo.id = "Flatomo";
 	pluginInfo.name = "Flatomo";
@@ -19,6 +23,16 @@ function getPluginInfo(lang)
 
 function beginExport(meta)
 {
+//	fl.trace("==== endExport");
+//	fl.trace(meta.app);
+//	fl.trace(meta.version);
+//	fl.trace(meta.image);
+//	fl.trace(meta.format);
+//	fl.trace(meta.size.w);
+//	fl.trace(meta.size.h);
+//	fl.trace(meta.scale);
+//	fl.trace("---- endExport");
+
 	var s = '<?xml version="1.0" encoding="utf-8"?>\n';
 	s += '<TextureAtlas imagePath="' + meta.image + '">\n';
 	s += '\t<!-- Created with ' + meta.app + ' version ' + meta.version + ' -->\n';
@@ -30,12 +44,31 @@ function beginExport(meta)
 
 function frameExport(frame)
 {
+//	fl.trace("==== frameExport");
+//	fl.trace(frame.id);
+//	fl.trace(frame.frame.x);
+//	fl.trace(frame.frame.y);
+//	fl.trace(frame.frame.w);
+//	fl.trace(frame.frame.h);
+//	fl.trace(frame.offsetInSource.x);
+//	fl.trace(frame.offsetInSource.y);
+//	fl.trace(frame.sourceSize.w);
+//	fl.trace(frame.sourceSize.h);
+//	fl.trace(frame.rotated);
+//	fl.trace(frame.trimmed);
+//	fl.trace(frame.frameNumber);
+//	fl.trace(frame.frameLabel);
+//	fl.trace(frame.lastFrameLabel);
+//	fl.trace("---- frameExport");
+
 	var frameId = frame.id;
 	if (frame.frameSource instanceof SymbolItem) {
 		frameId = frame.frameSource.linkageClassName;
 	}
 	
-	var s = '\t<SubTexture name="' + frameId + frame.frameNumber + '" x="' + frame.frame.x + '" y="' + frame.frame.y + '" width="' + frame.frame.w + '" height="' + frame.frame.h;
+	var frameNumber = ('0000' + frame.frameNumber).slice(-4);
+	
+	var s = '\t<SubTexture name="' + frameId + frameNumber + '" x="' + frame.frame.x + '" y="' + frame.frame.y + '" width="' + frame.frame.w + '" height="' + frame.frame.h;
 	
 	if (frame.symbolName != lastSymbol) {
 		lastSymbol = frame.symbolName;
@@ -55,5 +88,15 @@ function frameExport(frame)
 
 function endExport(meta)
 {
+//	fl.trace("==== endExport");
+//	fl.trace(meta.app);
+//	fl.trace(meta.version);
+//	fl.trace(meta.image);
+//	fl.trace(meta.format);
+//	fl.trace(meta.size.w);
+//	fl.trace(meta.size.h);
+//	fl.trace(meta.scale);
+//	fl.trace("---- endExport");
+	
 	return '</TextureAtlas>\n';
 }
