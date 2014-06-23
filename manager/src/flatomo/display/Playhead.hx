@@ -16,7 +16,6 @@ class Playhead {
 		this.codes = sections.toControlCodes();
 		this.isPlaying = true;
 		this.currentFrame = 1;
-		this.nextFrame = 1;
 	}
 	
 	/**
@@ -29,8 +28,7 @@ class Playhead {
 	/** 現在の再生ヘッドの位置 */
 	public var currentFrame(default, null):Int;
 	
-	private var nextFrame:Int;
-	
+	/** タイムラインのセクション情報 */
 	private var sections:Array<Section>;
 	
 	/** 再生中かどうか */
@@ -47,24 +45,27 @@ class Playhead {
 	}
 	
 	/**
-	 * 指定したセクションで再生ヘッドを再生します。
-	 * @param	sectionName 遷移先のセクション名
-	 * @param	?increment 差分（frame）
+	 * 指定したセクションに遷移します。
+	 * @param	sectionName 遷移先セクション名
 	 */
-	public function gotoAndPlay(sectionName:Dynamic, ?increment:Int = 0):Void {
-		gotoGlobalAndPlay(findSection(sectionName) + increment);
+	public function gotoSection(sectionName:String, increment:Int = 0):Void {
+		gotoFrame(fetchSectionStartFrame(sectionName) + increment);
+	}	
+	
+	/**
+	 * 指定したフレームに遷移します。
+	 * @param	frame 遷移先フレーム（FrameIndex）
+	 */
+	public function gotoFrame(frame:Int):Void {
+		currentFrame = frame;
 	}
 	
 	/**
-	 * 指定したセクションで再生ヘッドを停止します。
-	 * @param	sectionName 遷移先のセクション名
-	 * @param	?increment 差分（frame）
+	 * 指定したセクションの開始フレームを取り出す
+	 * @param	sectionName 対象のセクション名
+	 * @return 対象のセクションの開始フレーム
 	 */
-	public function gotoAndStop(sectionName:Dynamic, ?increment:Int = 0):Void {
-		gotoGlobalAndStop(findSection(sectionName) + increment);
-	}
-	
-	private function findSection(sectionName:String):Int {
+	private function fetchSectionStartFrame(sectionName:String):Int {
 		for (section in sections) {
 			if (section.name == sectionName) {
 				return section.begin;
@@ -74,45 +75,24 @@ class Playhead {
 	}
 	
 	/**
-	 * 指定したフレームで再生ヘッドを再生します。
-	 * @param	frame 遷移先フレーム
-	 */
-	public function gotoGlobalAndPlay(frame:Int):Void {
-		isPlaying = true;
-		currentFrame = frame;
-		nextFrame = frame + 1;
-	}
-	
-	/**
-	 * 指定したフレームで再生ヘッドを停止します。
-	 * @param	frame 遷移先フレーム
-	 */
-	public function gotoGlobalAndStop(frame:Int):Void {
-		isPlaying = false;
-		currentFrame = frame;
-		nextFrame = frame + 1;
-	}
-	
-	/**
 	 * アニメーションの再生ヘッドを1フレーム進める。
 	 * 制御コードによって再生ヘッドが移動したり停止する可能性がある。
 	 */
 	public function advanceFrame():Void {
-		if (!isPlaying) { return; }
+		if (!isPlaying) {
+			return;
+		}
 		
-		currentFrame = nextFrame;
-		
-		// 制御コード処理
-		nextFrame = currentFrame + 1;
 		if (codes.exists(currentFrame)) {
 			switch (codes.get(currentFrame)) {
 				case ControlCode.Goto(frame) :
-					nextFrame = frame;
-				case ControlCode.Stop : 
-					this.isPlaying = false;
+					this.currentFrame = frame;
+				case ControlCode.Stop :
+					isPlaying = false;
 			}
+		} else {
+			this.currentFrame = currentFrame + 1;
 		}
-		
 	}
 	
 }
