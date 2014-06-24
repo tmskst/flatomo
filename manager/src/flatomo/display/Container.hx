@@ -10,7 +10,6 @@ import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 
 using flatomo.display.SectionTools;
-using flatomo.display.LayoutAdjustedTools;
 
 // TODO : 将来、コンテナの親（継承関係）は starling.display.Sprite に置き換わる可能性があります。
 
@@ -20,7 +19,7 @@ using flatomo.display.LayoutAdjustedTools;
  * また、コンテナ内のインスタンス名（Element#name）は、1つの表示オブジェクトに対応する。
  * この性質上、再生ヘッドの到達を待つことなく任意の子へのアクセスができる。
  */
-class Container extends DisplayObjectContainer implements ILayoutAdjusted implements IAnimatable implements IPlayhead {
+class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	
 	/**
 	 * コンテナを生成する。
@@ -35,7 +34,6 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
-		this.playhead = new Playhead(sections);
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
 		for (object in displayObjects) {
@@ -43,34 +41,20 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted implem
 			object.visible = false;
 			this.addChild(object);
 		}
+		update(1);
 	}
 	
 	private var layouts:Vector<Layout>;
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;
 	
-	/** 再生ヘッド */
-	public var playhead(default, null):Playhead;
-	
-	/**
-	 * 再生ヘッドを進める
-	 * @param	time 今は使用しない
-	 */
-	public function advanceTime(time:Float):Void {
-		playhead.advanceFrame();
-		this.update();
-	}
-	
 	/** 自身（表示オブジェクト）の更新 */
-	private function update():Void {
+	public function update(currentFrame:Int):Void {
 		// すべての表示オブジェクトを不可視状態にする。
 		for (childIndex in 0...numChildren) {
 			var child = this.getChildAt(childIndex);
-			if (Std.is(child, IAnimatable)) {
-				cast(child, IAnimatable).advanceTime(1.0);
-			}
 			if (Std.is(child, ILayoutAdjusted)) {
-				cast(child, ILayoutAdjusted).update(playhead.currentFrame);
+				LayoutAdjustedTools.update(cast child, currentFrame);
 			}
 		}
 		
