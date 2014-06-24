@@ -57,6 +57,7 @@ class Playhead {
 	 * @param	frame 遷移先フレーム（FrameIndex）
 	 */
 	public function gotoFrame(frame:Int):Void {
+		isPlaying = true;
 		currentFrame = frame;
 	}
 	

@@ -331,10 +331,10 @@ class PlayheadTest {
 	}
 	
 	
-	/** 各セクションへgotoSectionで遷移する */
+	/** 再生中に各セクションへgotoSectionで遷移する */
 	
-	@Test("LoopセクションへgotoSectionで遷移する")
-	public function gotoSection_LoopSection():Void {
+	@Test("再生中にLoopセクションへgotoSectionで遷移する")
+	public function gotoSectionRunning_LoopSection():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 }
@@ -348,8 +348,8 @@ class PlayheadTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
-	@Test("OnceセクションへgotoSectionで遷移する")
-	public function gotoSection_OnceSection():Void {
+	@Test("再生中にOnceセクションへgotoSectionで遷移する")
+	public function gotoSectionRunning_OnceSection():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 }
@@ -363,8 +363,8 @@ class PlayheadTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
-	@Test("PassセクションへgotoSectionで遷移する")
-	public function gotoSection_PassSection():Void {
+	@Test("再生中にPassセクションへgotoSectionで遷移する")
+	public function gotoSectionRunning_PassSection():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 }
@@ -378,8 +378,8 @@ class PlayheadTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
-	@Test("StandstillセクションへgotoSectionで遷移する")
-	public function gotoSection_StandstillSection():Void {
+	@Test("再生中にStandstillセクションへgotoSectionで遷移する")
+	public function gotoSectionRunning_StandstillSection():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 }
@@ -393,8 +393,8 @@ class PlayheadTest {
 		Assert.areEqual(4, sut.currentFrame);
 	}
 	
-	@Test("GotoセクションへgotoSectionで遷移する")
-	public function gotoSection_GotoSection():Void {
+	@Test("再生中にGotoセクションへgotoSectionで遷移する")
+	public function gotoSectionRunning_GotoSection():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 }
@@ -410,10 +410,10 @@ class PlayheadTest {
 	
 	// TODO : インクリメントを含めた 各セクションへ遷移するgotoSectionのテスト
 	
-	/** 各セクションの先頭フレームへgotoFrameで遷移する */
+	/** 再生中に各セクションの先頭フレームへgotoFrameで遷移する */
 	
-	@Test("Loopセクションの先頭へgotoFrameで遷移する")
-	public function gotoFrame_LoopSectionStartFrame():Void {
+	@Test("再生中にLoopセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameRunning_LoopSectionStartFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 }
@@ -427,8 +427,8 @@ class PlayheadTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
-	@Test("Onceセクションの先頭へgotoFrameで遷移する")
-	public function gotoFrame_OnceSectionStartFrame():Void {
+	@Test("再生中にOnceセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameRunning_OnceSectionStartFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 }
@@ -442,8 +442,8 @@ class PlayheadTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
-	@Test("Passセクションの先頭へgotoFrameで遷移する")
-	public function gotoFrame_PassSectionStartFrame():Void {
+	@Test("再生中にPassセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameRunning_PassSectionStartFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 }
@@ -457,8 +457,8 @@ class PlayheadTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
-	@Test("Standstillセクションの先頭へgotoFrameで遷移する")
-	public function gotoFrame_StandstillSectionStartFrame():Void {
+	@Test("再生中にStandstillセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameRunning_StandstillSectionStartFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 }
@@ -472,8 +472,8 @@ class PlayheadTest {
 		Assert.areEqual(4, sut.currentFrame);
 	}
 	
-	@Test("Gotoセクションの先頭へgotoFrameで遷移する")
-	public function gotoFrame_GotoSectionStartFrame():Void {
+	@Test("再生中にGotoセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameRunning_GotoSectionStartFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 }
@@ -488,10 +488,10 @@ class PlayheadTest {
 	}
 	
 	
-	/** 各セクションの中央フレームへgotoFrameで遷移する */
+	/** 再生中に各セクションの中央フレームへgotoFrameで遷移する */
 	
-	@Test("Loopセクションの中央へgotoFrameで遷移する")
-	public function gotoFrame_LoopSectionMiddleFrame():Void {
+	@Test("再生中にLoopセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameRunning_LoopSectionMiddleFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 }
@@ -505,8 +505,8 @@ class PlayheadTest {
 		Assert.areEqual(6, sut.currentFrame);
 	}
 	
-	@Test("Onceセクションの中央へgotoFrameで遷移する")
-	public function gotoFrame_OnceSectionMiddleFrame():Void {
+	@Test("再生中にOnceセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameRunning_OnceSectionMiddleFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 }
@@ -520,8 +520,8 @@ class PlayheadTest {
 		Assert.areEqual(6, sut.currentFrame);
 	}
 	
-	@Test("Passセクションの中央へgotoFrameで遷移する")
-	public function gotoFrame_PassSectionMiddleFrame():Void {
+	@Test("再生中にPassセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameRunning_PassSectionMiddleFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 }
@@ -535,8 +535,8 @@ class PlayheadTest {
 		Assert.areEqual(6, sut.currentFrame);
 	}
 	
-	@Test("Standstillセクションの中央へgotoFrameで遷移する")
-	public function gotoFrame_StandstillSectionMiddleFrame():Void {
+	@Test("再生中にStandstillセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameRunning_StandstillSectionMiddleFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 }
@@ -550,8 +550,8 @@ class PlayheadTest {
 		Assert.areEqual(5, sut.currentFrame);
 	}
 	
-	@Test("Gotoセクションの中央へgotoFrameで遷移する")
-	public function gotoFrame_GotoSectionMiddleFrame():Void {
+	@Test("再生中にGotoセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameRunning_GotoSectionMiddleFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 }
@@ -566,10 +566,10 @@ class PlayheadTest {
 	}
 	
 	
-	/** 各セクションの最終フレームへgotoFrameで遷移する */
+	/** 再生中に各セクションの最終フレームへgotoFrameで遷移する */
 	
-	@Test("Loopセクションの最終フレームへgotoFrameで遷移する")
-	public function gotoFrame_LoopSectionFinalFrame():Void {
+	@Test("再生中にLoopセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameRunning_LoopSectionFinalFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 },
@@ -584,8 +584,8 @@ class PlayheadTest {
 		Assert.areEqual(4, sut.currentFrame);
 	}
 	
-	@Test("Onceセクションの最終フレームへgotoFrameで遷移する")
-	public function gotoFrame_OnceSectionFinalFrame():Void {
+	@Test("再生中にOnceセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameRunning_OnceSectionFinalFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 },
@@ -600,8 +600,8 @@ class PlayheadTest {
 		Assert.areEqual(6, sut.currentFrame);
 	}
 	
-	@Test("Passセクションの最終フレームへgotoFrameで遷移する")
-	public function gotoFrame_PassSectionFinalFrame():Void {
+	@Test("再生中にPassセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameRunning_PassSectionFinalFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 },
@@ -616,8 +616,8 @@ class PlayheadTest {
 		Assert.areEqual(7, sut.currentFrame);
 	}
 	
-	@Test("Standstillセクションの最終フレームへgotoFrameで遷移する")
-	public function gotoFrame_StandstillSectionFinalFrame():Void {
+	@Test("再生中にStandstillセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameRunning_StandstillSectionFinalFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 },
@@ -632,8 +632,8 @@ class PlayheadTest {
 		Assert.areEqual(6, sut.currentFrame);
 	}
 	
-	@Test("Gotoセクションの最終フレームへgotoFrameで遷移する")
-	public function gotoFrame_GotoSectionFinalFrame():Void {
+	@Test("再生中にGotoセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameRunning_GotoSectionFinalFrame():Void {
 		var sections = [
 			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
 			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 },
@@ -647,6 +647,324 @@ class PlayheadTest {
 		sut.advanceFrame();
 		Assert.areEqual(4, sut.currentFrame);
 	}
+	
+	/* ************************************************************************************************ */
+	
+	/** 停止中に各セクションへgotoSectionで遷移する */
+	
+	@Test("停止中にLoopセクションへgotoSectionで遷移する")
+	public function gotoSectionStopping_LoopSection():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoSection("a");
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("停止中にOnceセクションへgotoSectionで遷移する")
+	public function gotoSectionStopping_OnceSection():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoSection("a");
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("停止中にPassセクションへgotoSectionで遷移する")
+	public function gotoSectionStopping_PassSection():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoSection("a");
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("停止中にStandstillセクションへgotoSectionで遷移する")
+	public function gotoSectionStopping_StandstillSection():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoSection("a");
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(4, sut.currentFrame);
+	}
+	
+	@Test("停止中にGotoセクションへgotoSectionで遷移する")
+	public function gotoSectionStopping_GotoSection():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoSection("a");
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	/** 停止中に各セクションの先頭フレームへgotoFrameで遷移する */
+	
+	@Test("停止中にLoopセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameStopping_LoopSectionStartFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("停止中にOnceセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameStopping_OnceSectionStartFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("停止中にPassセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameStopping_PassSectionStartFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("停止中にStandstillセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameStopping_StandstillSectionStartFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(4, sut.currentFrame);
+	}
+	
+	@Test("停止中にGotoセクションの先頭へgotoFrameで遷移する")
+	public function gotoFrameStopping_GotoSectionStartFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(4);
+		Assert.areEqual(4, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	
+	/** 停止中に各セクションの中央フレームへgotoFrameで遷移する */
+	
+	@Test("停止中にLoopセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameStopping_LoopSectionMiddleFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(5);
+		Assert.areEqual(5, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(6, sut.currentFrame);
+	}
+	
+	@Test("停止中にOnceセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameStopping_OnceSectionMiddleFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(5);
+		Assert.areEqual(5, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(6, sut.currentFrame);
+	}
+	
+	@Test("停止中にPassセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameStopping_PassSectionMiddleFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(5);
+		Assert.areEqual(5, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(6, sut.currentFrame);
+	}
+	
+	@Test("停止中にStandstillセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameStopping_StandstillSectionMiddleFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(5);
+		Assert.areEqual(5, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(5, sut.currentFrame);
+	}
+	
+	@Test("停止中にGotoセクションの中央へgotoFrameで遷移する")
+	public function gotoFrameStopping_GotoSectionMiddleFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(5);
+		Assert.areEqual(5, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(6, sut.currentFrame);
+	}
+	
+	
+	/** 再生中に各セクションの最終フレームへgotoFrameで遷移する */
+	
+	@Test("停止中にLoopセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameStopping_LoopSectionFinalFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Loop, begin: 4, end: 6 },
+			{ name: "b", kind: SectionKind.Loop, begin: 7, end: 9 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(6);
+		Assert.areEqual(6, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(4, sut.currentFrame);
+	}
+	
+	@Test("停止中にOnceセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameStopping_OnceSectionFinalFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Once, begin: 4, end: 6 },
+			{ name: "b", kind: SectionKind.Loop, begin: 7, end: 9 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(6);
+		Assert.areEqual(6, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(6, sut.currentFrame);
+	}
+	
+	@Test("停止中にPassセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameStopping_PassSectionFinalFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Pass, begin: 4, end: 6 },
+			{ name: "b", kind: SectionKind.Loop, begin: 7, end: 9 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(6);
+		Assert.areEqual(6, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(7, sut.currentFrame);
+	}
+	
+	@Test("停止中にStandstillセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameStopping_StandstillSectionFinalFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Standstill, begin: 4, end: 6 },
+			{ name: "b", kind: SectionKind.Loop, begin: 7, end: 9 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(6);
+		Assert.areEqual(6, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(6, sut.currentFrame);
+	}
+	
+	@Test("停止中にGotoセクションの最終フレームへgotoFrameで遷移する")
+	public function gotoFrameStopping_GotoSectionFinalFrame():Void {
+		var sections = [
+			{ name: "-", kind: SectionKind.Loop, begin: 1, end: 3 },
+			{ name: "a", kind: SectionKind.Goto("a"), begin: 4, end: 6 },
+			{ name: "b", kind: SectionKind.Loop, begin: 7, end: 9 }
+		];
+		var sut = new Playhead(sections);
+		sut.stop();
+		Assert.areEqual(1, sut.currentFrame);
+		sut.gotoFrame(6);
+		Assert.areEqual(6, sut.currentFrame);
+		sut.advanceFrame();
+		Assert.areEqual(4, sut.currentFrame);
+	}
+	
 	
 	// TODO : 例外に関するテストの追加
 	
