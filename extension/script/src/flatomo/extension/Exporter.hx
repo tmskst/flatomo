@@ -12,6 +12,7 @@ import jsfl.ItemType;
 import jsfl.LayerType;
 import jsfl.Lib;
 import jsfl.Lib.fl;
+import jsfl.Library;
 import jsfl.SpriteSheetExporter;
 import jsfl.SymbolItem;
 
@@ -134,7 +135,10 @@ class Exporter {
 	 */
 	private function exportMarkers(symbolItems:Array<SymbolItem>):Void {
 		var packedMarkers = new Map<ItemPath, Map<LayerName, Map<Int, Marker>>>();
+		var library:Library = fl.getDocumentDOM().library;
 		for (symbolItem in symbolItems) {
+			library.editItem(symbolItem.name);
+			
 			var packedMarker = new Map<LayerName, Map<Int, Marker>>();
 			var markerLayers = symbolItem.timeline.layers.filter(function (layer) {
 				return	layer.layerType == LayerType.GUIDE &&
