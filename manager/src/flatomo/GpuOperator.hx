@@ -1,12 +1,15 @@
 package flatomo;
 
+import flash.geom.Point;
 import flash.text.TextFormatAlign;
-import flatomo.Posture;
-import flatomo.translator.RawTextureAtlas;
+import flash.xml.XML;
+import flash.xml.XMLList;
 import flatomo.display.Animation;
 import flatomo.display.Container;
 import flatomo.display.FlatomoImage;
 import flatomo.display.FlatomoTextField;
+import flatomo.Posture;
+import flatomo.translator.RawTextureAtlas;
 import haxe.ds.Vector;
 import starling.display.DisplayObject;
 import starling.display.Image;
@@ -19,26 +22,50 @@ import starling.utils.VAlign;
 
 class GpuOperator {
 	
-	/** テクスチャアトラスとメタデータを元に FlatomoAssetManagerを生成する */
-	public static function build(assetKit:AssetKit):GpuOperator {
-		var atlases = new Array<TextureAtlas>();
-		for (atlas in assetKit.atlases) {
-			atlases.push(new TextureAtlas(Texture.fromBitmapData(atlas.image), atlas.layout));
-		}
-		return new GpuOperator(atlases, assetKit.postures);
-	}
-	
-	public function new(atlases:Array<TextureAtlas>, postures:Map<ItemPath, Posture>) {
+	/**
+	 * AssetKitを元にGpuOperatorを初期化する。
+	 * @param	assetKit 
+	 */
+	public function new(assetKit:AssetKit) {
+		this.postures = assetKit.postures;
 		this.manager = new AssetManager();
-		for (index in 0...atlases.length) {
-			var atlas = atlases[index];
-			this.manager.addTextureAtlas('atlas${index}', atlas);
+		
+		// テクスチャアトラスの生成
+		for (index in 0...assetKit.atlases.length) {
+			var rawTextureAtlas:RawTextureAtlas = assetKit.atlases[index];
+			var textureAtlas:TextureAtlas = new TextureAtlas(
+				Texture.fromBitmapData(rawTextureAtlas.image),
+				rawTextureAtlas.layout
+			);
+			manager.addTextureAtlas('ATLAS' + index, textureAtlas);
 		}
-		this.postures = postures;
+		
+		
+		this.pivots = new Map<String, Point>();
+		// スプライトシートからpivotに関する情報を抜き出す
+		for (rawTextureAtlas in assetKit.atlases) {
+			var layout:XML = rawTextureAtlas.layout;
+			var subTextures:XMLList = layout.elements("SubTexture");
+			for (index in 0...subTextures.length()) {
+				var subTexture:XML = subTextures[index];
+				var pivotX:Float = Std.parseFloat(subTexture.attribute("pivotX").toString());
+				var pivotY:Float = Std.parseFloat(subTexture.attribute("pivotY").toString());
+				if (!Math.isNaN(pivotX) && !Math.isNaN(pivotY)) {
+					var key:String = subTexture.attribute("name").toString();
+					// FIXME : 本来は Animation, Image関係なくサフィックス`0000`は付く
+					if (StringTools.endsWith(key, "0000")) {
+						key = key.substr(0, -4);
+					}
+					pivots.set(key, new Point(pivotX, pivotY));
+				}
+			}
+		}
 	}
 	
 	private var manager:AssetManager;
 	private var postures:Map<ItemPath, Posture>;
+	private var pivots:Map<ItemPath, Point>;
+	
 	
 	/**
 	 * クラス（Class<flash.display.DisplayObject>）に対応する
@@ -60,11 +87,12 @@ class GpuOperator {
 		var type = postures.get(key);
 		switch (type) {
 			/* Animation */
-			case Posture.Animation(_, pivotX, pivotY) :
+			case Posture.Animation(_) :
 				var textures = manager.getTextures(key);
 				var animation = new Animation(layouts, textures);
-				animation.pivotX = pivotX;
-				animation.pivotY = pivotY;
+				var pivot = pivots.get(key);
+				animation.pivotX = pivot.x;
+				animation.pivotY = pivot.y;
 				return animation;
 			/* Container */
 			case Posture.Container(children, sections) :
@@ -87,10 +115,11 @@ class GpuOperator {
 				};
 				return textField;
 			/* Image */
-			case Posture.Image(pivotX, pivotY) :
+			case Posture.Image :
 				var image = new FlatomoImage(layouts, manager.getTexture(key));
-				image.pivotX = pivotX;
-				image.pivotY = pivotY;
+				var pivot = pivots.get(key);
+				image.pivotX = pivot.x;
+				image.pivotY = pivot.y;
 				return image;
 		}
 	}

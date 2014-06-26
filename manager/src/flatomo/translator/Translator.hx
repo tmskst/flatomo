@@ -80,16 +80,18 @@ class Translator {
 		// テクスチャを生成
 		for (frame in 0...source.totalFrames) {
 			source.gotoAndStop(frame + 1);
-			var index = ("00000" + Std.string(frame)).substr(-5);
+			var index = ("0000" + Std.string(frame)).substr(-4);
 			var bounds = Blitter.getBounds(source);
 			images.push( {
-				name: '${itemPath} ${index}',
+				index: frame,
+				name: '${itemPath}${index}',
 				image: Blitter.toBitmapData(source),
-				frame: new Rectangle(unionBounds.x - bounds.x, unionBounds.y - bounds.y, unionBounds.width, unionBounds.height)
+				frame: new Rectangle(unionBounds.x - bounds.x, unionBounds.y - bounds.y, unionBounds.width, unionBounds.height),
+				unionBounds: unionBounds,
 			});
 		}
 		var sections = library.extendedItems.get(itemPath).sections;
-		postures.set(itemPath, Posture.Animation(sections, -unionBounds.x, -unionBounds.y));
+		postures.set(itemPath, Posture.Animation(sections));
 	}
 	
 	/**
@@ -148,8 +150,8 @@ class Translator {
 	 */
 	private function translateQuaImage(source:DisplayObject, itemPath:ItemPath):Void {
 		var bounds = Blitter.getBounds(source);
-		images.push({ name: itemPath, image: Blitter.toBitmapData(source, bounds), frame: null });
-		postures.set(itemPath, Posture.Image(-bounds.x, -bounds.y));
+		images.push({ index: 0, name: itemPath, image: Blitter.toBitmapData(source, bounds), frame: null, unionBounds: bounds });
+		postures.set(itemPath, Posture.Image);
 	}
 	
 	/**

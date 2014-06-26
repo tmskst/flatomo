@@ -88,6 +88,10 @@ class AtlasGenerator {
 			subTexture.set("frameWidth", Std.string(piece.frame.width));
 			subTexture.set("frameHeight", Std.string(piece.frame.height));
 		}
+		if (piece.index == 0) {
+			subTexture.set("pivotX", Std.string( -piece.unionBounds.x));
+			subTexture.set("pivotY", Std.string( -piece.unionBounds.y));
+		}
 		return subTexture;
 	}
 	

@@ -120,8 +120,7 @@ class Exporter {
 		// 初期化
 		for (symbolItem in symbolItems) {
 			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
-			var unionBounds = TimelineTools.getUnionBounds(symbolItem.timeline, false, false);
-			postures.set(symbolItem.linkageClassName, Posture.Animation(extendedItem.sections, Math.ceil( -unionBounds.left), Math.ceil( -unionBounds.top)));
+			postures.set(symbolItem.linkageClassName, Posture.Animation(extendedItem.sections));
 		}
 		
 		// 出力
@@ -129,7 +128,7 @@ class Exporter {
 	}
 	
 	// FIXME: マーカーが存在しない場合にはファイルを出力しないように。
-	/**
+	/**	
 	 * マーカー情報をファイルに出力する。
 	 * SWFプロファイルに設定されたディレクトリに `flaファイル名 + .mks` が出力される。
 	 */
