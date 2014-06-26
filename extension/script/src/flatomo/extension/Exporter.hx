@@ -95,6 +95,8 @@ class Exporter {
 		var spriteSheetExporter = new SpriteSheetExporter();
 		{ // 初期化
 			spriteSheetExporter.algorithm		= SpriteSheetExporterAlgorithm.MAX_RECTS;
+			spriteSheetExporter.stackDuplicateFrames = true;
+			spriteSheetExporter.allowTrimming = true;
 			// Flatomo.plugin.jsfl の name属性には`item.linkageExportForAS`が指定される
 			spriteSheetExporter.layoutFormat	= cast "Flatomo";
 			spriteSheetExporter.borderPadding	= 2;
