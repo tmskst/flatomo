@@ -91,7 +91,7 @@ abstract ::CLASS_NAME::(::SUPER_CLASS_NAME::) to ::SUPER_CLASS_NAME:: {
 	::end::
 }
 
-@:enum abstract ::CLASS_NAME::SectionName(String) {
+@:enum abstract ::CLASS_NAME::SectionName(String) to String {
 	::foreach SECTIONS::
 	var ::NAME:: = "::NAME::";
 	::end::
