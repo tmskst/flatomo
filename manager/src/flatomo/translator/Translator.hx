@@ -215,7 +215,7 @@ class DisplayObjectTools {
 		if (!Std.is(source, MovieClip)) { return false; }
 		
 		var item = library.extendedItems.get(itemPath);
-		return item != null && item.animation;
+		return item != null && item.displayObjectType.equals(FlatomoItem.DisplayObjectType.Animation);
 	}
 	
 	/**
