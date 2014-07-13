@@ -1,6 +1,5 @@
 -D js-classic
 -cp script/src
--cp common/src
 -cp ../common/src
 
 # libraries
@@ -14,7 +13,6 @@
 --next
 
 -cp script/src
--cp common/src
 -cp ../common/src
 
 # libraries
@@ -26,7 +24,6 @@
 --next
 
 -cp script/src
--cp common/src
 -cp ../common/src
 
 # libraries
@@ -38,7 +35,6 @@
 --next
 
 -cp script/src
--cp common/src
 -cp ../common/src
 
 -resource script/res/Abstract.hx.template@template
@@ -63,7 +59,6 @@
 
 -D js-classic
 -cp script/src
--cp common/src
 -cp ../common/src
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
 -resource script/res/Abstract.hx.template@template
