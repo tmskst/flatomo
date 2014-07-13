@@ -1,96 +1,114 @@
 package flatomo.extension;
 
 import flatomo.FlatomoItem;
-import flatomo.Section;
-import haxe.Unserializer;
-import jsfl.EventType;
+import flatomo.FlatomoItem.DisplayObjectType;
+import flatomo.FlatomoItem.ExportType;
+import haxe.Resource;
+import haxe.Template;
 import jsfl.Item;
+import jsfl.ItemType;
+import jsfl.Lib;
 import jsfl.Lib.fl;
-import jsfl.Library;
-import jsfl.Timeline;
-
-using flatomo.extension.DocumentTools;
-using flatomo.extension.ItemTools;
+import jsfl.SymbolItem;
 
 using Lambda;
+using StringTools;
+using flatomo.extension.ItemTools;
 
 class Script {
 	
-	private static var send:Api -> Void;
-	
-	public static function main() {
-		send = Connector.send;
-		fl.addEventListener(EventType.TIMELINE_CHANGED, refresh);
+	private static function getName(resolve:EnumValue -> String -> Bool, enumValue:EnumValue, name:String):Bool {
+		return enumValue.getName() == name;
 	}
 	
-	/**
-	 * 作業タイムラインが変更されたときに呼び出される。
-	 * パネルに作業タイムラインが変更されたこと（PanelApi.TimlineSelected, PanelApi.DisabledTimlineSelected）を通知する。
-	 */
-	private static function timelineChanged():Void {
-		var timeline:Timeline = fl.getDocumentDOM().getTimeline();
-		
-		// 作業タイムラインがライブラリ内に存在しない場合はFlatomoItemを保存することができない
-		if (timeline.libraryItem == null) {
-			send(PanelApi.DisabledTimlineSelected);
-			return;
-		}
-		
-		var item:Item = null;
-		{ // initialize item
-			var library:Library = fl.getDocumentDOM().library;
-			var index:Int = library.findItemIndex(timeline.libraryItem.name);
-			item = library.items[index];
-		}
-		
-		var latestSection:Array<Section> = SectionCreator.fetchSections(timeline);
-		var savedItem:FlatomoItem = item.getFlatomoItem();
-		
-		send(PanelApi.TimlineSelected(timeline.name, latestSection, savedItem));
+	private static function getGotoSectionName(resolve:SectionKind -> String -> Bool, kind:SectionKind, name:String):Bool {
+		return switch (kind) {
+			case SectionKind.Goto(sectionName) :
+				sectionName == name;
+			case _ :
+				false;
+		};
 	}
 	
-	// ------------------------------------------------------------------------------------
-	
-	public static function handle(raw_data:String):Void {
-		var data:ScriptApi = Unserializer.run(raw_data);
-		switch (data) {
-			case ScriptApi.Refresh :
-				refresh();
-			case ScriptApi.Save(data) :
-				save(data);
-		}
-	}
-	
-	/**
-	 * 作業タイムラインにFlatomoItemを保存します。
-	 * @param	data 保存するデータ
-	 */
 	@:access(flatomo.extension.ItemTools)
-	private static function save(data:FlatomoItem):Void {
-		if (!fl.getDocumentDOM().isFlatomo()) {
-			return;
+	public static function main() {
+		/* スクリプトを実行するには、
+		 * 1. ライブラリ項目を1つだけ選択している。
+		 * 2. 選択されたライブラリ項目がシンボルアイテムであること。
+		 */
+		// 対象のシンボルアイテム
+		var selectedSymbolItem:SymbolItem = null;
+		{ // initialize selectedSymbolItem
+			var selectedItems:Array<Item> = fl.getDocumentDOM().library.getSelectedItems();
+			if (selectedItems.length != 1) {
+				Lib.alert("ライブラリ項目を1つだけ選択してください");
+				return;
+			}
+			var selectedItem:Item = fl.getDocumentDOM().library.getSelectedItems()[0];
+			if (!selectedItem.itemType.equals(ItemType.MOVIE_CLIP) && !selectedItem.itemType.equals(ItemType.GRAPHIC)) {
+				Lib.alert("シンボルアイテムを選択してください");
+				return;
+			}
+			selectedSymbolItem = cast selectedItem;
 		}
 		
-		var timeline:Timeline = fl.getDocumentDOM().getTimeline();
-		var item:Item = null;
-		{ // initialize item
-			var library:Library = fl.getDocumentDOM().library;
-			var index:Int = library.findItemIndex(timeline.libraryItem.name);
-			item = library.items[index];
+		// 対象のシンボルアイテムに保存された拡張情報
+		var flatomoItem:FlatomoItem = selectedSymbolItem.getFlatomoItem();
+		
+		var symbolItemConfigTemplate = new Template(Resource.getString("FlatomoItemConfig"));
+		var result:Dynamic = fl.xmlPanelFromString(symbolItemConfigTemplate.execute(
+			{ // context
+				linkage				: selectedSymbolItem.linkageClassName,
+				exportForFlatomo	: flatomoItem.exportForFlatomo,
+				primitiveItem		: flatomoItem.primitiveItem,
+				exportType 			: flatomoItem.exportType,
+				displayObjectType	: flatomoItem.displayObjectType,
+				sectionList			: flatomoItem.sections.list(),
+				sectionNameList		: flatomoItem.sections.list().map(function (section) { return section.name; } ),
+			},
+			{ // macros
+				getName				: getName,
+				getGotoSectionName	: getGotoSectionName
+			}
+		));
+		
+		// ダイアログがキャンセルされたら保存せずに終了
+		if (result.dismiss == "cancel") { return; }
+		
+		// ダイアログを元に生成された拡張ライブラリ項目
+		var latestFlatomoItem:FlatomoItem = {
+			sections			: [],
+			exportForFlatomo	: result.exportForFlatomo,
+			primitiveItem		: result.primitiveItem,
+			exportType			: ExportType.createByName(result.exportType),
+			displayObjectType	: DisplayObjectType.createByName(result.displayObjectType),
+		};
+		
+		// セクション情報を集計する
+		for (field in Reflect.fields(result)) {
+			if (field.startsWith("sectionKind")) {
+				var sectionName:String = field.substring(field.lastIndexOf("_") + 1);
+				var sectionKindName:String = Reflect.getProperty(result, field);
+				var params = switch (sectionKindName) {
+					case "Goto"	: [Reflect.getProperty(result, "sectionNameList_" + sectionName)];
+					case _ 		: [];
+				};
+				latestFlatomoItem.sections.push({
+					name: sectionName,
+					kind: SectionKind.createByName(sectionKindName, params),
+					begin: -1,
+					end: -1,
+				});
+			}
 		}
-		item.setFlatomoItem(data);
-	}
-	
-	/**
-	 * 現在（最新）のタイムラインを元にセクション情報を生成しパネルに送信します。
-	 */
-	private static function refresh():Void {
-		var document = fl.getDocumentDOM();
-		if (document == null || !document.isFlatomo()) {
-			send(PanelApi.FlatomoDisabled);
-		} else {
-			timelineChanged();
+		
+		selectedSymbolItem.setFlatomoItem(latestFlatomoItem);
+		
+		// Flatomo用に書き出し設定が有効ならシンボルをActionScript用に書き出しリンケージ設定を有効にする
+		if (latestFlatomoItem.exportForFlatomo) {
+			var linkage:String = Reflect.getProperty(result, "linkage");
+			selectedSymbolItem.linkageExportForAS = true;
+			selectedSymbolItem.linkageClassName = linkage;
 		}
 	}
-	
 }
