@@ -42,7 +42,6 @@ class Exporter {
 				var symbolItem:SymbolItem = cast item;
 				var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
 				if (symbolItem.linkageExportForAS &&
-					flatomoItem != null &&
 					flatomoItem.exportForFlatomo &&
 					flatomoItem.exportType.equals(ExportType.Static) &&
 					flatomoItem.displayObjectType.equals(DisplayObjectType.Animation)) {

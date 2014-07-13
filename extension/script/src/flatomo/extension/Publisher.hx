@@ -74,11 +74,6 @@ private class FlatomoLibraryCreator {
 		library.scan_allSymbolItem(function (item:SymbolItem) {
 			var itemPath:String = getItemPath(item);
 			var flatomoItem:FlatomoItem = item.getFlatomoItem();
-			// TODO : getFlatomoItem は NullObjectを返しても良いかも
-			if (flatomoItem == null) {
-				var sections = SectionCreator.fetchSections(item.timeline);
-				flatomoItem = { sections: sections, animation: false };
-			}
 			extendedItems.set(itemPath, flatomoItem);
 			
 			// すべての Elementについて走査
