@@ -37,10 +37,10 @@ class HxClassesCreator {
 			var item = data.extendedItems.get(itemPath);
 			var salt:Salt = {
 				CLASS_NAME	: "F" + getClassName(itemPath),
-				SUPER_CLASS_NAME	: if (item.animation) "flatomo.display.Animation" else "flatomo.display.Container",
+				SUPER_CLASS_NAME	: if (item.displayObjectType.equals(DisplayObjectType.Animation)) "flatomo.display.Animation" else "flatomo.display.Container",
 				FIELDS		: getFields(itemPath, data.itemPaths),
 				SECTIONS	: getSections(item),
-				API_NAME	: if (item.animation) "animationApi" else "containerApi",
+				API_NAME	: if (item.displayObjectType.equals(DisplayObjectType.Animation)) "animationApi" else "containerApi",
 				PACKAGE		: "",
 			}
 			externs.push( { name: salt.CLASS_NAME, value: template.execute(salt) } );
