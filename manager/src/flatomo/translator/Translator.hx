@@ -3,6 +3,7 @@ package flatomo.translator;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
+import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flatomo.InstanceName;
@@ -111,8 +112,8 @@ class Translator {
 			// 現在のフレームの対象に追加されている直接の子を走査する
 			for (childIndex in 0...source.numChildren) {
 				var object = source.getChildAt(childIndex);
+				var type = object.fetchDisplayObjectType(itemPath, library);
 				if (!children.exists(object.name)) {
-					var type = object.fetchDisplayObjectType(itemPath, library);
 					var key = switch (type) {
 						case DisplayObjectType.Animation : object.fetchItemPath(itemPath, library);
 						case DisplayObjectType.Container : object.fetchItemPath(itemPath, library);
@@ -126,15 +127,14 @@ class Translator {
 					translate(object, key);
 				}
 				
-				var child = children.get(object.name);
-				child.layouts.set(frame, {
-					x: object.x,
-					y: object.y,
-					rotation: untyped { __global__["starling.utils.deg2rad"](object.rotation); } ,
-					scaleX: object.scaleX,
-					scaleY: object.scaleY,
-				});
+				var transformationMatrix:Matrix = object.transform.matrix.clone();
+				if (type.match(DisplayObjectType.Image)) {
+					var bounds = Blitter.getBounds(object);
+					transformationMatrix.translate(bounds.x, bounds.y);
+				}
 				
+				var child = children.get(object.name);
+				child.layouts.set(frame, transformationMatrix);
 			}
 		}
 		

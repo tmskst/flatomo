@@ -18,11 +18,6 @@ class LayoutAdjustedTools {
 		}
 		
 		source.visible = true;
-		source.x = layout.x;
-		source.y = layout.y;
-		source.rotation = layout.rotation;
-		source.scaleX = layout.scaleX;
-		source.scaleY = layout.scaleY;
-		
+		source.transformationMatrix = layout;
 	}
 }

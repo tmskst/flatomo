@@ -1,15 +1,12 @@
 package flatomo.display;
 
+import flash.geom.Matrix;
 import flatomo.Layout;
 import haxe.ds.Vector;
 
 interface ILayoutAdjusted {
 	/* Layout */
-	private var x:Float;
-	private var y:Float;
-	private var rotation:Float;
-	private var scaleX:Float;
-	private var scaleY:Float;
+	private var transformationMatrix:Matrix;
 	private var visible:Bool;
 	
 	private var layouts:Vector<Layout>;
