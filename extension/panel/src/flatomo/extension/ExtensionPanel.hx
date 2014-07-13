@@ -1,6 +1,7 @@
 package flatomo.extension;
 
 import com.bit101.components.PushButton;
+import com.bit101.components.Style;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.Lib;
@@ -8,16 +9,24 @@ import flash.Lib;
 class ExtensionPanel extends Sprite {
 	
 	public static function main() {
-		Lib.current.stage.addChild(new ExtensionPanel());
+		try {
+			Style.setStyle(Style.DARK);
+			Lib.current.stage.addChild(new ExtensionPanel());
+		} catch (error:Dynamic) {
+			trace(error);
+		}
 	}
 	
 	public function new() {
 		super();
+		
 		openSymbolItemConfigButton = new PushButton(this, 0, 0, "OPEN SYMBOL ITEM CONFIG", openSymbolItemConfig);
 		openSymbolItemConfigButton.y = 20;
 		openSymbolItemConfigButton.x = 10;
 		openSymbolItemConfigButton.height = 20;
 		resize(null);
+		
+		Lib.current.stage.addEventListener(Event.RESIZE, resize);
 	}
 	
 	private var openSymbolItemConfigButton:PushButton;
