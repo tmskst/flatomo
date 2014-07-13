@@ -7,6 +7,18 @@ package flatomo;
 typedef FlatomoItem = {
 	/** セクション情報 */
 	var sections:Array<Section>;
-	/** アニメーション属性 */
-	var animation:Bool;
+	var exportForFlatomo:Bool;
+	var primitiveItem:Bool;
+	var exportType:ExportType;
+	var displayObjectType:DisplayObjectType;
+}
+
+enum ExportType {
+	Dynamic;
+	Static;
+}
+
+enum DisplayObjectType {
+	Container;
+	Animation;
 }
