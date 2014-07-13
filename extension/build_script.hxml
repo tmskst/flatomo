@@ -9,6 +9,8 @@
 -main flatomo.extension.Script
 -js script/bin/flatomo.jsfl
 
+-resource script/res/FlatomoItemConfig.template.xul@FlatomoItemConfig
+
 --next
 
 -cp script/src
