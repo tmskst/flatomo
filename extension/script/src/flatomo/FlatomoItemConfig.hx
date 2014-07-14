@@ -87,8 +87,8 @@ class FlatomoItemConfig {
 		// ダイアログを元に生成された拡張ライブラリ項目
 		var latestFlatomoItem:FlatomoItem = {
 			sections			: [],
-			exportForFlatomo	: result.exportForFlatomo,
-			primitiveItem		: result.primitiveItem,
+			exportForFlatomo	: result.exportForFlatomo == "true",
+			primitiveItem		: result.primitiveItem == "true",
 			exportType			: ExportType.createByName(result.exportType),
 			displayObjectType	: DisplayObjectType.createByName(result.displayObjectType),
 		};
