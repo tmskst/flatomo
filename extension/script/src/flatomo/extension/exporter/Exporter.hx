@@ -62,8 +62,8 @@ class Exporter {
 			var parts = PartsAnimationParser.parse(containerItem);
 			materials.set(containerItem.name, parts);
 			for (key in parts.numTextures.keys()) {
-				var exists:Bool = textureItems.exists(function (symbolItem) {
-					return symbolItem.name == key;
+				var exists:Bool = textureItems.exists(function (textureItem) {
+					return textureItem.name == key;
 				});
 				if (!exists) {
 					textureItems.push(cast library.items[library.findItemIndex(key)]);
