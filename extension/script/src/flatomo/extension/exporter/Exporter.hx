@@ -109,7 +109,7 @@ class Exporter {
 	 * アニメーションのextern定義を出力する。
 	 */
 	private function exportExterns(symbolItems:Array<SymbolItem>):Void {
-		var files = HxClassesCreator.export2(symbolItems);
+		var files = HxClassesCreator.create2(symbolItems);
 		for (file in files) {
 			var path:String = if (file.packageName != "") ~/\./g.replace(file.packageName, "/") + "/" else "";
 			FLfile.createFolder(outputDirectoryPath + path);

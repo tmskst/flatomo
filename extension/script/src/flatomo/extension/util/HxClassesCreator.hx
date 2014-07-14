@@ -30,7 +30,7 @@ private typedef Salt = {
 
 class HxClassesCreator {
 	
-	public static function export(data:FlatomoLibrary):Array<{ name:String, value:String }> {
+	public static function create(data:FlatomoLibrary):Array<{ name:String, value:String }> {
 		var externs = new Array<{ name:String, value:String }>();
 		var template = new Template(Resource.getString("template"));
 		for (itemPath in data.extendedItems.keys()) {
@@ -48,7 +48,7 @@ class HxClassesCreator {
 		return externs;
 	}
 	
-	public static function export2(symbolItems:Array<SymbolItem>):Array<{ name:String, packageName:String, content:String }> {
+	public static function create2(symbolItems:Array<SymbolItem>):Array<{ name:String, packageName:String, content:String }> {
 		var template = new Template(Resource.getString("template"));
 		var externs = new Array<{ name:String, packageName:String, content:String }>();
 		

@@ -17,7 +17,7 @@ class FlatomoLibraryExporter {
 		}
 		{ // extern定義（*.hx）を書き出す
 			var fileUri = swfPath.substring(0, swfPath.lastIndexOf("/"));
-			var files = HxClassesCreator.export(library);
+			var files = HxClassesCreator.create(library);
 			for (file in files) {
 				FLfile.write(fileUri + "/" + file.name + ".hx", file.value);
 			}
