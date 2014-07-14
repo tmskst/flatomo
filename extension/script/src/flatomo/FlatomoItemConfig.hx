@@ -62,11 +62,12 @@ class FlatomoItemConfig {
 		
 		// 対象のシンボルアイテムに保存された拡張情報
 		var flatomoItem:FlatomoItem = selectedSymbolItem.getFlatomoItem();
+		var linkageClassName:String = selectedSymbolItem.linkageClassName;
 		
 		var symbolItemConfigTemplate = new Template(Resource.getString("FlatomoItemConfig"));
 		var result:Dynamic = fl.xmlPanelFromString(symbolItemConfigTemplate.execute(
 			{ // context
-				linkage				: selectedSymbolItem.linkageClassName,
+				linkage				: if (linkageClassName == null) "" else linkageClassName,
 				exportForFlatomo	: flatomoItem.exportForFlatomo,
 				primitiveItem		: flatomoItem.primitiveItem,
 				exportType 			: flatomoItem.exportType,
