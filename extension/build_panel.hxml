@@ -10,3 +10,5 @@
 # libraries
 -cp panel/lib/minimal/hxclasses
 -swf-lib panel/lib/minimal/minimal.swc
+
+-D flatomoVersion=1.0.0
