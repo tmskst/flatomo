@@ -63,7 +63,10 @@ function frameExport(frame)
 
 	var frameId = frame.id;
 	if (frame.frameSource instanceof SymbolItem) {
-		frameId = frame.frameSource.linkageClassName;
+		frameId = frame.frameSource.name;
+		if (frame.frameSource.linkageExportForAS) {
+			frameId = frame.frameSource.linkageClassName;
+		}
 	}
 	
 	var frameNumber = ('0000' + frame.frameNumber).slice(-4);
