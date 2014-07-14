@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<dialog>
+	<checkbox id="isFlatomoDocument" label="現在のドキュメントでFlatomoを有効にする" checked="false"/>
+	<hbox>
+		<spacer flex="1"/>
+		<button label="OK" width="30" dlgType="accept" oncommand="fl.xmlui.accept()" />
+		<button label="キャンセル" width="30" oncommand="fl.xmlui.cancel()" />
+	</hbox>
+</dialog>

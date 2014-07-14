@@ -1,4 +1,4 @@
-package flatomo.extension;
+package flatomo;
 
 import jsfl.FLfile;
 import jsfl.Lib;
@@ -16,14 +16,10 @@ class Installer {
 		var scriptURI = fl.scriptURI.substr(0, fl.scriptURI.lastIndexOf("/script/bin") + 1);
 		var configURI = fl.configURI;
 		
-		// Scripts
-		copy(scriptURI + "script/bin/EnableFlatomo.jsfl", configURI + "Commands/Flatomoを有効にする.jsfl");
-		copy(scriptURI + "script/bin/DisableFlatomo.jsfl", configURI + "Commands/Flatomoを無効にする.jsfl");
-		copy(scriptURI + "script/bin/Publisher.jsfl", configURI + "Commands/Flatomo向けにパブリッシュ.jsfl");
-		copy(scriptURI + "script/bin/Exporter.jsfl", configURI + "Commands/Flatomo用スプライトシート書き出し（試験的）.jsfl");
-		
 		// Panel
-		copy(scriptURI + "script/bin/flatomo.jsfl", configURI + "WindowSWF/flatomo.jsfl");
+		copy(scriptURI + "script/bin/PublishDialog.jsfl", configURI + "WindowSWF/PublishDialog.jsfl");
+		copy(scriptURI + "script/bin/DocumentConfig.jsfl", configURI + "WindowSWF/DocumentConfig.jsfl");
+		copy(scriptURI + "script/bin/FlatomoItemConfig.jsfl", configURI + "WindowSWF/FlatomoItemConfig.jsfl");
 		copy(scriptURI + "panel/bin/Flatomo.swf", configURI + "WindowSWF/Flatomo.swf");
 	}
 	

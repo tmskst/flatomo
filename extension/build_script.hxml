@@ -1,66 +1,49 @@
--D js-classic
+# #####################################
+# FlatomoItemConfig
+# #####################################
 -cp script/src
 -cp ../common/src
-
-# libraries
--cp script/lib/haxe-jsfl/jsfl/hxclasses
-
--main flatomo.extension.Script
--js script/bin/flatomo.jsfl
-
+-main flatomo.FlatomoItemConfig
+-js script/bin/FlatomoItemConfig.jsfl
+# resouce
 -resource script/res/FlatomoItemConfig.template.xul@FlatomoItemConfig
-
---next
-
--cp script/src
--cp ../common/src
-
-# libraries
+# haxe-jsfl
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
 
--main flatomo.extension.EnableFlatomo
--js script/bin/EnableFlatomo.jsfl
 
+# #####################################
+# DocumentConfig
+# #####################################
 --next
-
 -cp script/src
--cp ../common/src
-
-# libraries
+-main flatomo.DocumentConfig
+-js script/bin/DocumentConfig.jsfl
+# resouce
+-resource script/res/DocumentConfig.template.xul@DocumentConfig
+# haxe-jsfl
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
 
--main flatomo.extension.DisableFlatomo
--js script/bin/DisableFlatomo.jsfl
 
+# #####################################
+# DocumentConfig
+# #####################################
 --next
-
 -cp script/src
--cp ../common/src
-
--resource script/res/Abstract.hx.template@template
-
-# libraries
+-main flatomo.PublishDialog
+-js script/bin/PublishDialog.jsfl
+# resouce
+-resource script/res/PublishDialog.template.xul@PublishDialog
+# haxe-jsfl
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
 
--main flatomo.extension.Publisher
--js script/bin/Publisher.jsfl
 
+# #####################################
+# Installer
+# #####################################
 --next
-
 -cp script/src
-
-# libraries
--cp script/lib/haxe-jsfl/jsfl/hxclasses
-
--main flatomo.extension.Installer
+-main flatomo.Installer
 -js script/bin/Installer.jsfl
 
---next
-
--D js-classic
--cp script/src
--cp ../common/src
+# haxe-jsfl
 -cp script/lib/haxe-jsfl/jsfl/hxclasses
--resource script/res/Abstract.hx.template@template
--main flatomo.extension.Exporter
--js script/bin/Exporter.jsfl
