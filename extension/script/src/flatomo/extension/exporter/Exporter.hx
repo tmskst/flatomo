@@ -1,4 +1,4 @@
-package flatomo;
+package flatomo.extension.exporter;
 
 import flatomo.extension.util.HxClassesCreator;
 import flatomo.FlatomoItem;

@@ -1,5 +1,7 @@
 package flatomo;
 
+import flatomo.extension.exporter.Exporter;
+import flatomo.extension.exporter.Publisher;
 import haxe.Resource;
 import haxe.Template;
 import jsfl.Document;
