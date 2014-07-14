@@ -1,73 +1,85 @@
 package flatomo.extension.exporter;
 
 import flatomo.extension.util.HxClassesCreator;
-import flatomo.FlatomoItem;
-import flatomo.ItemPath;
-import flatomo.Marker;
-import haxe.Resource;
+import flatomo.FlatomoItem.DisplayObjectType;
+import flatomo.extension.PartsAnimationParser;
 import haxe.Serializer;
-import haxe.Template;
-import jsfl.Element;
+import jsfl.Document;
 import jsfl.FLfile;
 import jsfl.ItemType;
-import jsfl.LayerType;
 import jsfl.Lib;
-import jsfl.Lib.fl;
 import jsfl.Library;
-import jsfl.SpriteSheetExporter;
 import jsfl.SymbolItem;
-
-using jsfl.TimelineTools;
-using flatomo.extension.util.ItemTools;
+import jsfl.Lib.fl;
 
 using Lambda;
+using flatomo.extension.util.ItemTools;
 
 class Exporter {
-
-	public static function run() {
-		new Exporter();
+	
+	public static function export(document:Document) {
+		new Exporter(document);
 	}
 	
-	private function new() {
-		/*
-		 * このスクリプトでは
-		 * スプライトシート、マーカー情報、アニメーションのextern定義、アニメーションの列挙を出力する。
-		 */
-		var document = fl.getDocumentDOM();
-		var library = document.library;
+	public function new(document:Document) {
+		var library:Library = document.library;
 		
-		var symbolItems = new Array<SymbolItem>();
+		var animationItems:Array<SymbolItem> = [];
+		var containerItems:Array<SymbolItem> = [];
+		
 		for (item in library.items) {
-			// ActionScript用に書き出しが有効でかつアニメーション属性が有効なアイテムが書き出される。
-			if (item.itemType == ItemType.MOVIE_CLIP) {
-				var symbolItem:SymbolItem = cast item;
-				var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
-				if (symbolItem.linkageExportForAS &&
-					flatomoItem.exportForFlatomo &&
-					flatomoItem.exportType.equals(ExportType.Static) &&
-					flatomoItem.displayObjectType.equals(DisplayObjectType.Animation)) {
-					symbolItems.push(symbolItem);
-				}
+			switch(item.itemType) {
+				case ItemType.MOVIE_CLIP, ItemType.GRAPHIC :
+					var symbolItem:SymbolItem = cast item;
+					var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
+					if (symbolItem.linkageExportForAS && flatomoItem.exportForFlatomo) {
+						switch (flatomoItem.displayObjectType) {
+							case DisplayObjectType.Animation :
+								animationItems.push(symbolItem);
+							case DisplayObjectType.Container :
+								containerItems.push(symbolItem);
+						}
+					}
 			}
 		}
 		
 		{ // outputDirectoryPath, sourceFileName を初期化
-			var swfPath = document.getSWFPathFromProfile();
+			var swfPath:String = document.getSWFPathFromProfile();
 			outputDirectoryPath = swfPath.substring(0, swfPath.lastIndexOf("/")) + "/";
-			var path = swfPath.substring(0, swfPath.lastIndexOf("."));
+			var path:String = swfPath.substring(0, swfPath.lastIndexOf("."));
 			sourceFileName = path.substring(path.lastIndexOf("/") + 1);
-			var fileNameConvention = ~/^[A-Z][a-zA-Z0-9]+$/;
+			var fileNameConvention:EReg = ~/^[A-Z][a-zA-Z0-9]+$/;
 			if (!fileNameConvention.match(sourceFileName)) {
-				Lib.alert("不適切なSWFプロファイル設定 : 出力ファイル名は大文字で始まり、かつ使用できる文字は[a-zA-Z0-9]です。");
-				return;
+				return Lib.alert("不適切なSWFプロファイル設定 : 出力ファイル名は大文字で始まり、かつ使用できる文字は[a-zA-Z0-9]です。");
 			}
 			FLfile.createFolder(outputDirectoryPath);
 		}
 		
-		TextureAtlasExporter.export(symbolItems, outputDirectoryPath + sourceFileName);
-		exportPostures(symbolItems);
-		MarkerExporter.export(symbolItems, outputDirectoryPath + sourceFileName);
-		exportExterns(symbolItems);
+		
+		var textureItems:Array<SymbolItem> = [];
+		var materials:Map<String, Dynamic> = new Map<String, Dynamic>();
+		for (containerItem in containerItems) {
+			var parts = PartsAnimationParser.parse(containerItem);
+			materials.set(containerItem.name, parts);
+			for (key in parts.numTextures.keys()) {
+				var exists:Bool = textureItems.exists(function (symbolItem) {
+					return symbolItem.name == key;
+				});
+				if (!exists) {
+					textureItems.push(cast library.items[library.findItemIndex(key)]);
+				}
+			}
+		}
+		var outputPath:String = outputDirectoryPath + sourceFileName;
+		FLfile.write(outputPath + "." + "mtl", Serializer.run(materials));
+		
+		TextureAtlasExporter.export(animationItems.concat(textureItems), outputPath);
+		
+		var staticExportItems = animationItems.concat(containerItems);
+		
+		MarkerExporter.export(staticExportItems, outputPath);
+		exportPostures(staticExportItems);
+		exportExterns(staticExportItems);
 	}
 	
 	/**

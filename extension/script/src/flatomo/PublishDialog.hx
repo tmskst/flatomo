@@ -33,7 +33,7 @@ class PublishDialog {
 		if (result.dismiss == "cancel") { return; }
 		
 		var staticPublish:Bool	= result.staticPublish == "true";
-		if (staticPublish) { Exporter.run(); }
+		if (staticPublish) { Exporter.export(document); }
 		
 		var dynamicPublish:Bool	= result.dynamicPublish == "true";
 		if (dynamicPublish) { Publisher.run(); }
