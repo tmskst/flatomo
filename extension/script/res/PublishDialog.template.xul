@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <dialog>
-	<checkbox id="dynamic" label="動的（実行時にテクスチャを生成）" checked="false"/>
-	<checkbox id="static" label="静的（FlashCCでテクスチャを生成）" checked="false"/>
+	<checkbox id="dynamicPublish" label="動的（実行時にテクスチャを生成）" checked="::dynamicPublish::"/>
+	<checkbox id="staticPublish" label="静的（FlashCCでテクスチャを生成）" checked="::staticPublish::"/>
 	<hbox>
 		<spacer flex="1"/>
 		<button label="パブリッシュ" width="30" dlgType="accept" oncommand="fl.xmlui.accept()" />
