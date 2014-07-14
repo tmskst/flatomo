@@ -5,6 +5,7 @@ import flatomo.FlatomoItem.DisplayObjectType;
 import flatomo.FlatomoItem.ExportType;
 import haxe.Resource;
 import haxe.Template;
+import jsfl.Document;
 import jsfl.Item;
 import jsfl.ItemType;
 import jsfl.Lib;
@@ -14,6 +15,7 @@ import jsfl.SymbolItem;
 using Lambda;
 using StringTools;
 using flatomo.extension.ItemTools;
+using flatomo.extension.DocumentTools;
 
 class FlatomoItemConfig {
 	
@@ -32,6 +34,14 @@ class FlatomoItemConfig {
 	
 	@:access(flatomo.extension.ItemTools)
 	public static function main() {
+		var document:Document = fl.getDocumentDOM();
+		if (document == null) {
+			return Lib.alert("有効なドキュメントを開いてください");
+		}
+		if (!document.isFlatomo()) {
+			return Lib.alert("Flatomoが有効でないドキュメントです");
+		}
+		
 		/* スクリプトを実行するには、
 		 * 1. ライブラリ項目を1つだけ選択している。
 		 * 2. 選択されたライブラリ項目がシンボルアイテムであること。
@@ -41,13 +51,11 @@ class FlatomoItemConfig {
 		{ // initialize selectedSymbolItem
 			var selectedItems:Array<Item> = fl.getDocumentDOM().library.getSelectedItems();
 			if (selectedItems.length != 1) {
-				Lib.alert("ライブラリ項目を1つだけ選択してください");
-				return;
+				return Lib.alert("ライブラリ項目を1つだけ選択してください");
 			}
 			var selectedItem:Item = fl.getDocumentDOM().library.getSelectedItems()[0];
 			if (!selectedItem.itemType.equals(ItemType.MOVIE_CLIP) && !selectedItem.itemType.equals(ItemType.GRAPHIC)) {
-				Lib.alert("シンボルアイテムを選択してください");
-				return;
+				return Lib.alert("シンボルアイテムを選択してください");
 			}
 			selectedSymbolItem = cast selectedItem;
 		}
