@@ -16,6 +16,7 @@
 # #####################################
 --next
 -cp script/src
+-cp ../common/src
 -main flatomo.DocumentConfig
 -js script/bin/DocumentConfig.jsfl
 # resouce

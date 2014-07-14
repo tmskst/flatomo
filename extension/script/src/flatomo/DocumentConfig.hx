@@ -6,10 +6,12 @@ import jsfl.Document;
 import jsfl.Lib;
 import jsfl.Lib.fl;
 
+using flatomo.extension.util.ItemTools;
 using flatomo.extension.util.DocumentTools;
 
 class DocumentConfig {
 	
+	@:access(flatomo.extension.util.ItemTools)
 	public static function main() {
 		var document:Document = fl.getDocumentDOM();
 		if (document == null) {
@@ -29,8 +31,13 @@ class DocumentConfig {
 		// ドキュメントの情報を更新
 		var latestFlatomoDocument:Bool = result.isFlatomoDocument == "true";
 		switch (latestFlatomoDocument) {
-			case true	: document.enableFlatomo();
-			case false	: document.disableFlatomo();
+			case true :
+				document.enableFlatomo();
+			case false :
+				for (item in document.library.items) {
+					item.removeFlatomoItem();
+				}
+				document.disableFlatomo();
 		}
 	}
 }
