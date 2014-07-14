@@ -64,9 +64,9 @@ class Exporter {
 			FLfile.createFolder(outputDirectoryPath);
 		}
 		
-		exportSpriteSheet(symbolItems);
+		TextureAtlasExporter.export(symbolItems, outputDirectoryPath + sourceFileName);
 		exportPostures(symbolItems);
-		exportMarkers(symbolItems);
+		MarkerExporter.export(symbolItems, outputDirectoryPath + sourceFileName);
 		exportExterns(symbolItems);
 	}
 	
@@ -86,34 +86,6 @@ class Exporter {
 	private var sourceFileName:String;
 	
 	private static inline var EXTENSION_POSTURES = "pos";
-	private static inline var EXTENSION_MARKERS = "mks";
-	private static inline var PREFIX_MARKER_LAYER_NAME = "marker_";
-	
-	// FIXME : 1枚に収まりきらないスプライトシートの対応
-	/**
-	 * スプライトシートの出力。
-	 * SWFプロファイルに設定されたディレクトリに `flaファイル名 + (.png, .xml)` が出力される。
-	 */
-	private function exportSpriteSheet(items:Array<SymbolItem>):Void {
-		var spriteSheetExporter = new SpriteSheetExporter();
-		{ // 初期化
-			spriteSheetExporter.algorithm		= SpriteSheetExporterAlgorithm.MAX_RECTS;
-			spriteSheetExporter.stackDuplicateFrames = true;
-			spriteSheetExporter.allowTrimming = true;
-			// Flatomo.plugin.jsfl の name属性には`item.linkageExportForAS`が指定される
-			spriteSheetExporter.layoutFormat	= cast "Flatomo";
-			spriteSheetExporter.borderPadding	= 2;
-		}
-		
-		// 書き出し対象のアイテムをエクスポーターに追加
-		for (item in items) {
-			spriteSheetExporter.addSymbol(item);
-		}
-		
-		// スプライトシートの書き出し
-		var imageFormat = { format: "png", bitDepth: 32, backgroundColor: "#00000000" };
-		spriteSheetExporter.exportSpriteSheet(outputDirectoryPath + sourceFileName, imageFormat, true);
-	}
 	
 	/**
 	 * 表示オブジェクトの再構築に必要な情報をファイルに出力する。
@@ -132,39 +104,6 @@ class Exporter {
 		FLfile.write(outputDirectoryPath + sourceFileName + "." + EXTENSION_POSTURES, Serializer.run(postures));
 	}
 	
-	// FIXME: マーカーが存在しない場合にはファイルを出力しないように。
-	/**	
-	 * マーカー情報をファイルに出力する。
-	 * SWFプロファイルに設定されたディレクトリに `flaファイル名 + .mks` が出力される。
-	 */
-	private function exportMarkers(symbolItems:Array<SymbolItem>):Void {
-		var packedMarkers = new Map<ItemPath, Map<LayerName, Map<Int, Marker>>>();
-		var library:Library = fl.getDocumentDOM().library;
-		for (symbolItem in symbolItems) {
-			library.editItem(symbolItem.name);
-			
-			var packedMarker = new Map<LayerName, Map<Int, Marker>>();
-			var markerLayers = symbolItem.timeline.layers.filter(function (layer) {
-				return	layer.layerType == LayerType.GUIDE &&
-						StringTools.startsWith(layer.name, PREFIX_MARKER_LAYER_NAME);
-			});
-			for (markerLayer in markerLayers) {
-				// マーカーが存在しないフレームもあり得る
-				var markers = new Map<Int, Marker>();
-				for (frameIndex in 0...markerLayer.frameCount) {
-					var frame = markerLayer.frames[frameIndex];
-					symbolItem.timeline.setSelectedFrames(frameIndex, frameIndex);
-					for (element in frame.elements) {
-						markers.set(frameIndex, MarkerTools.fromElement(element));
-					}
-				}
-				packedMarker.set(markerLayer.name, markers);
-			}
-			packedMarkers.set(symbolItem.linkageClassName, packedMarker);
-		}
-		FLfile.write(outputDirectoryPath + sourceFileName + "." + EXTENSION_MARKERS, Serializer.run(packedMarkers));
-	}
-	
 	// FIXME: 出力先をアニメーションのFQCNに変更する。
 	/**
 	 * アニメーションのextern定義を出力する。
@@ -178,18 +117,4 @@ class Exporter {
 		}
 	}
 	
-}
-
-private class MarkerTools {
-	public static function fromElement(element:Element):Marker {
-		return {
-			x: element.x,
-			y: element.y,
-			width: element.width,
-			height: element.height,
-			rotation: element.rotation,
-			scaleX: element.scaleX,
-			scaleY: element.scaleY,
-		};
-	}
 }
