@@ -60,7 +60,7 @@ class Exporter {
 		var materials:Map<String, Dynamic> = new Map<String, Dynamic>();
 		for (containerItem in containerItems) {
 			var parts = PartsAnimationParser.parse(containerItem);
-			materials.set(containerItem.name, parts);
+			materials.set(containerItem.linkageClassName, parts);
 			for (key in parts.numTextures.keys()) {
 				var exists:Bool = textureItems.exists(function (textureItem) {
 					return textureItem.name == key;
