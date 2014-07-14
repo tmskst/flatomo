@@ -1,4 +1,4 @@
-package flatomo.extension;
+package flatomo.extension.util;
 
 import jsfl.Document;
 import jsfl.PersistentDataType;

@@ -1,4 +1,4 @@
-package flatomo.extension;
+package flatomo.extension.util;
 
 import flatomo.FlatomoLibrary;
 import haxe.Serializer;

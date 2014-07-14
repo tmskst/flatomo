@@ -20,9 +20,9 @@ using Lambda;
 using StringTools;
 using jsfl.LibraryTools;
 using jsfl.TimelineTools;
-using flatomo.extension.ItemTools;
-using flatomo.extension.DocumentTools;
-using flatomo.extension.FlatomoLibraryTools;
+using flatomo.extension.util.ItemTools;
+using flatomo.extension.util.DocumentTools;
+using flatomo.extension.util.FlatomoLibraryTools;
 
 class Publisher {
 	

@@ -1,4 +1,4 @@
-package flatomo.extension;
+package flatomo.extension.util;
 
 import flatomo.FlatomoItem;
 import flatomo.FlatomoLibrary;
@@ -8,7 +8,7 @@ import haxe.Resource;
 import haxe.Template;
 import jsfl.SymbolItem;
 
-using flatomo.extension.ItemTools;
+using flatomo.extension.util.ItemTools;
 
 private typedef Fields = Array<{ NAME:String , CLASS_NAME:String }>;
 private typedef Sections = Array<{ NAME:String }>;

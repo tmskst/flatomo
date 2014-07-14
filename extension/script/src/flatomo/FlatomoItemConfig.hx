@@ -14,8 +14,8 @@ import jsfl.SymbolItem;
 
 using Lambda;
 using StringTools;
-using flatomo.extension.ItemTools;
-using flatomo.extension.DocumentTools;
+using flatomo.extension.util.ItemTools;
+using flatomo.extension.util.DocumentTools;
 
 class FlatomoItemConfig {
 	

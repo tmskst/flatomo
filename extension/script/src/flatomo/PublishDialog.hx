@@ -6,7 +6,7 @@ import jsfl.Document;
 import jsfl.Lib;
 import jsfl.Lib.fl;
 
-using flatomo.extension.DocumentTools;
+using flatomo.extension.util.DocumentTools;
 
 class PublishDialog {
 	

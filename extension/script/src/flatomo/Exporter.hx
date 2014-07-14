@@ -1,6 +1,6 @@
 package flatomo;
 
-import flatomo.extension.HxClassesCreator;
+import flatomo.extension.util.HxClassesCreator;
 import flatomo.FlatomoItem;
 import flatomo.ItemPath;
 import flatomo.Marker;
@@ -18,7 +18,7 @@ import jsfl.SpriteSheetExporter;
 import jsfl.SymbolItem;
 
 using jsfl.TimelineTools;
-using flatomo.extension.ItemTools;
+using flatomo.extension.util.ItemTools;
 
 using Lambda;
 
