@@ -10,7 +10,6 @@ using flatomo.extension.util.DocumentTools;
 
 class DocumentConfig {
 	
-	@:access(flatomo.extension.DocumentTools)
 	public static function main() {
 		var document:Document = fl.getDocumentDOM();
 		if (document == null) {
