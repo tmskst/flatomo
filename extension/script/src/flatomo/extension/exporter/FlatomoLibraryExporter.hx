@@ -1,14 +1,15 @@
-package flatomo.extension.util;
+package flatomo.extension.exporter;
 
+import flatomo.extension.util.HxClassesCreator;
 import flatomo.FlatomoLibrary;
 import haxe.Serializer;
 import jsfl.Document;
 import jsfl.FLfile;
 
-class FlatomoLibraryTools {
+class FlatomoLibraryExporter {
 	
 	/** FlatomoLibraryをファイルに書き込みます */
-	private static function publish(library:FlatomoLibrary, document:Document):Void {
+	private static function export(library:FlatomoLibrary, document:Document):Void {
 		var swfPath:String = document.getSWFPathFromProfile();
 		{ // *.flatomo を書き出す
 			var fileUri = swfPath.substring(0, swfPath.lastIndexOf(".")) + "." + "flatomo";

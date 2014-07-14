@@ -22,19 +22,19 @@ using jsfl.LibraryTools;
 using jsfl.TimelineTools;
 using flatomo.extension.util.ItemTools;
 using flatomo.extension.util.DocumentTools;
-using flatomo.extension.util.FlatomoLibraryTools;
+using flatomo.extension.exporter.FlatomoLibraryExporter;
 
 class Publisher {
 	
 	private static var listenerId:Int;
 	
-	@:access(FlatomoLibraryTools)
+	@:access(flatomo.extension.exporter.FlatomoLibraryExporter)
 	public static function run() {
 		var document:Document = fl.getDocumentDOM();
 		if (document == null || !document.isFlatomo()) { return; }
 		
 		var flatomoLibrary = FlatomoLibraryCreator.create(document.library);
-		flatomoLibrary.publish(document);
+		flatomoLibrary.export(document);
 		
 		listenerId = fl.addEventListener(EventType.POST_PUBLISH, postPublish);
 		document.publish();
