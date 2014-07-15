@@ -73,7 +73,7 @@ class Exporter {
 		var outputPath:String = outputDirectoryPath + sourceFileName;
 		FLfile.write(outputPath + "." + "mtl", Serializer.run(materials));
 		
-		TextureAtlasExporter.export(animationItems.concat(textureItems), outputPath);
+		TextureAtlasExporter.export(cast animationItems.concat(textureItems), outputPath);
 		
 		var staticExportItems = animationItems.concat(containerItems);
 		

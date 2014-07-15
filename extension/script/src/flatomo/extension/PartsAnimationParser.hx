@@ -78,13 +78,14 @@ class PartsAnimationParser {
 				var instance:Instance = cast element;
 				stack.push(MatrixTools.concatMatrix(instance.matrix, geometricTransform));
 				
-				if (instance.instanceType != InstanceType.SYMBOL) { continue; }
+				var isPrimitiveInstance:Bool = switch (instance.instanceType) {
+					case InstanceType.BITMAP : true;
+					case InstanceType.SYMBOL : cast(instance.libraryItem, SymbolItem).getFlatomoItem().primitiveItem;
+					case _ : false;
+				};
 				
-				var librarySymbolItem:SymbolItem = cast instance.libraryItem;
-				var flatomoItem:FlatomoItem = librarySymbolItem.getFlatomoItem();
-				
-				if (flatomoItem.primitiveItem) {
-					// fold
+				// fold
+				if (isPrimitiveInstance) {
 					var result:Matrix = MatrixTools.createIdentityMatrix();
 					for (matrix in stack) {
 						result = MatrixTools.concatMatrix(matrix, result);
@@ -92,7 +93,9 @@ class PartsAnimationParser {
 					//trace(instance.libraryItem.name + ", " + depth);
 					parts.push( { name: instance.libraryItem.name, matrix: result, id: -1, depth: depth++ } );
 					stack.pop();
-				} else {
+					continue;
+				}
+				if (instance.instanceType == InstanceType.SYMBOL) {
 					var symbolInstance:SymbolInstance = cast instance;
 					var firstFrame:Int = symbolInstance.firstFrame;
 					var frameCount:Int = cast(symbolInstance.libraryItem, SymbolItem).timeline.frameCount;
