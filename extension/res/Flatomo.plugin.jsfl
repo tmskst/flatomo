@@ -62,7 +62,7 @@ function frameExport(frame)
 //	fl.trace("---- frameExport");
 
 	var frameId = frame.id;
-	if (frame.frameSource instanceof SymbolItem) {
+	if (frame.symbol != null && frame.frameSource instanceof SymbolItem) {
 		frameId = frame.frameSource.name;
 		if (frame.frameSource.linkageExportForAS) {
 			frameId = frame.frameSource.linkageClassName;
