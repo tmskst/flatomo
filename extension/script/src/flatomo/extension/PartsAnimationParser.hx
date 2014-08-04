@@ -4,6 +4,7 @@ import jsfl.ElementType;
 import jsfl.Frame;
 import jsfl.Instance;
 import jsfl.InstanceType;
+import jsfl.Item;
 import jsfl.LayerType;
 import jsfl.Matrix;
 import jsfl.MatrixTools;
@@ -19,6 +20,7 @@ using flatomo.extension.util.ItemTools;
 
 class PartsAnimationParser {
 	
+	/*
 	public static function parse(rootSymbolItem:SymbolItem):{ parts:Array<Array<{ name:String, matrix:Matrix, id:Int, depth:Int }>>, numTextures:Map<String, Int> } {
 		var parts = new Array<Array<{ name:String, matrix:Matrix, id:Int, depth:Int }>>();
 		for (frameIndex in 0...rootSymbolItem.timeline.frameCount) {
@@ -44,16 +46,73 @@ class PartsAnimationParser {
 		
 		return { parts: parts, numTextures: numTextures };
 	}
+	*/
 	
-	private var parts:Array<{ name:String, matrix:Matrix, id:Int, depth:Int }>;
-	private var depth:Int = 0;
-	private function new(rootSymbolItem:SymbolItem, frameIndex:Int) {
-		//trace("###" + rootSymbolItem.name + ", " + frameIndex);
-		parts = new Array<{ name:String, matrix:Matrix, id:Int, depth:Int }>();
-		analyze(rootSymbolItem, frameIndex, new Array<Matrix>());
+	public static function parse(rootSymbolItem:SymbolItem):{ x:Array<{ name:String, matrixes:Array<Matrix> }>, y:Array<Item> } {
+		var parser:PartsAnimationParser = new PartsAnimationParser(rootSymbolItem);
+		var result = new Array<{ name:String, matrixes:Array<Matrix> }>();
+		
+		/*
+		 *	matrixes : {
+		 *		Symbol0 => [
+		 *			[
+		 * 				{ a : 1, b : 0, c : 0, d : 1, tx :   0, ty :   0 },
+		 * 				{ a : 1, b : 0, c : 0, d : 1, tx : 100, ty :   0 }
+		 * 			],
+		 *			[
+		 * 				{ a : 1, b : 0, c : 0, d : 1, tx : 100, ty : 100 },
+		 * 				{ a : 1, b : 0, c : 0, d : 1, tx : 200, ty : 200 }
+		 *			]
+		 *		]
+		 *	}
+		 */
+		for (name in parser.matrixes.keys()) {
+			//trace(name);
+			var timeline:Array<Array<Matrix>> = parser.matrixes.get(name);
+			while (timeline.exists(function (frame) { return frame.length != 0; } )) {
+				var matrixes:Array<Matrix> = [for (i in 0...timeline.length) null];
+				for (frameIndex in 0...timeline.length) {
+					var frame:Array<Matrix> = timeline[frameIndex];
+					if (!frame.empty()) {
+						matrixes[frameIndex] = frame.pop();
+					}
+				}
+				//trace(matrixes);
+				result.push({ name: name, matrixes: matrixes });
+			}
+		}
+		return { x: result, y: parser.items };
 	}
 	
-	private function analyze(symbolItem:SymbolItem, frameIndex:Int, matrixes:Array<Matrix>):Void {
+	public function new(rootSymbolItem:SymbolItem):Void {
+		this.currentFrame = 0;
+		this.frameCount = rootSymbolItem.timeline.frameCount;
+		this.matrixes = new Map<String, Array<Array<Matrix>>>();
+		this.items = new Array<Item>();
+		
+		for (frameIndex in 0...frameCount) {
+			currentFrame = frameIndex;
+			trace("-------NEXT FRAME---------------------------");
+			analyze(rootSymbolItem, frameIndex, new Array<Matrix>());
+		}
+	}
+	
+	private var currentFrame:Int;
+	private var frameCount:Int;
+	private var matrixes:Map<String, Array<Array<Matrix>>>;
+	private var items:Array<Item>;
+	
+	private function addMatrix(name:String, matrix:Matrix, frameIndex:Int, item:Item):Void {
+		if (!matrixes.exists(name)) {
+			items.push(item);
+			matrixes.set(name, [for (i in 0...frameCount) []]);
+		}
+		trace(frameIndex + ", " + name);
+		var container:Array<Array<Matrix>> = matrixes.get(name);
+		container[frameIndex].push(matrix);
+	}
+	
+	private function analyze(symbolItem:SymbolItem, frameIndex:Int, stack:Array<Matrix>):Void {
 		//{ 走査するフレーム（フレームが存在する通常レイヤー）
 		var frames:Array<Frame> = symbolItem.timeline.layers
 			.filter(function (layer) { return layer.layerType.equals(LayerType.NORMAL); })
@@ -63,6 +122,11 @@ class PartsAnimationParser {
 		frames.reverse();
 		
 		for (frame in frames) {
+			for (element in frame.elements) {
+				trace(frameIndex + ", " + element.layer.name + ", " + element.name);
+			}
+			
+			
 			var geometricTransform:Matrix = switch (frame.tweenType) {
 				case TweenType.NONE, TweenType.SHAPE :
 					MatrixTools.createIdentityMatrix();
@@ -76,7 +140,7 @@ class PartsAnimationParser {
 				.filter(function (element) { return element.elementType.equals(ElementType.INSTANCE); } );
 			
 			for (instance in instances) {
-				matrixes.push(MatrixTools.concatMatrix(instance.matrix, geometricTransform));
+				stack.push(MatrixTools.concatMatrix(instance.matrix, geometricTransform));
 				
 				// パーツアニメーションの基本単位（プリミティブインスタンス）
 				// 1. インスタンスがビットマップならば強制的にパーツアニメーションの基本単位とみなす
@@ -87,11 +151,11 @@ class PartsAnimationParser {
 				
 				// インスタンスがパーツアニメーションの基本単位
 				if (primitive) {
-					var result:Matrix = matrixes
+					var result:Matrix = stack
 						.fold(function (matrix1, matrix2) { return matrix1.concatMatrix(matrix2); }, MatrixTools.createIdentityMatrix());
 					
-					parts.push({ name: instance.libraryItem.name, matrix: result, id: -1, depth: depth++ });
-					matrixes.pop();
+					addMatrix(instance.libraryItem.name, result, currentFrame, instance.libraryItem);
+					stack.pop();
 				}
 				// パーツアニメーションの基本単位ではないシンボルインスタンス（インスタンスが子を持っている）
 				else if (instance.instanceType == InstanceType.SYMBOL) {
@@ -113,10 +177,11 @@ class PartsAnimationParser {
 							throw 'Ignored : Button Symbol';
 					}
 					
-					analyze(cast symbolInstance.libraryItem, symbolFrameIndex, matrixes);
+					analyze(cast symbolInstance.libraryItem, symbolFrameIndex, stack);
 				}
 			}
 		}
-		matrixes.pop();
+		stack.pop();
 	}
+	
 }

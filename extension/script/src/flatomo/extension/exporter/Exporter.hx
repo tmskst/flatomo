@@ -1,8 +1,8 @@
 package flatomo.extension.exporter;
 
+import flatomo.extension.PartsAnimationParser;
 import flatomo.extension.util.HxClassesCreator;
 import flatomo.FlatomoItem.DisplayObjectType;
-import flatomo.extension.PartsAnimationParser;
 import haxe.Serializer;
 import jsfl.Document;
 import jsfl.FLfile;
@@ -10,7 +10,6 @@ import jsfl.ItemType;
 import jsfl.Lib;
 import jsfl.Library;
 import jsfl.SymbolItem;
-import jsfl.Lib.fl;
 
 using Lambda;
 using flatomo.extension.util.ItemTools;
@@ -57,18 +56,32 @@ class Exporter {
 		
 		
 		var textureItems:Array<SymbolItem> = [];
-		var materials:Map<String, Dynamic> = new Map<String, Dynamic>();
+		var materials = new Map<String, Array<{ name:String, matrixes:Array<Dynamic> }>>();
+		
 		for (containerItem in containerItems) {
 			var parts = PartsAnimationParser.parse(containerItem);
-			materials.set(containerItem.linkageClassName, parts);
-			for (key in parts.numTextures.keys()) {
-				var exists:Bool = textureItems.exists(function (textureItem) {
-					return textureItem.name == key;
-				});
-				if (!exists) {
-					textureItems.push(cast library.items[library.findItemIndex(key)]);
-				}
+			materials.set(containerItem.linkageClassName, parts.x);
+			
+			for (a in parts.y) {
+				textureItems.push(cast a);
 			}
+			
+			//for (part in parts) {
+				//for (textureItem in textureItems) {
+					//if (textureItem.name == part.name) { continue; }
+				//}
+				//var index = library.findItemIndex(part.name);
+				//trace(Type.getClassName(Type.getClass(index)));
+				//textureItems.push(cast library.items[index]);
+				///*
+				//var exists:Bool = textureItems
+					//.exists(function (textureItem) { return textureItem.name == part.name; } );
+				//
+				//if (!exists) {
+					//textureItems.push(cast library.items[library.findItemIndex(part.name)]);
+				//}
+				//*/
+			//}
 		}
 		var outputPath:String = outputDirectoryPath + sourceFileName;
 		FLfile.write(outputPath + "." + "mtl", Serializer.run(materials));
