@@ -47,14 +47,29 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	
 	/** 自身（表示オブジェクト）の更新 */
 	public function update(currentFrame:Int):Void {
-		// すべての表示オブジェクトを不可視状態にする。
+		// 自身の子のうち制御可能な表示オブジェクトのリスト
+		var children = new Array<ILayoutAdjusted>();
 		for (childIndex in 0...numChildren) {
-			var child = this.getChildAt(childIndex);
+			var child:DisplayObject = this.getChildAt(childIndex);
 			if (Std.is(child, ILayoutAdjusted)) {
-				LayoutAdjustedTools.update(cast child, currentFrame);
+				children.push(cast child);
 			}
 		}
 		
-	}
-	
+		for (child in children) {
+			var layout:Layout = child.layouts.get(currentFrame - 1);
+			if (layout == null) {
+				child.visible = false;
+				continue;
+			} 
+			
+			child.visible = true;
+			
+			var depth:Int = cast(child, DisplayObject).parent.getChildIndex(cast child);
+			cast(child, DisplayObject).parent.swapChildrenAt(depth, layout.depth);
+			child.transformationMatrix = layout.geometricTransform;
+			
+			
+		}
+	}	
 }
