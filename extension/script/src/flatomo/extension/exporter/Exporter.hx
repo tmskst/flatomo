@@ -56,7 +56,7 @@ class Exporter {
 		
 		
 		var textureItems:Array<SymbolItem> = [];
-		var materials = new Map<String, Array<{ name:String, matrixes:Array<Dynamic> }>>();
+		var materials = new Map<String, Array<{ path:String, layouts:Array<Dynamic> }>>();
 		
 		for (containerItem in containerItems) {
 			var parts = PartsAnimationParser.parse(containerItem);
