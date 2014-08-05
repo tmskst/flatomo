@@ -72,7 +72,7 @@ class GpuOperator {
 	 * 表示オブジェクト（starling.display.DisplayObject）を生成します
 	 */
 	public function createInstance(clazz:Class<flash.display.DisplayObject>):DisplayObject {
-		return create("F:" + Type.getClassName(clazz), new Vector(0));
+		return create("F:" + Type.getClassName(clazz), new Array<Layout>());
 	}
 	
 	/**
@@ -81,8 +81,8 @@ class GpuOperator {
 	 * @return 生成（構築）された表示オブジェクト
 	 */
 	// TODO : private
-	public function create(key:String, layouts:Vector<Layout> = null):DisplayObject {
-		if (layouts == null) { layouts = new Vector<Layout>(0); }
+	public function create(key:String, layouts:Array<Layout> = null):DisplayObject {
+		if (layouts == null) { layouts = new Array<Layout>(); }
 		
 		var type = postures.get(key);
 		switch (type) {

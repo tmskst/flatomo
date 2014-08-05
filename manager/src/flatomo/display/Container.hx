@@ -3,7 +3,6 @@ package flatomo.display;
 import flatomo.display.ILayoutAdjusted;
 import flatomo.GpuOperator;
 import flatomo.Layout;
-import haxe.ds.Vector;
 import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
@@ -26,7 +25,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	 * @param	sections セクション情報。
 	 */
 	@:allow(flatomo.GpuOperator)
-	private function new(layouts:Vector<Layout>, displayObjects:Array<DisplayObject>, sections:Array<Section>) {
+	private function new(layouts:Array<Layout>, displayObjects:Array<DisplayObject>, sections:Array<Section>) {
 		super();
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
@@ -40,7 +39,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 		update(1);
 	}
 	
-	private var layouts:Vector<Layout>;
+	private var layouts:Array<Layout>;
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;
 	
@@ -56,7 +55,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 		}
 		
 		for (child in children) {
-			var layout:Layout = child.layouts.get(currentFrame - 1);
+			var layout:Layout = child.layouts[currentFrame - 1];
 			if (layout == null) {
 				child.visible = false;
 				continue;

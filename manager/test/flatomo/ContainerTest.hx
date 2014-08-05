@@ -11,7 +11,7 @@ class ContainerTest {
 	
 	@Test("生成直後は可視状態にある")
 	public function afterConstruct_visible():Void {
-		var sut = new Container(new haxe.ds.Vector<Layout>(0), [], []);
+		var sut = new Container([], [], []);
 		Assert.areEqual(true, sut.visible);
 	}
 	

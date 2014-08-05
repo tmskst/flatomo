@@ -13,14 +13,14 @@ class AnimationTest {
 	
 	@Test("生成直後は可視状態にある")
 	public function afterConstruct_visible():Void {
-		var sut = new Animation(new haxe.ds.Vector<Layout>(0), createTextures(1)); 
+		var sut = new Animation([], createTextures(1)); 
 		Assert.areEqual(true, sut.visible);
 	}
 	
 	@Test("生成直後のテクスチャはテクスチャ集合の最初のもの")
 	public function afterConstruct_texture():Void {
 		var textures = createTextures(3);
-		var sut = new Animation(new haxe.ds.Vector<Layout>(0), textures);
+		var sut = new Animation([], textures);
 		Assert.areEqual(textures[0], sut.texture);
 	}
 	
@@ -32,7 +32,7 @@ class AnimationTest {
 	public function afterAdvanceTime_texture():Void {
 		var textures = createTextures(3);
 		var playhead = new Playhead([]);
-		var sut = new Animation(new haxe.ds.Vector<Layout>(0), textures);
+		var sut = new Animation([], textures);
 		/*
 		 * 生成直後のテクスチャは textures[0]
 		 * このタイミングで実際に描画されているかどうかは分からない

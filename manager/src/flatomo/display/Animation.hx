@@ -2,7 +2,6 @@ package flatomo.display;
 
 import flatomo.display.ILayoutAdjusted;
 import flatomo.Layout;
-import haxe.ds.Vector;
 import starling.animation.IAnimatable;
 import starling.display.Image;
 import starling.textures.Texture;
@@ -25,7 +24,7 @@ class Animation extends Image implements ILayoutAdjusted {
 	 * @param	sections　セクション情報
 	 */
 	@:allow(flatomo.GpuOperator)
-	private function new(layouts:haxe.ds.Vector<Layout>, textures:flash.Vector<Texture>) {
+	private function new(layouts:Array<Layout>, textures:flash.Vector<Texture>) {
 		if (textures.length == 0) {
 			throw '少なくとも一つのテクスチャが必要です。';
 		}
@@ -37,7 +36,7 @@ class Animation extends Image implements ILayoutAdjusted {
 		this.textures = textures;
 	}
 	
-	private var layouts:Vector<Layout>;
+	private var layouts:Array<Layout>;
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;
 	

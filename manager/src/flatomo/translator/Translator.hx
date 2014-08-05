@@ -103,7 +103,7 @@ class Translator {
 	 * @param	source 対象の表示オブジェクト
 	 */
 	private function translateQuaContainer(source:MovieClip, itemPath:ItemPath):Void {
-		var children = new Map<InstanceName, { path:String, layouts:Vector<Layout> }>();
+		var children = new Map<InstanceName, { path:String, layouts:Array<Layout> }>();
 		
 		// 全フレームを走査して対象の直接の子の配置情報を収集する
 		for (frame in 0...source.totalFrames) {
@@ -122,7 +122,7 @@ class Translator {
 					};
 					children.set(object.name, {
 						path	: key,
-						layouts	: new Vector<Layout>(source.totalFrames + 1),
+						layouts	: new Array<Layout>(/*source.totalFrames + 1*/),
 					});
 					translate(object, key);
 				}
@@ -134,7 +134,7 @@ class Translator {
 				}
 				
 				var child = children.get(object.name);
-				child.layouts.set(frame, { transform: transformationMatrix, depth: childIndex });
+				child.layouts[frame] = { transform: transformationMatrix, depth: childIndex };
 			}
 		}
 		
