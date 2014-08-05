@@ -20,7 +20,7 @@ using flatomo.extension.util.ItemTools;
 
 class PartsAnimationParser {
 	
-	public static function parse(rootSymbolItem:SymbolItem):{ x:Array<{ path:String, layouts:Array<Layout> }>, y:Array<Item> } {
+	public static function parse(rootSymbolItem:SymbolItem):{ parts:Array<{ path:String, layouts:Array<Layout> }>, items:Array<Item> } {
 		var parser:PartsAnimationParser = new PartsAnimationParser(rootSymbolItem);
 		var result = new Array<{ path:String, layouts:Array<Layout> }>();
 		
@@ -37,7 +37,7 @@ class PartsAnimationParser {
 				result.push({ path: name, layouts: matrixes });
 			}
 		}
-		return { x: result, y: parser.items };
+		return { parts: result, items: parser.items };
 	}
 	
 	public function new(rootSymbolItem:SymbolItem):Void {

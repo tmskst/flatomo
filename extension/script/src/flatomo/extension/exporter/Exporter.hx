@@ -60,10 +60,10 @@ class Exporter {
 		
 		for (containerItem in containerItems) {
 			var parts = PartsAnimationParser.parse(containerItem);
-			materials.set(containerItem.linkageClassName, parts.x);
+			materials.set(containerItem.linkageClassName, parts.parts);
 			
-			for (a in parts.y) {
-				textureItems.push(cast a);
+			for (item in parts.items) {
+				textureItems.push(cast item);
 			}
 			
 		}
