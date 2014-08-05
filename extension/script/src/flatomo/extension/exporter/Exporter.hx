@@ -54,28 +54,35 @@ class Exporter {
 			FLfile.createFolder(outputDirectoryPath);
 		}
 		
+		this.postures = new Map<Linkage, Posture>();
+		
 		
 		var textureItems:Array<SymbolItem> = [];
-		var materials = new Map<String, Array<{ path:String, layouts:Array<Dynamic> }>>();
 		
 		for (containerItem in containerItems) {
-			var parts = PartsAnimationParser.parse(containerItem);
-			materials.set(containerItem.linkageClassName, parts.parts);
+			var parseResult = PartsAnimationParser.parse(containerItem);
 			
-			for (item in parts.items) {
+			var children = new Map<InstanceName, { path:String, layouts:Array<Layout> }>();
+			for (partIndex in 0...parseResult.parts.length) {
+				var part = parseResult.parts[partIndex];
+				children.set("parts" + partIndex, part);
+			}
+			postures.set(containerItem.linkageClassName, Posture.Container(children, []));
+			
+			for (item in parseResult.items) {
+				postures.set(item.name, Posture.Image);
 				textureItems.push(cast item);
 			}
 			
 		}
 		var outputPath:String = outputDirectoryPath + sourceFileName;
-		FLfile.write(outputPath + "." + "mtl", Serializer.run(materials));
 		
 		TextureAtlasExporter.export(cast animationItems.concat(textureItems), outputPath);
 		
 		var staticExportItems = animationItems.concat(containerItems);
 		
 		MarkerExporter.export(staticExportItems, outputPath);
-		exportPostures(staticExportItems);
+		exportPostures([]);
 		exportExterns(staticExportItems);
 	}
 	
@@ -94,6 +101,8 @@ class Exporter {
 	 */
 	private var sourceFileName:String;
 	
+	private var postures:Map<Linkage, Posture>;
+	
 	private static inline var EXTENSION_POSTURES = "pos";
 	
 	/**
@@ -102,7 +111,6 @@ class Exporter {
 	 * SWFプロファイルに設定されたディレクトリに `flaファイル名 + .pos` が出力される。
 	 */
 	private function exportPostures(symbolItems:Array<SymbolItem>):Void {
-		var postures = new Map<Linkage, Posture>();
 		// 初期化
 		for (symbolItem in symbolItems) {
 			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
