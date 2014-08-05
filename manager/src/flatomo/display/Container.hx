@@ -1,7 +1,6 @@
 package flatomo.display;
 
 import flatomo.display.ILayoutAdjusted;
-import flatomo.display.LayoutAdjustedTools;
 import flatomo.GpuOperator;
 import flatomo.Layout;
 import haxe.ds.Vector;
