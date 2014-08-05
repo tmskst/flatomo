@@ -66,22 +66,6 @@ class Exporter {
 				textureItems.push(cast a);
 			}
 			
-			//for (part in parts) {
-				//for (textureItem in textureItems) {
-					//if (textureItem.name == part.name) { continue; }
-				//}
-				//var index = library.findItemIndex(part.name);
-				//trace(Type.getClassName(Type.getClass(index)));
-				//textureItems.push(cast library.items[index]);
-				///*
-				//var exists:Bool = textureItems
-					//.exists(function (textureItem) { return textureItem.name == part.name; } );
-				//
-				//if (!exists) {
-					//textureItems.push(cast library.items[library.findItemIndex(part.name)]);
-				//}
-				//*/
-			//}
 		}
 		var outputPath:String = outputDirectoryPath + sourceFileName;
 		FLfile.write(outputPath + "." + "mtl", Serializer.run(materials));
