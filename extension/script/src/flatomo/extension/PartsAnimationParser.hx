@@ -20,54 +20,11 @@ using flatomo.extension.util.ItemTools;
 
 class PartsAnimationParser {
 	
-	/*
-	public static function parse(rootSymbolItem:SymbolItem):{ parts:Array<Array<{ name:String, matrix:Matrix, id:Int, depth:Int }>>, numTextures:Map<String, Int> } {
-		var parts = new Array<Array<{ name:String, matrix:Matrix, id:Int, depth:Int }>>();
-		for (frameIndex in 0...rootSymbolItem.timeline.frameCount) {
-			parts.push(new PartsAnimationParser(rootSymbolItem, frameIndex).parts);
-		}
-		
-		var numTextures = new Map<String, Int>();
-		for (frame in parts) {
-			var numTexturesPerFrame = new Map<String, Int>();
-			for (element in frame) {
-				numTexturesPerFrame.set(element.name, if (!numTexturesPerFrame.exists(element.name)) 1 else numTexturesPerFrame.get(element.name) + 1);
-				element.id = numTexturesPerFrame.get(element.name) - 1; 
-			}
-			
-			for (key in numTexturesPerFrame.keys()) {
-				if (!numTextures.exists(key)) {
-					numTextures.set(key, numTexturesPerFrame.get(key));
-				} else {
-					numTextures.set(key, Std.int(Math.max(numTextures.get(key), numTexturesPerFrame.get(key))));
-				}
-			}
-		}
-		
-		return { parts: parts, numTextures: numTextures };
-	}
-	*/
-	
 	public static function parse(rootSymbolItem:SymbolItem):{ x:Array<{ name:String, matrixes:Array<Matrix> }>, y:Array<Item> } {
 		var parser:PartsAnimationParser = new PartsAnimationParser(rootSymbolItem);
 		var result = new Array<{ name:String, matrixes:Array<Matrix> }>();
 		
-		/*
-		 *	matrixes : {
-		 *		Symbol0 => [
-		 *			[
-		 * 				{ a : 1, b : 0, c : 0, d : 1, tx :   0, ty :   0 },
-		 * 				{ a : 1, b : 0, c : 0, d : 1, tx : 100, ty :   0 }
-		 * 			],
-		 *			[
-		 * 				{ a : 1, b : 0, c : 0, d : 1, tx : 100, ty : 100 },
-		 * 				{ a : 1, b : 0, c : 0, d : 1, tx : 200, ty : 200 }
-		 *			]
-		 *		]
-		 *	}
-		 */
 		for (name in parser.matrixes.keys()) {
-			//trace(name);
 			var timeline:Array<Array<Matrix>> = parser.matrixes.get(name);
 			while (timeline.exists(function (frame) { return frame.length != 0; } )) {
 				var matrixes:Array<Matrix> = [for (i in 0...timeline.length) null];
@@ -77,7 +34,6 @@ class PartsAnimationParser {
 						matrixes[frameIndex] = frame.pop();
 					}
 				}
-				//trace(matrixes);
 				result.push({ name: name, matrixes: matrixes });
 			}
 		}
@@ -92,7 +48,6 @@ class PartsAnimationParser {
 		
 		for (frameIndex in 0...frameCount) {
 			currentFrame = frameIndex;
-			trace("-------NEXT FRAME---------------------------");
 			analyze(rootSymbolItem, frameIndex, new Array<Matrix>());
 		}
 	}
@@ -107,7 +62,6 @@ class PartsAnimationParser {
 			items.push(item);
 			matrixes.set(name, [for (i in 0...frameCount) []]);
 		}
-		trace(frameIndex + ", " + name);
 		var container:Array<Array<Matrix>> = matrixes.get(name);
 		container[frameIndex].push(matrix);
 	}
@@ -122,11 +76,6 @@ class PartsAnimationParser {
 		frames.reverse();
 		
 		for (frame in frames) {
-			for (element in frame.elements) {
-				trace(frameIndex + ", " + element.layer.name + ", " + element.name);
-			}
-			
-			
 			var geometricTransform:Matrix = switch (frame.tweenType) {
 				case TweenType.NONE, TweenType.SHAPE :
 					MatrixTools.createIdentityMatrix();
