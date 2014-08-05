@@ -18,6 +18,6 @@ class LayoutAdjustedTools {
 		}
 		
 		source.visible = true;
-		source.transformationMatrix = layout;
+		source.transformationMatrix = layout.geometricTransform;
 	}
 }

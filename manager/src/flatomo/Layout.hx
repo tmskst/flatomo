@@ -1,4 +1,9 @@
 package flatomo;
 
+import flash.geom.Matrix;
+
 /** 表示オブジェクトの配置情報。 */
-typedef Layout = flash.geom.Matrix;
+typedef Layout = {
+	var geometricTransform:Matrix;
+	var depth:Int;
+}
