@@ -134,7 +134,7 @@ class Translator {
 				}
 				
 				var child = children.get(object.name);
-				child.layouts.set(frame, { geometricTransform: transformationMatrix, depth: childIndex });
+				child.layouts.set(frame, { transform: transformationMatrix, depth: childIndex });
 			}
 		}
 		

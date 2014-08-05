@@ -66,9 +66,14 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 			
 			var depth:Int = cast(child, DisplayObject).parent.getChildIndex(cast child);
 			cast(child, DisplayObject).parent.swapChildrenAt(depth, layout.depth);
-			child.transformationMatrix = layout.geometricTransform;
-			
-			
+			child.transformationMatrix.setTo(
+				layout.transform.a,
+				layout.transform.b,
+				layout.transform.c,
+				layout.transform.d,
+				layout.transform.tx,
+				layout.transform.ty
+			);
 		}
 	}	
 }
