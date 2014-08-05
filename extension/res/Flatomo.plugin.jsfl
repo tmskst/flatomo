@@ -67,11 +67,11 @@ function frameExport(frame)
 		if (frame.frameSource.linkageExportForAS) {
 			frameId = frame.frameSource.linkageClassName;
 		}
+		var frameNumber = ('0000' + frame.frameNumber).slice(-4);
+		frameId = frameId + frameNumber;
 	}
 	
-	var frameNumber = ('0000' + frame.frameNumber).slice(-4);
-	
-	var s = '\t<SubTexture name="' + frameId + frameNumber + '" x="' + frame.frame.x + '" y="' + frame.frame.y + '" width="' + frame.frame.w + '" height="' + frame.frame.h;
+	var s = '\t<SubTexture name="' + frameId + '" x="' + frame.frame.x + '" y="' + frame.frame.y + '" width="' + frame.frame.w + '" height="' + frame.frame.h;
 	
 	if (frame.symbolName != lastSymbol) {
 		lastSymbol = frame.symbolName;
