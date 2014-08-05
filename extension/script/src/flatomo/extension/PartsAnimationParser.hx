@@ -20,16 +20,16 @@ using flatomo.extension.util.ItemTools;
 
 class PartsAnimationParser {
 	
-	public static function parse(rootSymbolItem:SymbolItem):{ x:Array<{ name:String, matrixes:Array<{ m:Matrix, d:Int }> }>, y:Array<Item> } {
+	public static function parse(rootSymbolItem:SymbolItem):{ x:Array<{ name:String, matrixes:Array<Layout> }>, y:Array<Item> } {
 		var parser:PartsAnimationParser = new PartsAnimationParser(rootSymbolItem);
-		var result = new Array<{ name:String, matrixes:Array<{ m:Matrix, d:Int }> }>();
+		var result = new Array<{ name:String, matrixes:Array<Layout> }>();
 		
 		for (name in parser.matrixes.keys()) {
-			var timeline:Array<Array<{ m:Matrix, d:Int }>> = parser.matrixes.get(name);
+			var timeline:Array<Array<Layout>> = parser.matrixes.get(name);
 			while (timeline.exists(function (frame) { return frame.length != 0; } )) {
-				var matrixes:Array<{ m:Matrix, d:Int }> = [for (i in 0...timeline.length) null];
+				var matrixes:Array<Layout> = [for (i in 0...timeline.length) null];
 				for (frameIndex in 0...timeline.length) {
-					var frame:Array<{ m:Matrix, d:Int }> = timeline[frameIndex];
+					var frame:Array<Layout> = timeline[frameIndex];
 					if (!frame.empty()) {
 						matrixes[frameIndex] = frame.pop();
 					}
@@ -43,7 +43,7 @@ class PartsAnimationParser {
 	public function new(rootSymbolItem:SymbolItem):Void {
 		this.currentFrame = 0;
 		this.frameCount = rootSymbolItem.timeline.frameCount;
-		this.matrixes = new Map<String, Array<Array<{ m:Matrix, d:Int }>>>();
+		this.matrixes = new Map<String, Array<Array<Layout>>>();
 		this.items = new Array<Item>();
 		
 		for (frameIndex in 0...frameCount) {
@@ -56,7 +56,7 @@ class PartsAnimationParser {
 	private var childIndex:Int;
 	private var currentFrame:Int;
 	private var frameCount:Int;
-	private var matrixes:Map<String, Array<Array<{ m:Matrix, d:Int }>>>;
+	private var matrixes:Map<String, Array<Array<Layout>>>;
 	private var items:Array<Item>;
 	
 	private function addMatrix(name:String, matrix:Matrix, frameIndex:Int, item:Item):Void {
@@ -64,8 +64,8 @@ class PartsAnimationParser {
 			items.push(item);
 			matrixes.set(name, [for (i in 0...frameCount) []]);
 		}
-		var container:Array<Array<{ m:Matrix, d:Int }>> = matrixes.get(name);
-		container[frameIndex].push({ m:matrix, d:childIndex++ });
+		var container:Array<Array<Layout>> = matrixes.get(name);
+		container[frameIndex].push({ transform: matrix, depth:childIndex++ });
 	}
 	
 	private function analyze(symbolItem:SymbolItem, frameIndex:Int, stack:Array<Matrix>):Void {
