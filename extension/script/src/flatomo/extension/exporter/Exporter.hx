@@ -67,7 +67,8 @@ class Exporter {
 				var part = parseResult.parts[partIndex];
 				children.set("parts" + partIndex, part);
 			}
-			postures.set(containerItem.linkageClassName, Posture.Container(children, []));
+			var extendedItem:FlatomoItem = containerItem.getFlatomoItem();
+			postures.set(containerItem.linkageClassName, Posture.Container(children, extendedItem.sections));
 			
 			for (item in parseResult.items) {
 				postures.set(item.name, Posture.Image);
