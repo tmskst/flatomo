@@ -4,8 +4,6 @@ import flash.display.DisplayObject;
 import flatomo.AssetKit;
 import flatomo.translator.AtlasGenerator;
 import flatomo.translator.Translator;
-import flatomo.translator.RawTextureAtlas;
-import flatomo.Posture;
 
 class Flatomo {
 	
