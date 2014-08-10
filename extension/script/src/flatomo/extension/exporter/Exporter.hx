@@ -82,7 +82,7 @@ class Exporter {
 		var staticExportItems = animationItems.concat(containerItems);
 		
 		MarkerExporter.export(staticExportItems, outputPath);
-		exportPostures([]);
+		exportPostures(staticExportItems);
 		exportExterns(staticExportItems);
 	}
 	
@@ -114,7 +114,9 @@ class Exporter {
 		// 初期化
 		for (symbolItem in symbolItems) {
 			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
-			postures.set(symbolItem.linkageClassName, Posture.Animation(extendedItem.sections));
+			if (!postures.exists(symbolItem.linkageClassName)) {
+				postures.set(symbolItem.linkageClassName, Posture.Animation(extendedItem.sections));
+			}
 		}
 		
 		// 出力
