@@ -50,21 +50,21 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 		for (childIndex in 0...numChildren) {
 			var child:DisplayObject = this.getChildAt(childIndex);
 			if (Std.is(child, ILayoutAdjusted)) {
+				child.visible = false;
 				children.push(cast child);
 			}
 		}
 		
 		for (child in children) {
 			var layout:Layout = child.layouts[currentFrame - 1];
-			if (layout == null) {
-				child.visible = false;
-				continue;
-			} 
+			if (layout == null || child.visiblePropertyOverwrited && !child.visible) { continue; } 
 			
 			child.visible = true;
 			
-			var depth:Int = cast(child, DisplayObject).parent.getChildIndex(cast child);
-			cast(child, DisplayObject).parent.swapChildrenAt(depth, layout.depth);
+			if (child.layoutPropertiesOverwrited) { continue; }
+			
+			var depth:Int = this.getChildIndex(cast child);
+			this.swapChildrenAt(depth, layout.depth);
 			child.transformationMatrix.setTo(
 				layout.transform.a,
 				layout.transform.b,
