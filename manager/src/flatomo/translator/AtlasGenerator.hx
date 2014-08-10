@@ -66,7 +66,7 @@ class AtlasGenerator {
 			layout.addChild(createSubTextureElement(subTexture, area));
 			canvas.blit(subTexture.image, area);
 		}
-		return { image: canvas, layout: new flash.xml.XML(layout.toString()) };
+		return RawTextureAtlas.BitmapData(canvas, new XML(layout.toString()));
 	}
 	
 	/** テクスチャをアトラスに転写する */

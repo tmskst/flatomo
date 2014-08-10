@@ -33,10 +33,13 @@ class GpuOperator {
 		// テクスチャアトラスの生成
 		for (index in 0...assetKit.atlases.length) {
 			var rawTextureAtlas:RawTextureAtlas = assetKit.atlases[index];
-			var textureAtlas:TextureAtlas = new TextureAtlas(
-				Texture.fromBitmapData(rawTextureAtlas.image),
-				rawTextureAtlas.layout
-			);
+			var textureAtlas:TextureAtlas = switch (rawTextureAtlas) {
+				case RawTextureAtlas.BitmapData(image, layout) :
+					new TextureAtlas(Texture.fromBitmapData(image), layout);
+				case RawTextureAtlas.Atf(image, layout) : 
+					new TextureAtlas(Texture.fromAtfData(image), layout);
+			};
+			
 			manager.addTextureAtlas('ATLAS' + index, textureAtlas);
 		}
 		
@@ -44,20 +47,23 @@ class GpuOperator {
 		this.pivots = new Map<String, Point>();
 		// スプライトシートからpivotに関する情報を抜き出す
 		for (rawTextureAtlas in assetKit.atlases) {
-			var layout:XML = rawTextureAtlas.layout;
-			var subTextures:XMLList = layout.elements("SubTexture");
-			for (index in 0...subTextures.length()) {
-				var subTexture:XML = subTextures[index];
-				var pivotX:Float = Std.parseFloat(subTexture.attribute("pivotX").toString());
-				var pivotY:Float = Std.parseFloat(subTexture.attribute("pivotY").toString());
-				if (!Math.isNaN(pivotX) && !Math.isNaN(pivotY)) {
-					var key:String = subTexture.attribute("name").toString();
-					// FIXME : 本来は Animation, Image関係なくサフィックス`0000`は付く
-					if (StringTools.endsWith(key, "0000")) {
-						key = key.substr(0, -4);
+			switch(rawTextureAtlas) {
+				case RawTextureAtlas.BitmapData(_, layout)
+				|	 RawTextureAtlas.Atf(_, layout) :
+					var subTextures:XMLList = layout.elements("SubTexture");
+					for (index in 0...subTextures.length()) {
+						var subTexture:XML = subTextures[index];
+						var pivotX:Float = Std.parseFloat(subTexture.attribute("pivotX").toString());
+						var pivotY:Float = Std.parseFloat(subTexture.attribute("pivotY").toString());
+						if (!Math.isNaN(pivotX) && !Math.isNaN(pivotY)) {
+							var key:String = subTexture.attribute("name").toString();
+							// FIXME : 本来は Animation, Image関係なくサフィックス`0000`は付く
+							if (StringTools.endsWith(key, "0000")) {
+								key = key.substr(0, -4);
+							}
+							pivots.set(key, new Point(pivotX, pivotY));
+						}
 					}
-					pivots.set(key, new Point(pivotX, pivotY));
-				}
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import haxe.ds.StringMap;
 import haxe.Unserializer;
 
 private typedef EmbedAssetKit = {
-	atlases:Array<{ image:Class<BitmapData>, layout:Class<ByteArray> }>,
+	atlases:Array<EmbedTextureAtlas>,
 	postures:Array<Class<ByteArray>>
 };
 
@@ -17,10 +17,19 @@ class AssetKitUtil {
 	public static function fromEmbedAssets(assets:EmbedAssetKit):AssetKit {
 		var rawTextureAtlases = new Array<RawTextureAtlas>();
 		for (lowAtlas in assets.atlases) {
-			rawTextureAtlases.push( {
-				image: Type.createInstance(lowAtlas.image, [0, 0]),
-				layout: new XML(Type.createInstance(lowAtlas.layout, []).toString()),
-			});
+			var rawTextureAtlas:RawTextureAtlas = switch (lowAtlas) {
+				case EmbedTextureAtlas.BitmapData(image, layout) :
+					RawTextureAtlas.BitmapData(
+						Type.createInstance(image, [0, 0]),
+						new XML(Type.createInstance(layout, []).toString())
+					);
+				case EmbedTextureAtlas.Atf(image, layout) :
+					RawTextureAtlas.Atf(
+						Type.createInstance(image, []),
+						new XML(Type.createInstance(layout, []).toString())
+					);
+			}
+			rawTextureAtlases.push(rawTextureAtlas);
 		}
 		
 		var postures = new Array<StringMap<Posture>>();
