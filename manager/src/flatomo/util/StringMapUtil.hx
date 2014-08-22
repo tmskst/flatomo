@@ -9,7 +9,7 @@ class StringMapUtil {
 		for (map in maps) {
 			for (key in map.keys()) {
 				if (union.exists(key)) {
-					throw '重複するキー : ${key}';
+					trace('重複するキー : ${key}');
 				}
 				union.set(key, map.get(key));
 			}
