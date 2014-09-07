@@ -23,7 +23,7 @@
 			<DispatchInfo>
 				<Resources>
 					<MainPath>./content/index.html</MainPath>
-					<ScriptPath>./content/Script.jsfl</ScriptPath>
+					<ScriptPath>./content/js/Script.jsfl</ScriptPath>
 				</Resources>
 				<UI>
 					<Type>Panel</Type>
