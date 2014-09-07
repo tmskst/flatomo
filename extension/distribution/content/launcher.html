@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>flatomo.extension.Launcher</title>
+		<script src="./lib/CSInterface.js"></script>
+		<script>
+			function launch() {
+				new CSInterface().requestOpenExtension('flatomo.extension.Main');
+			}
+		</script>
+	</head>
+	
+	<body>
+		<input type="button" value="Launch" onclick="launch()" />
+	</body>
+</html>

@@ -5,6 +5,7 @@
 				   ExtensionBundleVersion="1.0" 
 				   Version="5.0">
 	<ExtensionList>
+		<Extension Id="flatomo.extension.Launcher" Version="0.1"/>
 		<Extension Id="flatomo.extension.Main" Version="0.1"/>
 	</ExtensionList>
 	<ExecutionEnvironment>
@@ -19,6 +20,23 @@
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>
+		<Extension Id="flatomo.extension.Launcher">
+			<DispatchInfo>
+				<Resources>
+					<MainPath>./content/launcher.html</MainPath>
+				</Resources>
+				<UI>
+					<Type>Panel</Type>
+					<Menu>flatomo.extension.Launcher</Menu>
+					<Geometry>
+						<Size>
+							<Height>300</Height>
+							<Width>500</Width>
+						</Size>
+					</Geometry>
+				</UI>
+			</DispatchInfo>
+		</Extension>
 		<Extension Id="flatomo.extension.Main">
 			<DispatchInfo>
 				<Resources>
@@ -26,8 +44,7 @@
 					<ScriptPath>./content/js/Script.jsfl</ScriptPath>
 				</Resources>
 				<UI>
-					<Type>Panel</Type>
-					<Menu>flatomo.extension.Main</Menu>
+					<Type>ModalDialog</Type>
 					<Geometry>
 						<Size>
 							<Height>300</Height>

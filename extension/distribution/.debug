@@ -5,4 +5,9 @@
 		<Host Name="FLPR" Port="64082"/> 
 	</HostList>
 	</Extension>
+	<Extension Id="flatomo.extension.Launcher">
+	<HostList>
+		<Host Name="FLPR" Port="64081"/> 
+	</HostList>
+	</Extension>
 </ExtensionList>
