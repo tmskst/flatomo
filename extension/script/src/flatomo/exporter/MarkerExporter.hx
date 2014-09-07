@@ -1,4 +1,4 @@
-package flatomo.extension.exporter;
+package flatomo.exporter;
 
 import haxe.Serializer;
 import jsfl.Element;

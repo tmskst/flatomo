@@ -1,4 +1,4 @@
-package flatomo.extension;
+package flatomo;
 
 import jsfl.ElementType;
 import jsfl.Frame;
@@ -16,7 +16,7 @@ import jsfl.TweenType;
 
 using Lambda;
 using jsfl.MatrixTools;
-using flatomo.extension.util.ItemTools;
+using flatomo.util.ItemTools;
 
 class PartsAnimationParser {
 	
@@ -98,7 +98,7 @@ class PartsAnimationParser {
 				// 2. 拡張アイテムについて`プリミティブ属性`が有効ならパーツアニメーションの基本単位とする
 				var primitive:Bool = 
 					instance.instanceType == InstanceType.BITMAP ||
-					instance.instanceType == InstanceType.SYMBOL && ItemTools.getFlatomoItem(untyped instance.libraryItem).primitiveItem;
+					instance.instanceType == InstanceType.SYMBOL/* && ItemTools.getExtendedItem(untyped instance.libraryItem).primitiveItem*/;
 				
 				// インスタンスがパーツアニメーションの基本単位
 				if (primitive) {

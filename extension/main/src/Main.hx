@@ -47,6 +47,10 @@ class Main {
 		new JQuery('input#save').click(function (event:JqEvent) {
 			save();
 		});
+		
+		new JQuery('input#export').click(function (event:JqEvent) {
+			invoke(ScriptApi.Export, null);
+		});
 	}
 	
 	private function save():Void {

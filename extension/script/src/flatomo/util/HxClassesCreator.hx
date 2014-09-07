@@ -1,14 +1,13 @@
-package flatomo.extension.util;
+package flatomo.util;
 
-import flatomo.FlatomoItem;
-import flatomo.FlatomoLibrary;
+import flatomo.ExtendedItem;
 import flatomo.ItemPath;
 import flatomo.Linkage;
 import haxe.Resource;
 import haxe.Template;
 import jsfl.SymbolItem;
 
-using flatomo.extension.util.ItemTools;
+using flatomo.util.ItemTools;
 
 private typedef Fields = Array<{ NAME:String , CLASS_NAME:String }>;
 private typedef Sections = Array<{ NAME:String }>;
@@ -29,7 +28,7 @@ private typedef Salt = {
 }
 
 class HxClassesCreator {
-	
+	/*
 	public static function create(data:FlatomoLibrary):Array<{ name:String, value:String }> {
 		var externs = new Array<{ name:String, value:String }>();
 		var template = new Template(Resource.getString("template"));
@@ -47,13 +46,13 @@ class HxClassesCreator {
 		}
 		return externs;
 	}
-	
+	*/
 	public static function create2(symbolItems:Array<SymbolItem>):Array<{ name:String, packageName:String, content:String }> {
 		var template = new Template(Resource.getString("template"));
 		var externs = new Array<{ name:String, packageName:String, content:String }>();
 		
 		for (symbolItem in symbolItems) {
-			var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
+			var flatomoItem:ExtendedItem = symbolItem.getExtendedItem();
 			var linkageClassName:Linkage = symbolItem.linkageClassName;
 			var context = {
 				KEY					: linkageClassName,
@@ -119,7 +118,7 @@ class HxClassesCreator {
 	}
 	
 	/** ライブラリ項目のセクション情報からセクション名の列挙を抽出します */
-	private static function getSections(item:FlatomoItem):Sections {
+	private static function getSections(item:ExtendedItem):Sections {
 		var sections = new Sections();
 		for (section in item.sections) {
 			sections.push({ NAME : section.name });

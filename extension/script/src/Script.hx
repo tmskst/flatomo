@@ -2,6 +2,7 @@ package ;
 
 import flatomo.DocumentStatus;
 import flatomo.ExtendedItem;
+import flatomo.exporter.Exporter;
 import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
 import flatomo.util.DocumentTools;
@@ -43,6 +44,8 @@ class Script {
 				return getExtensionItem(name);
 			case ScriptApi.SetExtensionItem(item) :
 				setExtensionItem(item);
+			case ScriptApi.Export :
+				Exporter.export(document);
 		}
 		return 0;
 	}

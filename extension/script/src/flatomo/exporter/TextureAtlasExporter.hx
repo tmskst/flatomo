@@ -1,4 +1,4 @@
-package flatomo.extension.exporter;
+package flatomo.exporter;
 import jsfl.Item;
 import jsfl.ItemType;
 import jsfl.SpriteSheetExporter;
@@ -16,7 +16,7 @@ class TextureAtlasExporter {
 			exporter.algorithm = SpriteSheetExporterAlgorithm.MAX_RECTS;
 			exporter.stackDuplicateFrames = true;
 			exporter.allowTrimming = true;
-			exporter.layoutFormat = cast "Flatomo";
+			exporter.layoutFormat = SpriteSheetExporterLayoutFormat.STARLING;
 			exporter.borderPadding = 2;
 		}
 		

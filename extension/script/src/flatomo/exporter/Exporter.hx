@@ -1,8 +1,8 @@
-package flatomo.extension.exporter;
+package flatomo.exporter;
 
-import flatomo.extension.PartsAnimationParser;
-import flatomo.extension.util.HxClassesCreator;
-import flatomo.FlatomoItem.DisplayObjectType;
+import flatomo.ExtendedItem;
+import flatomo.PartsAnimationParser;
+import flatomo.util.HxClassesCreator;
 import haxe.Serializer;
 import jsfl.Document;
 import jsfl.FLfile;
@@ -12,7 +12,7 @@ import jsfl.Library;
 import jsfl.SymbolItem;
 
 using Lambda;
-using flatomo.extension.util.ItemTools;
+using flatomo.util.ItemTools;
 
 class Exporter {
 	
@@ -30,12 +30,12 @@ class Exporter {
 			switch(item.itemType) {
 				case ItemType.MOVIE_CLIP, ItemType.GRAPHIC :
 					var symbolItem:SymbolItem = cast item;
-					var flatomoItem:FlatomoItem = symbolItem.getFlatomoItem();
-					if (symbolItem.linkageExportForAS && flatomoItem.exportForFlatomo) {
-						switch (flatomoItem.displayObjectType) {
-							case DisplayObjectType.Animation :
+					var flatomoItem:ExtendedItem = symbolItem.getExtendedItem();
+					if (symbolItem.linkageExportForAS && flatomoItem.linkageExportForFlatomo) {
+						switch (flatomoItem.exportClassKind) {
+							case ExportClassKind.Animation :
 								animationItems.push(symbolItem);
-							case DisplayObjectType.Container :
+							case ExportClassKind.Container :
 								containerItems.push(symbolItem);
 						}
 					}
@@ -67,7 +67,7 @@ class Exporter {
 				var part = parseResult.parts[partIndex];
 				children.set("parts" + partIndex, part);
 			}
-			var extendedItem:FlatomoItem = containerItem.getFlatomoItem();
+			var extendedItem:ExtendedItem = containerItem.getExtendedItem();
 			postures.set(containerItem.linkageClassName, Posture.Container(children, extendedItem.sections));
 			
 			for (item in parseResult.items) {
@@ -114,7 +114,7 @@ class Exporter {
 	private function exportPostures(symbolItems:Array<SymbolItem>):Void {
 		// 初期化
 		for (symbolItem in symbolItems) {
-			var extendedItem:FlatomoItem = symbolItem.getFlatomoItem();
+			var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
 			if (!postures.exists(symbolItem.linkageClassName)) {
 				postures.set(symbolItem.linkageClassName, Posture.Animation(extendedItem.sections));
 			}

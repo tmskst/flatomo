@@ -34,3 +34,7 @@ div#library div:hover {
 div#main {
 	float: left;
 }
+
+div#footer {
+	clear: both;
+}

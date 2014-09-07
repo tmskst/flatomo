@@ -9,4 +9,5 @@ enum ScriptApi {
 	GetExtensionLibrary;
 	GetExtensionItem(name:String);
 	SetExtensionItem(item:ExtensionItem);
+	Export;
 }
