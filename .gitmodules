@@ -1,0 +1,3 @@
+[submodule "lib/haxe-jsfl/haxe-jsfl"]
+	path = lib/haxe-jsfl/haxe-jsfl
+	url = git@github.com:tmskst/haxe-jsfl.git
