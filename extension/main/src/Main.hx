@@ -1,6 +1,7 @@
 package ;
 
 import adobe.cep.CSInterface;
+import flatomo.DocumentStatus;
 import flatomo.ExportClassKind;
 import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
@@ -21,8 +22,19 @@ class Main {
 	
 	private function new() {
 		invoke(ScriptApi.ValidationTest, function(validDocument_raw:Serialization) {
-			var validDocument:Bool = Unserializer.run(validDocument_raw);
-			if (validDocument) { initialize(); }
+			var status:DocumentStatus = Unserializer.run(validDocument_raw);
+			switch (status) {
+				case Enabled: initialize();
+				case Disabled: 
+					new JQuery('div#warning div').text('Disabled');
+					new JQuery('div#warning input#enable_flatomo').click(function (event:JqEvent) {
+						invoke(ScriptApi.Enable, null);
+						initialize();
+					});
+				case Invalid:
+					new JQuery('div#warning div').text('Invalid');
+					new JQuery('div#warning input#enable_flatomo').css('display', 'none');
+			}
 		});
 	}
 	

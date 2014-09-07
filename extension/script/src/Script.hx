@@ -1,5 +1,6 @@
 package ;
 
+import flatomo.DocumentStatus;
 import flatomo.ExtendedItem;
 import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
@@ -30,15 +31,20 @@ class Script {
 		var document:Document = fl.getDocumentDOM();
 		
 		switch (command) {
+			case ScriptApi.Enable :
+				document.enableFlatomo();
+			case ScriptApi.Disable :
+				document.disableFlatomo();
 			case ScriptApi.ValidationTest :
-				return document != null && document.isFlatomo();
+				return if (document == null) Invalid else if (document.isFlatomo()) Enabled else Disabled;
 			case ScriptApi.GetExtensionLibrary :
 				return document.library.symbolItems().map(function (item) return item.name);
 			case ScriptApi.GetExtensionItem(name) :
 				return getExtensionItem(name);
 			case ScriptApi.SetExtensionItem(item) :
-				return setExtensionItem(item);
+				setExtensionItem(item);
 		}
+		return 0;
 	}
 	
 	private static function getExtensionItem(name:String):ExtensionItem {
@@ -54,15 +60,13 @@ class Script {
 	}
 	
 	@:access(flatomo.util.ItemTools)
-	private static function setExtensionItem(extensionItem:ExtensionItem):Bool {
+	private static function setExtensionItem(extensionItem:ExtensionItem):Void {
 		var item:Item = fl.getDocumentDOM().library.getItem(extensionItem.name);
 		if (extensionItem.linkageExportForFlatomo) {
 			item.linkageExportForAS = true;
 			item.linkageClassName = extensionItem.linkageClassName;
 		}
 		item.setExtendedItem(extensionItem);
-		
-		return false;
 	}
 	
 }
