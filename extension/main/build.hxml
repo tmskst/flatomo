@@ -1,0 +1,7 @@
+-cp src
+-cp ../common
+-cp ../../common
+-cp ../../lib/haxe-cep/haxe-cep
+-main Main
+-D embed-js
+-js ../distribution/content/js/Main.js

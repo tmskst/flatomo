@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>MyExtension</title>
+		<link href="./css/main.css" type="text/css" rel="stylesheet">
+	</head>
+	
+	<body>
+		<div id="warning">Warning</div>
+		
+		<input type="button" value="Save" id="save" />
+		
+		<div>
+			<input type="checkbox" />Filter Export Items
+		</div>
+		<!-- Symbol Items -->
+		<div id="library">
+			<div>Symbol 0</div>
+			<div>Symbol 1</div>
+			<div>Symbol 2</div>
+			<div>Symbol 3</div>
+			<div>Symbol 4</div>
+			<div>Symbol 5</div>
+			<div>Symbol 6</div>
+			<div>Symbol 7</div>
+		</div>
+		<div id="main">
+			<div>Symbol 0</div>
+			<table>
+				<tr>
+					<td />
+					<td><input type="checkbox"/>Exports for Flatomo</td>
+				</tr>
+				<tr>
+					<td>Linkage</td>
+					<td><input type="text" value="com.example.Example" /></td>
+				</tr>
+				<tr>
+					<td>Export Type</td>
+					<td>
+						<select>
+							<option value="N">Container(Parts Animation)</option>
+							<option value="N">Animation</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<!-- SECTION -->
+			<table>
+				<tr>
+					<td>SECTION NAME</td>
+					<td>
+						<select>
+							<option value="N">Loop</option>
+							<option value="N">Once</option>
+						</select>
+					</td>
+					<td>
+						<select>
+							<option value="N">Section X</option>
+							<option value="N">Section Y</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<script src="./lib/jquery-2.1.1.min.js"></script>
+		<script src="./lib/CSInterface.js"></script>
+		<script src="./js/Main.js"></script>
+	</body>
+</html>

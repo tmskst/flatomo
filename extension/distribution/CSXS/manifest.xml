@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+				   ExtensionBundleId="flatomo.extension" 
+				   ExtensionBundleName="Flatomo Extension" 
+				   ExtensionBundleVersion="1.0" 
+				   Version="5.0">
+	<ExtensionList>
+		<Extension Id="flatomo.extension.Main" Version="0.1"/>
+	</ExtensionList>
+	<ExecutionEnvironment>
+		<HostList>
+            <Host Name="FLPR" Version="12.0"/>
+		</HostList>
+		<LocaleList>
+			<Locale Code="All"/>
+		</LocaleList>
+		<RequiredRuntimeList>
+			<RequiredRuntime Name="CSXS" Version="5.0"/>
+		</RequiredRuntimeList>
+	</ExecutionEnvironment>
+	<DispatchInfoList>
+		<Extension Id="flatomo.extension.Main">
+			<DispatchInfo>
+				<Resources>
+					<MainPath>./content/index.html</MainPath>
+					<ScriptPath>./content/Script.jsfl</ScriptPath>
+				</Resources>
+				<UI>
+					<Type>Panel</Type>
+					<Menu>flatomo.extension.Main</Menu>
+					<Geometry>
+						<Size>
+							<Height>300</Height>
+							<Width>500</Width>
+						</Size>
+					</Geometry>
+				</UI>
+			</DispatchInfo>
+		</Extension>
+	</DispatchInfoList>
+</ExtensionManifest>

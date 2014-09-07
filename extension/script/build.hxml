@@ -1,0 +1,9 @@
+-cp src
+-cp ../common
+-cp ../../common
+-cp ../../lib/haxe-jsfl/haxe-jsfl/jsfl/hxclasses
+-main Script
+-D js-classic
+-js ../distribution/content/js/Script.jsfl
+-dce full
+--macro haxe.macro.Compiler.keep("jsfl.Boot")
