@@ -1,6 +1,7 @@
 package ;
 
 import adobe.cep.CSInterface;
+import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
 import haxe.Serializer;
 import haxe.Unserializer;
@@ -35,7 +36,11 @@ class Main {
 		for (item in extensionLibrary) {
 			var element = new JQuery('<div>$item</div>');
 			element.click(function (event:JqEvent) {
-				trace(new JQuery(event.currentTarget).text());
+				var itemPath:String = new JQuery(event.currentTarget).text();
+				invoke(ScriptApi.GetExtensionItem(itemPath), function (extensionItem_raw:Serialization) {
+					var extensionItem:ExtensionItem = Unserializer.run(extensionItem_raw);
+					trace(extensionItem);
+				});
 			});
 			library.append(element);
 		}

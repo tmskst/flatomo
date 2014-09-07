@@ -9,4 +9,8 @@ class LibraryTools {
 		return library.items.filter(function (item) { return item.itemType.equals(GRAPHIC) || item.itemType.equals(MOVIE_CLIP); });
 	}
 	
+	public static function getItem(library:Library, namePath:String):Item {
+		 return library.items[library.findItemIndex(namePath)];
+	}
+	
 }

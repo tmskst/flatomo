@@ -1,6 +1,6 @@
-package flatomo.extension.util;
+package flatomo.util;
 
-import flatomo.FlatomoItem;
+import flatomo.ExtendedItem;
 import haxe.Serializer;
 import haxe.Unserializer;
 import jsfl.Item;
@@ -12,50 +12,48 @@ class ItemTools {
 	private static inline var DATA_NAME:String = "f_item";
 	
 	/**
-	 * ItemからFlatomoItemを取り出す
+	 * ItemからExtendedItemを取り出す
 	 * @param	item ライブラリ項目
-	 * @return 取得したFlatomoItem
+	 * @return 取得したExtendedItem
 	 */
-	public static function getFlatomoItem(symbolItem:SymbolItem):FlatomoItem {
+	public static function getExtendedItem(symbolItem:SymbolItem):ExtendedItem {
 		var latestSection:Array<Section> = SectionCreator.fetchSections(symbolItem.timeline);
 		if (!symbolItem.hasData(DATA_NAME)) {
 			return {
-				sections			: latestSection,
-				exportForFlatomo	: false,
-				primitiveItem		: false,
-				exportType			: ExportType.Dynamic,
-				displayObjectType	: DisplayObjectType.Container,
+				linkageExportForFlatomo : false,
+				exportClassKind 		: ExportClassKind.Container,
+				sections				: latestSection,
 			};
 		}
 		
-		var flatomoItem:FlatomoItem = Unserializer.run(symbolItem.getData(DATA_NAME));
+		var extendedItem:ExtendedItem = Unserializer.run(symbolItem.getData(DATA_NAME));
 		// 最新のセクション情報と保存済みセクション情報を比較する。
 		// 名前(name属性)が一致するものについては、保存済みセクションのkind属性を最新のセクションにコピーする。
 		for (l in latestSection) {
-			for (s in flatomoItem.sections) {
+			for (s in extendedItem.sections) {
 				if (l.name == s.name) { l.kind = s.kind; }
 			}
 		}
-		flatomoItem.sections = latestSection;
+		extendedItem.sections = latestSection;
 		
-		return flatomoItem;
+		return extendedItem;
 	}
 	
 	/**
-	 * ItemにFlatomoItemを保存する
+	 * ItemにExtendedItemを保存する
 	 * @param	item 保存先
 	 * @param	data 保存するデータ
 	 */
-	private static function setFlatomoItem(item:Item, data:FlatomoItem):Void {
-		removeFlatomoItem(item);
+	private static function setExtendedItem(item:Item, data:ExtendedItem):Void {
+		removeExtendedItem(item);
 		item.addData(DATA_NAME, PersistentDataType.STRING, Serializer.run(data));
 	}
 	
 	/**
-	 * ItemからFlatomoItemを削除する
+	 * ItemからExtendedItemを削除する
 	 * @param	item 対象のライブラリ項目
 	 */
-	private static function removeFlatomoItem(item:Item):Void {
+	private static function removeExtendedItem(item:Item):Void {
 		if (item.hasData(DATA_NAME)) {
 			item.removeData(DATA_NAME);
 		}

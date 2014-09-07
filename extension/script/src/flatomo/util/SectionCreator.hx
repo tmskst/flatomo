@@ -1,4 +1,4 @@
-package flatomo.extension.util;
+package flatomo.util;
 
 import flatomo.Section;
 import flatomo.SectionKind;
