@@ -8,7 +8,7 @@ import js.JQuery;
 class Main {
 	
 	public static function main() {
-		invoke(ScriptApi.ValidationTest, function(validDocument_raw:String) {
+		invoke(ScriptApi.ValidationTest, function(validDocument_raw:Serialization) {
 			var validDocument:Bool = Unserializer.run(validDocument_raw);
 			if (validDocument) {
 				new JQuery('div#warning').css('display', 'none');

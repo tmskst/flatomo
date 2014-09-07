@@ -1,0 +1,3 @@
+package ;
+
+typedef Serialization = String;
