@@ -5,5 +5,4 @@
 -main Script
 -D js-classic
 -js ../distribution/content/js/Script.jsfl
--dce full
 --macro haxe.macro.Compiler.keep("jsfl.Boot")

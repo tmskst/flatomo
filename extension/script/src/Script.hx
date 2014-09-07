@@ -1,12 +1,19 @@
 package ;
 
+import flatomo.ExtensionLibrary;
 import flatomo.util.DocumentTools;
 import haxe.Serializer;
 import haxe.Unserializer;
 import jsfl.Document;
+import jsfl.Item;
+import jsfl.ItemType;
 import jsfl.Lib.fl;
+import jsfl.Library;
 
-@:keep
+using Lambda;
+using flatomo.util.DocumentTools;
+using flatomo.util.LibraryTools;
+
 class Script {
 	
 	public static function main() { trace("Extension"); }
@@ -16,10 +23,13 @@ class Script {
 	}
 	
 	private static function execute(command:ScriptApi):Dynamic {
+		var document:Document = fl.getDocumentDOM();
+		
 		switch (command) {
 			case ScriptApi.ValidationTest :
-				var document:Document = fl.getDocumentDOM();
-				return document != null && DocumentTools.isFlatomo(document);
+				return document != null && document.isFlatomo();
+			case ScriptApi.GetExtensionLibrary :
+				return document.library.symbolItems().map(function (item) return item.name);
 		}
 	}
 	

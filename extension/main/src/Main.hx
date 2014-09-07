@@ -1,19 +1,44 @@
 package ;
 
 import adobe.cep.CSInterface;
+import flatomo.ExtensionLibrary;
 import haxe.Serializer;
 import haxe.Unserializer;
 import js.JQuery;
+import js.JQuery.JqEvent;
 
 class Main {
 	
-	public static function main() {
+	public static function main() { new Main(); }
+	
+	private function new() {
 		invoke(ScriptApi.ValidationTest, function(validDocument_raw:Serialization) {
 			var validDocument:Bool = Unserializer.run(validDocument_raw);
-			if (validDocument) {
-				new JQuery('div#warning').css('display', 'none');
-			}
+			if (validDocument) { initialize(); }
 		});
+	}
+	
+	private function initialize():Void {
+		new JQuery('div#warning').css('display', 'none');
+		invoke(ScriptApi.GetExtensionLibrary, function(library_raw:Serialization) {
+			createLibraryDiv(Unserializer.run(library_raw));
+		});
+	}
+	
+	private function createLibraryDiv(extensionLibrary:ExtensionLibrary):Void {
+		var library = new JQuery('div#library');
+		
+		// 'div#library div'を削除
+		library.children("div").remove();
+		
+		// ライブラリを作成
+		for (item in extensionLibrary) {
+			var element = new JQuery('<div>$item</div>');
+			element.click(function (event:JqEvent) {
+				trace(new JQuery(event.currentTarget).text());
+			});
+			library.append(element);
+		}
 	}
 	
 	/**
@@ -21,7 +46,7 @@ class Main {
 	 * @param	command
 	 * @param	callback
 	 */
-	private static function invoke(command:ScriptApi, callback:Dynamic -> Void):Void {
+	private function invoke(command:ScriptApi, callback:Dynamic -> Void):Void {
 		new CSInterface().evalScript('Script.invoke("' + Serializer.run(command) + '")', callback);
 	}
 	
