@@ -36,6 +36,8 @@ class Script {
 				return document.library.symbolItems().map(function (item) return item.name);
 			case ScriptApi.GetExtensionItem(name) :
 				return getExtensionItem(name);
+			case ScriptApi.SetExtensionItem(item) :
+				return setExtensionItem(item);
 		}
 	}
 	
@@ -50,4 +52,17 @@ class Script {
 			sections: extendedItem.sections,
 		};
 	}
+	
+	@:access(flatomo.util.ItemTools)
+	private static function setExtensionItem(extensionItem:ExtensionItem):Bool {
+		var item:Item = fl.getDocumentDOM().library.getItem(extensionItem.name);
+		if (extensionItem.linkageExportForFlatomo) {
+			item.linkageExportForAS = true;
+			item.linkageClassName = extensionItem.linkageClassName;
+		}
+		item.setExtendedItem(extensionItem);
+		
+		return false;
+	}
+	
 }

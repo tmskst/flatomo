@@ -1,15 +1,18 @@
 package ;
 
 import adobe.cep.CSInterface;
+import flatomo.ExportClassKind;
 import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
 import flatomo.Section;
+import flatomo.SectionKind;
 import haxe.Serializer;
 import haxe.Template;
 import haxe.Unserializer;
 import js.JQuery;
 import js.JQuery.JqEvent;
 
+using Lambda;
 using flatomo.JQueryTools;
 
 class Main {
@@ -28,6 +31,38 @@ class Main {
 		invoke(ScriptApi.GetExtensionLibrary, function(library_raw:Serialization) {
 			createLibraryDiv(Unserializer.run(library_raw));
 		});
+		
+		new JQuery('input#save').click(function (event:JqEvent) {
+			save();
+		});
+	}
+	
+	private function save():Void {
+		var sections:Array<Section> = [];
+		new JQuery('#section_list').find('select.section_kind').iter(function (query:JQuery) {
+			var sectionName:String = query.attr('name');
+			var sectionType:Int = Std.parseInt(query.children(':selected').val());
+			var gotoSectionName:String = new JQuery('select.goto_section[name=${sectionName}]').val();
+			
+			sections.push({
+				name: sectionName,
+				kind: SectionKind.createByIndex(sectionType, if (sectionType == 4) [gotoSectionName] else []),
+				begin: -1,
+				end: -1,
+			});
+		});
+		
+		var item:ExtensionItem = {
+			name: new JQuery('div#item_name').text(),
+			linkageClassName: new JQuery('input#item_linkage').val(),
+			linkageExportForFlatomo: new JQuery('input#item_export_for_flatomo').is(':checked'),
+			exportClassKind: ExportClassKind.createByIndex(Std.parseInt(new JQuery('select#item_export_class_kind').val())),
+			sections: sections,
+		}
+		
+		invoke(ScriptApi.SetExtensionItem(item), null);
+		trace(item);
+		trace(sections);
 	}
 	
 	private function createLibraryDiv(extensionLibrary:ExtensionLibrary):Void {
