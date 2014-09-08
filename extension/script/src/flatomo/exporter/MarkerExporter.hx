@@ -18,6 +18,7 @@ class MarkerExporter {
 	 * SWFプロファイルに設定されたディレクトリに `flaファイル名 + .mks` が出力される。
 	 */
 	public static function export(symbolItems:Array<SymbolItem>, outputPath:String):Void {
+		/*
 		var packedMarkers = new Map<ItemPath, Map<LayerName, Map<Int, Marker>>>();
 		var library:Library = fl.getDocumentDOM().library;
 		for (symbolItem in symbolItems) {
@@ -43,8 +44,9 @@ class MarkerExporter {
 			packedMarkers.set(symbolItem.linkageClassName, packedMarker);
 		}
 		FLfile.write(outputPath + "." + EXTENSION_MARKERS, Serializer.run(packedMarkers));
+		*/
 	}
-	
+	/*
 	private static function fromElement(element:Element):Marker {
 		return {
 			x: element.x,
@@ -56,5 +58,5 @@ class MarkerExporter {
 			scaleY: element.scaleY,
 		};
 	}
-	
+	*/
 }

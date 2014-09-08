@@ -7,7 +7,7 @@ import haxe.Resource;
 import haxe.Template;
 import jsfl.SymbolItem;
 
-using flatomo.util.ItemTools;
+using flatomo.util.SymbolItemTools;
 
 private typedef Fields = Array<{ NAME:String , CLASS_NAME:String }>;
 private typedef Sections = Array<{ NAME:String }>;
@@ -28,25 +28,7 @@ private typedef Salt = {
 }
 
 class HxClassesCreator {
-	/*
-	public static function create(data:FlatomoLibrary):Array<{ name:String, value:String }> {
-		var externs = new Array<{ name:String, value:String }>();
-		var template = new Template(Resource.getString("template"));
-		for (itemPath in data.extendedItems.keys()) {
-			var item = data.extendedItems.get(itemPath);
-			var salt:Salt = {
-				CLASS_NAME	: "F" + getClassName(itemPath),
-				SUPER_CLASS_NAME	: if (item.displayObjectType.equals(DisplayObjectType.Animation)) "flatomo.display.Animation" else "flatomo.display.Container",
-				FIELDS		: getFields(itemPath, data.itemPaths),
-				SECTIONS	: getSections(item),
-				API_NAME	: if (item.displayObjectType.equals(DisplayObjectType.Animation)) "animationApi" else "containerApi",
-				PACKAGE		: "",
-			}
-			externs.push( { name: salt.CLASS_NAME, value: template.execute(salt) } );
-		}
-		return externs;
-	}
-	*/
+	
 	public static function create2(symbolItems:Array<SymbolItem>):Array<{ name:String, packageName:String, content:String }> {
 		var template = new Template(Resource.getString("template"));
 		var externs = new Array<{ name:String, packageName:String, content:String }>();

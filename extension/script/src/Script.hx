@@ -18,7 +18,7 @@ import jsfl.SymbolItem;
 using Lambda;
 using flatomo.util.DocumentTools;
 using flatomo.util.LibraryTools;
-using flatomo.util.ItemTools;
+using flatomo.util.SymbolItemTools;
 
 class Script {
 	
@@ -62,14 +62,14 @@ class Script {
 		};
 	}
 	
-	@:access(flatomo.util.ItemTools)
+	@:access(flatomo.util.SymbolItemTools)
 	private static function setExtensionItem(extensionItem:ExtensionItem):Void {
-		var item:Item = fl.getDocumentDOM().library.getItem(extensionItem.name);
+		var symbolItem:SymbolItem = untyped fl.getDocumentDOM().library.getItem(extensionItem.name);
 		if (extensionItem.linkageExportForFlatomo) {
-			item.linkageExportForAS = true;
-			item.linkageClassName = extensionItem.linkageClassName;
+			symbolItem.linkageExportForAS = true;
+			symbolItem.linkageClassName = extensionItem.linkageClassName;
 		}
-		item.setExtendedItem(extensionItem);
+		symbolItem.setExtendedItem(extensionItem);
 	}
 	
 }

@@ -1,4 +1,4 @@
 package flatomo;
 
-/** エレメント(Element)の名前。 */
+/** 'jsfl.Element.name'に等しい */
 typedef InstanceName = String;

@@ -5,22 +5,22 @@ import jsfl.PersistentDataType;
 
 class DocumentTools {
 	
-	public static inline var DOCUMENT_ATTR_FLATOMO:String = "flatomo";
+	public static inline var NAMESPACE_FLATOMO:String = "flatomo";
 	
 	/** 作業中のドキュメントでFlatomoが動作するかどうか */
 	public static function isFlatomo(document:Document):Bool {
-		return document.documentHasData(DOCUMENT_ATTR_FLATOMO);
+		return document.documentHasData(NAMESPACE_FLATOMO);
 	}
 	
-	/** 作業中のドキュメントに対しFlatomoを有効にします。 */
+	/** 作業中のドキュメントに対しFlatomoを有効にします */
 	public static function enableFlatomo(document:Document):Void {
-		document.addDataToDocument(DOCUMENT_ATTR_FLATOMO, PersistentDataType.STRING, "flatomo");
+		document.addDataToDocument(NAMESPACE_FLATOMO, PersistentDataType.STRING, "F");
 	}
 	
-	/** 作業中のドキュメントに対しFlatomoを無効にします。 */
+	/** 作業中のドキュメントに対しFlatomoを無効にします */
 	public static function disableFlatomo(document:Document):Void {
-		if (document.documentHasData(DOCUMENT_ATTR_FLATOMO)) {
-			document.removeDataFromDocument(DOCUMENT_ATTR_FLATOMO);
+		if (document.documentHasData(NAMESPACE_FLATOMO)) {
+			document.removeDataFromDocument(NAMESPACE_FLATOMO);
 		}
 	}
 	

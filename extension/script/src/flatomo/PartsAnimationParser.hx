@@ -16,7 +16,7 @@ import jsfl.TweenType;
 
 using Lambda;
 using jsfl.MatrixTools;
-using flatomo.util.ItemTools;
+using flatomo.util.SymbolItemTools;
 
 class PartsAnimationParser {
 	

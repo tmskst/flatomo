@@ -1,10 +1,7 @@
 package flatomo;
 
+/** 幾何変換行列 */
 typedef GeometricTransform = {
-	var a:Float;
-	var b:Float;
-	var c:Float;
-	var d:Float;
-	var tx:Float;
-	var ty:Float;
+	a:Float, b:Float, tx:Float,
+	c:Float, d:Float, ty:Float,
 }

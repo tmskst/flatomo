@@ -7,13 +7,13 @@ import jsfl.Item;
 import jsfl.PersistentDataType;
 import jsfl.SymbolItem;
 
-class ItemTools {
+class SymbolItemTools {
 	
 	private static inline var DATA_NAME:String = "f_item";
 	
 	/**
-	 * ItemからExtendedItemを取り出す
-	 * @param	item ライブラリ項目
+	 * SymbolItemからExtendedItemを取り出す
+	 * @param	symbolItem ライブラリ項目
 	 * @return 取得したExtendedItem
 	 */
 	public static function getExtendedItem(symbolItem:SymbolItem):ExtendedItem {
@@ -40,22 +40,22 @@ class ItemTools {
 	}
 	
 	/**
-	 * ItemにExtendedItemを保存する
-	 * @param	item 保存先
+	 * SymbolItemにExtendedItemを保存する
+	 * @param	symbolItem 保存先
 	 * @param	data 保存するデータ
 	 */
-	private static function setExtendedItem(item:Item, data:ExtendedItem):Void {
-		removeExtendedItem(item);
-		item.addData(DATA_NAME, PersistentDataType.STRING, Serializer.run(data));
+	private static function setExtendedItem(symbolItem:SymbolItem, data:ExtendedItem):Void {
+		removeExtendedItem(symbolItem);
+		symbolItem.addData(DATA_NAME, PersistentDataType.STRING, Serializer.run(data));
 	}
 	
 	/**
-	 * ItemからExtendedItemを削除する
-	 * @param	item 対象のライブラリ項目
+	 * SymbolItemからExtendedItemを削除する
+	 * @param	symbolItem 対象のライブラリ項目
 	 */
-	private static function removeExtendedItem(item:Item):Void {
-		if (item.hasData(DATA_NAME)) {
-			item.removeData(DATA_NAME);
+	private static function removeExtendedItem(symbolItem:SymbolItem):Void {
+		if (symbolItem.hasData(DATA_NAME)) {
+			symbolItem.removeData(DATA_NAME);
 		}
 	}
 	

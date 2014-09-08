@@ -12,7 +12,7 @@ import jsfl.Library;
 import jsfl.SymbolItem;
 
 using Lambda;
-using flatomo.util.ItemTools;
+using flatomo.util.SymbolItemTools;
 
 class Exporter {
 	
