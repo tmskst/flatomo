@@ -57,6 +57,7 @@ class PartsAnimationParser {
 	private var currentFrame:Int;
 	private var frameCount:Int;
 	private var matrixes:Map<String, Array<Array<Layout>>>;
+	/** パーツアニメーションを構成する最小単位の集合 */
 	private var items:Array<Item>;
 	
 	private function addMatrix(name:String, matrix:Matrix, frameIndex:Int, item:Item):Void {
@@ -69,7 +70,7 @@ class PartsAnimationParser {
 	}
 	
 	private function analyze(symbolItem:SymbolItem, frameIndex:Int, stack:Array<Matrix>):Void {
-		//{ 走査するフレーム（フレームが存在する通常レイヤー）
+		//{ 解析対象のフレーム（通常レイヤーでかつエレメントが配置されているフレーム）
 		var frames:Array<Frame> = symbolItem.timeline.layers
 			.filter(function (layer) { return layer.layerType.equals(LayerType.NORMAL); })
 			.map   (function (layer) { return layer.frames[frameIndex]; } )
@@ -78,52 +79,58 @@ class PartsAnimationParser {
 		frames.reverse();
 		
 		for (frame in frames) {
+			// フレームに指定された幾何変換行列（トゥイーンによる変化）
 			var geometricTransform:Matrix = switch (frame.tweenType) {
+				// トゥイーンが存在しないかシェイプトゥイーンならば単位行列
 				case TweenType.NONE, TweenType.SHAPE :
 					MatrixTools.createIdentityMatrix();
+				// モーショントゥイーンかクラシックトゥイーンならばトゥイーンから変換行列を取得
 				case TweenType.MOTION, TweenType.MOTION_OBJECT :
 					var tween:Tween = frame.tweenObj;
 					tween.getGeometricTransform(frameIndex - tween.startFrame);
 			};
 			
-			// 走査するインスタンス（フレームに配置されたエレメントのうちインスタンスだけ）
+			// 解析対象のインスタンス（フレームに配置されたエレメントのうちインスタンスだけ）
 			var instances:Array<Instance> = untyped frame.elements
 				.filter(function (element) { return element.elementType.equals(ElementType.INSTANCE); } );
 			
+			// タイムラインの'frameIndex'フレーム目に配置されているインスタンスすべてについて
 			for (instance in instances) {
+				// インスタンスの変換行列とフレームに指定された変換行列を合成
 				stack.push(MatrixTools.concatMatrix(instance.matrix, geometricTransform));
 				
 				// パーツアニメーションの基本単位（プリミティブインスタンス）
-				// 1. インスタンスがビットマップならば強制的にパーツアニメーションの基本単位とみなす
-				// 2. 拡張アイテムについて`プリミティブ属性`が有効ならパーツアニメーションの基本単位とする
-				var primitive:Bool = 
-					instance.instanceType == InstanceType.BITMAP ||
-					instance.instanceType == InstanceType.SYMBOL/* && ItemTools.getExtendedItem(untyped instance.libraryItem).primitiveItem*/;
+				// インスタンスがビットマップならばパーツアニメーションの最小単位する
+				var primitive:Bool = instance.instanceType == InstanceType.BITMAP;				
 				
 				// インスタンスがパーツアニメーションの基本単位
 				if (primitive) {
-					var result:Matrix = stack
-						.fold(function (matrix1, matrix2) { return matrix1.concatMatrix(matrix2); }, MatrixTools.createIdentityMatrix());
+					// 変換行列をすべて合成
+					var result:Matrix = stack.fold(function (matrix1, matrix2) { return matrix1.concatMatrix(matrix2); }, MatrixTools.createIdentityMatrix());
 					
 					addMatrix(instance.libraryItem.name, result, currentFrame, instance.libraryItem);
 					stack.pop();
 				}
+				
 				// パーツアニメーションの基本単位ではないシンボルインスタンス（インスタンスが子を持っている）
 				else if (instance.instanceType == InstanceType.SYMBOL) {
 					var symbolInstance:SymbolInstance = cast instance;
-					if (symbolInstance.symbolType.equals(SymbolType.BUTTON)) { continue; }
-					
+					// 開始フレーム
 					var firstFrame:Int = symbolInstance.firstFrame;
+					// 現在のタイムラインの総フレーム数
 					var frameCount:Int = cast(symbolInstance.libraryItem, SymbolItem).timeline.frameCount;
 					
 					var symbolFrameIndex:Int = switch (symbolInstance.symbolType) {
+						// ムービークリップは配置される位置に関係ない
 						case SymbolType.MOVIE_CLIP : 0;
+						// グラフィックは配置されるフレームが何番目かで描画するフレームが変化する
 						case SymbolType.GRAPHIC :
 							switch (symbolInstance.loop) {
 								case LoopType.LOOP			: (frameIndex + firstFrame - frame.startFrame) % frameCount;
 								case LoopType.PLAY_ONCE 	: Math.ceil(Math.min(frameIndex + firstFrame - frame.startFrame, frameCount - 1));
 								case LoopType.SINGLE_FRAME	: firstFrame;
 							};
+						// パーツアニメーションはボタンを無視する
 						case SymbolType.BUTTON :
 							throw 'Ignored : Button Symbol';
 					}
