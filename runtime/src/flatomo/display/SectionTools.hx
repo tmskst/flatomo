@@ -19,9 +19,9 @@ class SectionTools {
 				codes.set(section.end, ControlCode.Goto(section.begin));
 			case SectionKind.Once : 
 				codes.set(section.end, ControlCode.Stop);
-			case SectionKind.Pass, SectionKind.Default : 
+			case SectionKind.Pass : 
 				// 追加するコードはない
-			case SectionKind.Standstill : 
+			case SectionKind.Stop : 
 				for (index in section.begin...(section.end + 1)) {
 					codes.set(index, ControlCode.Stop);
 				}

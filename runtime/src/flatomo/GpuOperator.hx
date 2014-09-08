@@ -9,7 +9,6 @@ import flatomo.display.Container;
 import flatomo.display.FlatomoImage;
 import flatomo.display.FlatomoTextField;
 import flatomo.Posture;
-import flatomo.translator.RawTextureAtlas;
 import haxe.ds.Vector;
 import starling.display.DisplayObject;
 import starling.display.Image;
@@ -26,6 +25,7 @@ class GpuOperator {
 	 * AssetKitを元にGpuOperatorを初期化する。
 	 * @param	assetKit 
 	 */
+	
 	public function new(assetKit:AssetKit) {
 		this.postures = assetKit.postures;
 		this.manager = new AssetManager();
