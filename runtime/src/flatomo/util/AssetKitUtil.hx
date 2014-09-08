@@ -3,7 +3,7 @@ package flatomo.util;
 import flash.display.BitmapData;
 import flash.utils.ByteArray;
 import flash.xml.XML;
-import flatomo.translator.RawTextureAtlas;
+import flatomo.RawTextureAtlas;
 import haxe.ds.StringMap;
 import haxe.Unserializer;
 
