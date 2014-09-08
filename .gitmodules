@@ -4,3 +4,6 @@
 [submodule "lib/haxe-cep/haxe-cep"]
 	path = lib/haxe-cep/haxe-cep
 	url = git@github.com:tmskst/haxe-cep.git
+[submodule "lib/starling/starling"]
+	path = lib/starling/starling
+	url = git@github.com:Gamua/Starling-Framework.git
