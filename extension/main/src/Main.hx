@@ -18,39 +18,53 @@ using flatomo.JQueryTools;
 
 class Main {
 	
-	public static function main() { new Main(); }
+	public static function main() {
+		new Main();
+	}
 	
 	private function new() {
+		// 作業中のドキュメントが有効なドキュメントかどうか
 		invoke(ScriptApi.ValidationTest, function(validDocument_raw:Serialization) {
+			// 警告オーバーレイ
+			var warning = new JQuery('div#warning div');
+			// 有効にするボタン
+			var enableButton = new JQuery('input#enable_flatomo');
+			
 			var status:DocumentStatus = Unserializer.run(validDocument_raw);
 			switch (status) {
-				case Enabled: initialize();
+				// 書き込みを許可されたドキュメント
+				case Enabled:
+					initialize();
+				// 書き込みが禁止されたドキュメント
 				case Disabled: 
-					new JQuery('div#warning div').text('Disabled');
-					new JQuery('div#warning input#enable_flatomo').click(function (event:JqEvent) {
+					warning.text('ドキュメントを操作する権限がありません');
+					// 有効にするボタンが押されたら
+					enableButton.click(function (event:JqEvent) {
+						// ドキュメントを書き込み可能な状態にし初期化する
 						invoke(ScriptApi.Enable, null);
 						initialize();
 					});
+				// 対応していないドキュメントかドキュメントが開かれていない
 				case Invalid:
-					new JQuery('div#warning div').text('Invalid');
-					new JQuery('div#warning input#enable_flatomo').css('display', 'none');
+					warning.text('対応していないドキュメントかドキュメントが開かれていません');
+					// ボタンを削除して初期化を禁止する
+					enableButton.css('display', 'none');
 			}
 		});
 	}
 	
 	private function initialize():Void {
+		// 警告オーバーレイを削除
 		new JQuery('div#warning').css('display', 'none');
+		
+		// ライブラリを取得
 		invoke(ScriptApi.GetExtensionLibrary, function(library_raw:Serialization) {
 			createLibraryDiv(Unserializer.run(library_raw));
 		});
 		
-		new JQuery('input#save').click(function (event:JqEvent) {
-			save();
-		});
-		
-		new JQuery('input#export').click(function (event:JqEvent) {
-			invoke(ScriptApi.Export, null);
-		});
+		// 仮
+		new JQuery('input#save').click(function (event:JqEvent) { save(); } );
+		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export, null); });
 	}
 	
 	private function save():Void {
@@ -84,98 +98,95 @@ class Main {
 	private function createLibraryDiv(extensionLibrary:ExtensionLibrary):Void {
 		var library = new JQuery('div#library');
 		
-		// 'div#library div'を削除
-		library.children("div").remove();
+		// 'div#library'のすべての子を削除
+		library.children("*").remove();
 		
 		// ライブラリを作成
 		for (item in extensionLibrary) {
 			var element = new JQuery('<div>$item</div>');
-			element.click(function (event:JqEvent) {
-				var itemPath:String = new JQuery(event.currentTarget).text();
-				invoke(ScriptApi.GetExtensionItem(itemPath), function (extensionItem_raw:Serialization) {
-					var extensionItem:ExtensionItem = Unserializer.run(extensionItem_raw);
-					refreshMainDiv(extensionItem);
-				});
-			});
+			element.click(libraryItemClicked);
 			library.append(element);
 		}
 	}
 	
+	private function libraryItemClicked(event:JqEvent):Void {
+		// 選択されたライブラリ項目のテキストノードをアイテムパスとし項目の詳細を取得
+		var itemPath:String = new JQuery(event.currentTarget).text();
+		invoke(ScriptApi.GetExtensionItem(itemPath), function (extensionItem_raw:Serialization) {
+			var extensionItem:ExtensionItem = Unserializer.run(extensionItem_raw);
+			// 'div#main'を再構築する
+			refreshMainDiv(extensionItem);
+		});
+	}
+	
 	private function refreshMainDiv(item:ExtensionItem):Void {
 		var content = new JQuery('div#main');
-		
 		// 'div#main'のすべての子を削除
 		content.children('*').remove();
-		// 'div#main div#item_name'を作成
+		// 'div#main div#item_name'を作成（出力対象、リンケージ名、出力形式）
 		createItemProperty(item.name, item.linkageClassName, item);
+		// 'table#section_list'を作成（セクション情報）
 		createSectionProfile(item.sections);
 		
+		// 出力対象かどうかを指定するチェックボックス
 		var exportForFlatomo = new JQuery('input#item_export_for_flatomo');
 		exportForFlatomo.click(function (event:JqEvent) {
+			// 出力対象でないときはリンケージ設定と出力形式の編集を禁止する
 			var checked = exportForFlatomo.is(':checked');
-			var toggle = function (e:JQuery) {
-				e.enable(checked);
-			};
-			toggle(new JQuery('input#item_linkage'));
-			toggle(new JQuery('select#item_export_class_kind'));
+			new JQuery('input#item_linkage').enable(checked);
+			new JQuery('select#item_export_class_kind').enable(checked);
 		});
 		
-		var option = new JQuery('.section_kind');
-		option.change(function (event:JqEvent) {
-			var selectedValue:String = new JQuery(event.target).children(':selected').val();
-			
+		// セクションの種類を選択するselect要素
+		var sectionKindSelector = new JQuery('.section_kind');
+		sectionKindSelector.change(function (event:JqEvent) {
+			// 変更があったselect要素が属するセクション名
 			var sectionName:String = event.target.getAttribute('name');
-			var x = new JQuery('select.goto_section[name=$sectionName]');
-			x.enable(selectedValue == '4');
+			// 選択されているセクションの種類
+			var selectedSectionKind:String = new JQuery(event.target).children(':selected').val();
+			// セクションの種類の種類をGotoに変更していたら遷移先を指定するselect要素を有効にする
+			new JQuery('select.goto_section[name=$sectionName]').enable(selectedSectionKind == '4');
 		});
-		
 	}
 	
 	private function createItemProperty(itemName:String, linkage:String, item:ExtensionItem):Void {
-		var content = new JQuery('div#main');
-		content.append('<div id="item_name">$itemName</div>');
-		
 		var template = new Template('
 		<table id="item_profile">
 			<tr>
 				<td />
-				<td><input type="checkbox" id="item_export_for_flatomo" ::if EXPORT_FOR_FLATOMO::checked::end:: />Exports for Flatomo</td>
+				<td><input type="checkbox" id="item_export_for_flatomo" ::if EXPORT_FOR_FLATOMO::checked::end:: />出力対象</td>
 			</tr>
 			<tr>
-				<td>Linkage</td>
+				<td>リンケージ設定</td>
 				<td><input type="text" id="item_linkage" value="::LINKAGE::" ::if !EXPORT_FOR_FLATOMO::disabled::end:: /></td>
 			</tr>
 			<tr>
-				<td>ExportType</td>
+				<td>出力形式</td>
 				<td>
 					<select id="item_export_class_kind" ::if !EXPORT_FOR_FLATOMO::disabled::end::>
-						<option value="0" ::if (DO_TYPE == 0)::selected::end::>Container(Parts Animation)</option>
-						<option value="1" ::if (DO_TYPE == 1)::selected::end::>Animation</option>
+						<option value="0" ::if (DO_TYPE == 0)::selected::end::>コンテナ（パーツアニメーション）</option>
+						<option value="1" ::if (DO_TYPE == 1)::selected::end::>アニメーション</option>
 					</select>
 				</td>
 			</tr>
 		</table>
 		');
 		
-		/* Append Item property */
+		var content = new JQuery('div#main');
+		content.append('<div id="item_name">$itemName</div>');
 		content.append(template.execute( {
-			// Export For Flatomo
+			// 出力対象
 			EXPORT_FOR_FLATOMO: item.linkageExportForFlatomo,
-			// DisplayObjectType (flatomo.display.Container or flatomo.display.Animation)
+			// 出力形式
 			DO_TYPE: item.exportClassKind.getIndex(),
-			// Linkage (jsfl.Item.linkageClassName)
+			// リンケージ設定
 			LINKAGE: item.linkageClassName,
 		}));
 		
 	}
 	
 	private function createSectionProfile(sections:Array<Section>):Void {
-		var content = new JQuery('div#main');
-		
-		var sectionTable = new JQuery('<table id="section_list">');
-		content.append(sectionTable);
-		
-		var rowTemplate = new Template('
+		var template = new Template('
 		<tr>
 			<td>::SECTION_NAME::</td>
 			<td>
@@ -197,14 +208,22 @@ class Main {
 		</tr>
 		');
 		
+		var content = new JQuery('div#main');
+		var table = new JQuery('<table id="section_list">');
+		content.append(table);
+		
 		for (section in sections) {
-			sectionTable.append(rowTemplate.execute( {
+			table.append(template.execute( {
+				// セクション名
 				SECTION_NAME : section.name,
+				// セクションの種類
 				SECTION_KIND : section.kind.getIndex(),
+				// 遷移先セクション
 				GOTO_SECTION : switch (section.kind) {
 					case Goto(name) : name;
 					case _ : null;
 				},
+				// すべてのセクションの名前の列挙
 				ALL_SECTIONS : Lambda.list(sections.map(function (s) return s.name)),
 			}));
 		}
