@@ -6,4 +6,4 @@
 -D js-classic
 -js ../distribution/content/js/Script.jsfl
 --macro haxe.macro.Compiler.keep("jsfl.Boot")
--resource ../res/Abstract.hx.template@template
+-resource ./res/Abstract.hx.template@template
