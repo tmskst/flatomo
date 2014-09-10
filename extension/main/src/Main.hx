@@ -68,7 +68,6 @@ class Main {
 		});
 		
 		// 仮
-		new JQuery('input#save').click(function (event:JqEvent) { save(); } );
 		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export); } );
 		
 		// 出力先
@@ -89,9 +88,12 @@ class Main {
 				}
 			});
 		});
+		
+		var div_main = new JQuery('div#main');
+		div_main.change(save);
 	}
 	
-	private function save():Void {
+	private function save(event:JqEvent):Void {
 		var sections:Array<Section> = [];
 		new JQuery('#section_list').find('select.section_kind').iter(function (query:JQuery) {
 			var sectionName:String = query.attr('name');
