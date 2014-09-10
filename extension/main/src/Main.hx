@@ -5,7 +5,6 @@ import flatomo.DocumentStatus;
 import flatomo.ExportClassKind;
 import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
-import flatomo.Flatomo;
 import flatomo.PublishProfile;
 import flatomo.Section;
 import flatomo.SectionKind;
@@ -74,14 +73,13 @@ class Main {
 		var input_publishPath = new JQuery('input#publishPath');
 		input_publishPath.val(publishProfile.publishPath);
 		input_publishPath.change(publishProfileModified);
-		// 出力ファイル名
-		var input_publishFileName = new JQuery('input#publishFileName');
-		input_publishFileName.val(publishProfile.fileName);
-		input_publishFileName.change(publishProfileModified);
 		
+		// 出力先選択ボタン
 		var input_browseExportDirectory = new JQuery('input#browseExportDirectory');
 		input_browseExportDirectory.click(function (event:JqEvent) {
+			// フォルダ選択ダイアログを表示
 			browseForFolderURL("出力先", function (url:String) {
+				// 出力先を敵とフィールドに代入し保存（キャンセルが押されたとき戻り値は'null'）
 				if (url != null) {
 					input_publishPath.val('${url}');
 					publishProfileModified(event);
@@ -89,33 +87,59 @@ class Main {
 			});
 		});
 		
+		// 出力ファイル名
+		var input_publishFileName = new JQuery('input#publishFileName');
+		input_publishFileName.val(publishProfile.fileName);
+		input_publishFileName.change(publishProfileModified);
+		
+		// アイテムの編集領域
 		var div_main = new JQuery('div#main');
 		div_main.change(save);
 	}
 	
 	private function save(event:JqEvent):Void {
-		var sections:Array<Section> = [];
-		new JQuery('#section_list').find('select.section_kind').iter(function (query:JQuery) {
+		var sectionKindList:Iterable<JQuery> = new JQuery('#section_list').find('select.section_kind');
+		var sections:List<Section> = sectionKindList.map(function (query:JQuery) {
+			// セクション名（select.section_kind@name）
 			var sectionName:String = query.attr('name');
-			var sectionType:Int = Std.parseInt(query.children(':selected').val());
+			// 選択されているセクションの種類
+			var sectionKindIndex:Int = Std.parseInt(query.children(':selected').val());
+			// 選択されている遷移先セクション名
 			var gotoSectionName:String = new JQuery('select.goto_section[name=${sectionName}]').val();
 			
-			sections.push({
+			var sectionKind:SectionKind = SectionKind.createByIndex(
+				sectionKindIndex, 
+				// SectionKind.Gotoならば引数に遷移先セクション名を取る
+				if (sectionKindIndex == 4) [gotoSectionName] else []
+			);
+			
+			return {
+				// セクションの開始フレームと終了フレームは
+				// パブリッシュ時にタイムラインから抽出するのでこの時点では必要ない
+				begin: 0, end: 0,
 				name: sectionName,
-				kind: SectionKind.createByIndex(sectionType, if (sectionType == 4) [gotoSectionName] else []),
-				begin: -1,
-				end: -1,
-			});
+				kind: sectionKind,
+			}
 		});
+		// 編集中のアイテム名
+		var itemName:String = new JQuery('div#item_name').text();
+		// 出力対象
+		var linkageExportForFlatomo:Bool = new JQuery('input#item_export_for_flatomo').is(':checked');
+		// リンケージ設定
+		var linkageClassName:String = new JQuery('input#item_linkage').val();
+		// 出力形式
+		var exportClassKindIndex:Int = Std.parseInt(new JQuery('select#item_export_class_kind').val());
+		var exportClassKind:ExportClassKind = ExportClassKind.createByIndex(exportClassKindIndex);
 		
 		var item:ExtensionItem = {
-			name: new JQuery('div#item_name').text(),
-			linkageClassName: new JQuery('input#item_linkage').val(),
-			linkageExportForFlatomo: new JQuery('input#item_export_for_flatomo').is(':checked'),
-			exportClassKind: ExportClassKind.createByIndex(Std.parseInt(new JQuery('select#item_export_class_kind').val())),
-			sections: sections,
+			name: itemName,
+			linkageExportForFlatomo: linkageExportForFlatomo,
+			linkageClassName: linkageClassName,
+			exportClassKind: exportClassKind,
+			sections: sections.array(),
 		}
 		
+		// ExtensionItemをItemに保存
 		invoke(ScriptApi.SetExtensionItem(item));
 	}
 	
