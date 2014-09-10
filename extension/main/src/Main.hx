@@ -195,7 +195,7 @@ class Main {
 			</tr>
 			<tr>
 				<td>リンケージ設定</td>
-				<td><input type="text" id="item_linkage" value="::LINKAGE::" ::if !EXPORT_FOR_FLATOMO::disabled::end:: /></td>
+				<td><input type="text" id="item_linkage" value="" ::if !EXPORT_FOR_FLATOMO::disabled::end:: /></td>
 			</tr>
 			<tr>
 				<td>出力形式</td>
@@ -216,9 +216,11 @@ class Main {
 			EXPORT_FOR_FLATOMO: item.linkageExportForFlatomo,
 			// 出力形式
 			DO_TYPE: item.exportClassKind.getIndex(),
-			// リンケージ設定
-			LINKAGE: item.linkageClassName,
 		}));
+		
+		if (item.linkageClassName != null) {
+			new JQuery('input#item_linkage').val(item.linkageClassName);
+		}
 		
 	}
 	
