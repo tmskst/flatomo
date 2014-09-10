@@ -43,8 +43,8 @@ class Main {
 					// 有効にするボタンが押されたら
 					enableButton.click(function (event:JqEvent) {
 						// ドキュメントを書き込み可能な状態にし初期化する
-						invoke(ScriptApi.Enable, null);
-						invoke(ScriptApi.SetPublishProfile( { publishPath: '', fileName: '' } ), null);
+						invoke(ScriptApi.Enable);
+						invoke(ScriptApi.SetPublishProfile( { publishPath: '', fileName: '' } ));
 						invoke(ScriptApi.GetPublishProfile, initialize);
 					});
 				// 対応していないドキュメントかドキュメントが開かれていない
@@ -69,7 +69,7 @@ class Main {
 		
 		// 仮
 		new JQuery('input#save').click(function (event:JqEvent) { save(); } );
-		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export, null); } );
+		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export); } );
 		
 		// 出力先
 		var input_publishPath = new JQuery('input#publishPath');
@@ -114,7 +114,7 @@ class Main {
 			sections: sections,
 		}
 		
-		invoke(ScriptApi.SetExtensionItem(item), null);
+		invoke(ScriptApi.SetExtensionItem(item));
 	}
 	
 	private function createLibraryDiv(extensionLibrary:ExtensionLibrary):Void {
@@ -142,13 +142,13 @@ class Main {
 			publishPath: input_publishPath.val(),
 			fileName   : input_publishFileName.val(),
 		};
-		invoke(ScriptApi.SetPublishProfile(publishProfile), null);
+		invoke(ScriptApi.SetPublishProfile(publishProfile));
 	}
 	
 	private function libraryItemClicked(event:JqEvent):Void {
 		// 選択されたライブラリ項目のテキストノードをアイテムパスとし項目の詳細を取得
 		var itemPath:String = new JQuery(event.currentTarget).text();
-		invoke(ScriptApi.SelectItem(itemPath), null);
+		invoke(ScriptApi.SelectItem(itemPath));
 		invoke(ScriptApi.GetExtensionItem(itemPath), function (extensionItem_raw:Serialization) {
 			var extensionItem:ExtensionItem = Unserializer.run(extensionItem_raw);
 			// 'div#main'を再構築する
@@ -272,7 +272,7 @@ class Main {
 	 * @param	command
 	 * @param	callback
 	 */
-	private function invoke(command:ScriptApi, callback:Dynamic -> Void):Void {
+	private function invoke(command:ScriptApi, callback:Dynamic -> Void = null):Void {
 		new CSInterface().evalScript('Script.invoke("' + Serializer.run(command) + '")', callback);
 	}
 	
