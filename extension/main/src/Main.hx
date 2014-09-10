@@ -121,7 +121,7 @@ class Main {
 		var library = new JQuery('div#library');
 		
 		// 'div#library'のすべての子を削除
-		library.children("*").remove();
+		library.empty();
 		
 		// ライブラリを作成
 		for (item in extensionLibrary) {
@@ -159,7 +159,7 @@ class Main {
 	private function refreshMainDiv(item:ExtensionItem):Void {
 		var content = new JQuery('div#main');
 		// 'div#main'のすべての子を削除
-		content.children('*').remove();
+		content.empty();
 		// 'div#main div#item_name'を作成（出力対象、リンケージ名、出力形式）
 		createItemProperty(item.name, item.linkageClassName, item);
 		// 'table#section_list'を作成（セクション情報）
