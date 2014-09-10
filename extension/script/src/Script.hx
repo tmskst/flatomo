@@ -8,6 +8,7 @@ import flatomo.ExtensionLibrary;
 import flatomo.util.DocumentTools;
 import haxe.Serializer;
 import haxe.Unserializer;
+import js.Lib;
 import jsfl.Document;
 import jsfl.Item;
 import jsfl.ItemType;
@@ -30,6 +31,7 @@ class Script {
 	
 	private static function execute(command:ScriptApi):Dynamic {
 		var document:Document = fl.getDocumentDOM();
+		var library:Library = document.library;
 		
 		switch (command) {
 			case ScriptApi.Enable :
@@ -38,6 +40,8 @@ class Script {
 				document.disableFlatomo();
 			case ScriptApi.ValidationTest :
 				return if (document == null) Invalid else if (document.isFlatomo()) Enabled else Disabled;
+			case ScriptApi.SelectItem(itemPath) :
+				library.selectItem(itemPath);
 			case ScriptApi.GetExtensionLibrary :
 				return document.library.symbolItems().map(function (item) return item.name);
 			case ScriptApi.GetExtensionItem(name) :

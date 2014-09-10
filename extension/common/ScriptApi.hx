@@ -11,6 +11,8 @@ enum ScriptApi {
 	Disable;
 	/** 現在のドキュメントでFlatomoが利用可能かどうか検証をする */
 	ValidationTest;
+	/** ライブラリアイテムを選択する */
+	SelectItem(itemPath:String);
 	/** ExtensionLibraryをjsfl.Libraryから取得する */
 	GetExtensionLibrary;
 	/**

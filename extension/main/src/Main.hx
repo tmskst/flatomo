@@ -115,8 +115,6 @@ class Main {
 		}
 		
 		invoke(ScriptApi.SetExtensionItem(item), null);
-		trace(item);
-		trace(sections);
 	}
 	
 	private function createLibraryDiv(extensionLibrary:ExtensionLibrary):Void {
@@ -150,6 +148,7 @@ class Main {
 	private function libraryItemClicked(event:JqEvent):Void {
 		// 選択されたライブラリ項目のテキストノードをアイテムパスとし項目の詳細を取得
 		var itemPath:String = new JQuery(event.currentTarget).text();
+		invoke(ScriptApi.SelectItem(itemPath), null);
 		invoke(ScriptApi.GetExtensionItem(itemPath), function (extensionItem_raw:Serialization) {
 			var extensionItem:ExtensionItem = Unserializer.run(extensionItem_raw);
 			// 'div#main'を再構築する
