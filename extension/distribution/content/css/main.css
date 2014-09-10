@@ -1,7 +1,7 @@
 body {
-	/* DEBUG */
-	max-width: 500px;
-	max-height: 500px;
+	font-size: 12px;
+	font-family: sans-serif;
+	/*-webkit-user-select: none;*/
 }
 
 div#warning {
@@ -19,12 +19,13 @@ div#warning {
 
 div#library {
 	float: left;
-	width: 100px;
+	width: 130px;
 	overflow: scroll;
 }
 
 div#library div {
 	display: block;
+	white-space: nowrap;
 }
 
 div#library div:hover {
@@ -32,6 +33,7 @@ div#library div:hover {
 }
 
 div#main {
+	padding: 0 20px;
 	float: left;
 }
 

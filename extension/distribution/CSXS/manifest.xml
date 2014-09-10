@@ -47,9 +47,13 @@
 					<Type>ModalDialog</Type>
 					<Geometry>
 						<Size>
-							<Height>300</Height>
+							<Height>500</Height>
 							<Width>500</Width>
 						</Size>
+						<MaxSize>
+							<Height>800</Height>
+							<Width>800</Width>
+						</MaxSize>
 					</Geometry>
 				</UI>
 			</DispatchInfo>
