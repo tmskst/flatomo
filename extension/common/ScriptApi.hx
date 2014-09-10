@@ -1,6 +1,7 @@
 package ;
 
 import flatomo.ExtensionItem;
+import flatomo.PublishProfile;
 
 /** パネルから呼び出すことのできるツールのAPI */
 enum ScriptApi {
@@ -22,6 +23,10 @@ enum ScriptApi {
 	 * @param name 保存するExtensionItem
 	 */
 	SetExtensionItem(item:ExtensionItem);
+	/** 作業中のドキュメントからパブリッシュプロファイルを取得します */
+	GetPublishProfile;
+	/** 作業中のドキュメントにパブリッシュプロファイルを設定します */
+	SetPublishProfile(publishProfile:PublishProfile);
 	/** 出力する */
 	Export;
 }

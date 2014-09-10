@@ -44,6 +44,10 @@ class Script {
 				return getExtensionItem(name);
 			case ScriptApi.SetExtensionItem(item) :
 				setExtensionItem(item);
+			case ScriptApi.GetPublishProfile :
+				return document.getPublishProfile();
+			case ScriptApi.SetPublishProfile(publishProfile) :
+				document.setPublishProfile(publishProfile);
 			case ScriptApi.Export :
 				Exporter.export(document);
 		}

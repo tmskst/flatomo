@@ -12,11 +12,26 @@
 			<input id="enable_flatomo" type="button" value="Enable Flatomo" />
 		</div>
 		
-		<input type="button" value="Save" id="save" />
+		<div>
+			<table>
+				<tr>
+					<td>出力先</td>
+					<td><input id="publishPath" type="text" /><input type="button" value="選択" id="browseExportDirectory" /></td>
+				</tr>
+				<tr>
+					<td>出力ファイル名</td>
+					<td><input id="publishFileName" type="text" /></td>
+				</tr>
+			</table>
+		</div>
 		
+		<!--<input type="button" value="Save" id="save" />-->
+		
+		<!--
 		<div>
 			<input type="checkbox" />Filter Export Items
 		</div>
+		-->
 		<!-- Symbol Items -->
 		<div id="library">
 			<div>Symbol 0</div>

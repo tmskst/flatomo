@@ -5,6 +5,8 @@ import flatomo.DocumentStatus;
 import flatomo.ExportClassKind;
 import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
+import flatomo.Flatomo;
+import flatomo.PublishProfile;
 import flatomo.Section;
 import flatomo.SectionKind;
 import haxe.Serializer;
@@ -34,7 +36,7 @@ class Main {
 			switch (status) {
 				// 書き込みを許可されたドキュメント
 				case Enabled:
-					initialize();
+					invoke(ScriptApi.GetPublishProfile, initialize);
 				// 書き込みが禁止されたドキュメント
 				case Disabled: 
 					warning.text('ドキュメントを操作する権限がありません');
@@ -42,7 +44,8 @@ class Main {
 					enableButton.click(function (event:JqEvent) {
 						// ドキュメントを書き込み可能な状態にし初期化する
 						invoke(ScriptApi.Enable, null);
-						initialize();
+						invoke(ScriptApi.SetPublishProfile( { publishPath: '', fileName: '' } ), null);
+						invoke(ScriptApi.GetPublishProfile, initialize);
 					});
 				// 対応していないドキュメントかドキュメントが開かれていない
 				case Invalid:
@@ -53,7 +56,9 @@ class Main {
 		});
 	}
 	
-	private function initialize():Void {
+	private function initialize(publishProfile_raw:Serialization):Void {
+		var publishProfile:PublishProfile = Unserializer.run(publishProfile_raw);
+		
 		// 警告オーバーレイを削除
 		new JQuery('div#warning').css('display', 'none');
 		
@@ -64,7 +69,26 @@ class Main {
 		
 		// 仮
 		new JQuery('input#save').click(function (event:JqEvent) { save(); } );
-		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export, null); });
+		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export, null); } );
+		
+		// 出力先
+		var input_publishPath = new JQuery('input#publishPath');
+		input_publishPath.val(publishProfile.publishPath);
+		input_publishPath.change(publishProfileModified);
+		// 出力ファイル名
+		var input_publishFileName = new JQuery('input#publishFileName');
+		input_publishFileName.val(publishProfile.fileName);
+		input_publishFileName.change(publishProfileModified);
+		
+		var input_browseExportDirectory = new JQuery('input#browseExportDirectory');
+		input_browseExportDirectory.click(function (event:JqEvent) {
+			browseForFolderURL("出力先", function (url:String) {
+				if (url != null) {
+					input_publishPath.val('${url}');
+					publishProfileModified(event);
+				}
+			});
+		});
 	}
 	
 	private function save():Void {
@@ -107,6 +131,20 @@ class Main {
 			element.click(libraryItemClicked);
 			library.append(element);
 		}
+	}
+	
+	private function publishProfileModified(event:JqEvent):Void {
+		// 出力先
+		var input_publishPath = new JQuery('input#publishPath');
+		// 出力ファイル名
+		var input_publishFileName = new JQuery('input#publishFileName');
+		
+		// パブリッシュプロファイル
+		var publishProfile:PublishProfile = {
+			publishPath: input_publishPath.val(),
+			fileName   : input_publishFileName.val(),
+		};
+		invoke(ScriptApi.SetPublishProfile(publishProfile), null);
 	}
 	
 	private function libraryItemClicked(event:JqEvent):Void {
@@ -237,6 +275,10 @@ class Main {
 	 */
 	private function invoke(command:ScriptApi, callback:Dynamic -> Void):Void {
 		new CSInterface().evalScript('Script.invoke("' + Serializer.run(command) + '")', callback);
+	}
+	
+	private function browseForFolderURL(description:String, callback:Dynamic -> Void):Void {
+		new CSInterface().evalScript('fl.browseForFolderURL("${description}")', callback);
 	}
 	
 }
