@@ -1,5 +1,6 @@
 package flatomo.util;
 
+import flatomo.DocumentStatus;
 import flatomo.PublishProfile;
 import haxe.Serializer;
 import haxe.Unserializer;
@@ -36,6 +37,11 @@ class DocumentTools {
 			}
 			document.addDataToDocument(FLATOMO_PUBLISH_PROFILE, PersistentDataType.STRING, Serializer.run(publishProfile));
 		}
+	}
+	
+	/** 作業中のドキュメントの状態を取得します */
+	public static function validationTest(document:Document):DocumentStatus {
+		return if (document == null) Invalid else if (isFlatomo(document)) Enabled else Disabled;
 	}
 	
 	/** 作業中のドキュメントからパブリッシュプロファイルを取得します */

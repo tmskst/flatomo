@@ -31,7 +31,6 @@ class Script {
 	
 	private static function execute(command:ScriptApi):Dynamic {
 		var document:Document = fl.getDocumentDOM();
-		var library:Library = document.library;
 		
 		switch (command) {
 			case ScriptApi.Enable :
@@ -39,8 +38,9 @@ class Script {
 			case ScriptApi.Disable :
 				document.disableFlatomo();
 			case ScriptApi.ValidationTest :
-				return if (document == null) Invalid else if (document.isFlatomo()) Enabled else Disabled;
+				return document.validationTest();
 			case ScriptApi.SelectItem(itemPath) :
+				var library:Library = document.library;
 				library.selectItem(itemPath);
 			case ScriptApi.GetExtensionLibrary :
 				return document.library.symbolItems().map(function (item) return item.name);
