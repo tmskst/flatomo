@@ -37,6 +37,8 @@ class Exporter {
 								animationItems.push(symbolItem);
 							case ExportClassKind.Container :
 								containerItems.push(symbolItem);
+							case ExportClassKind.PartsAnimation : 
+								
 						}
 					}
 			}

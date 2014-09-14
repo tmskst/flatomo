@@ -195,12 +195,10 @@ class Main {
 		
 		// 出力対象かどうかを指定するチェックボックス
 		var exportForFlatomo = new JQuery('input#item_export_for_flatomo');
-		exportForFlatomo.click(function (event:JqEvent) {
-			// 出力対象でないときはリンケージ設定と出力形式の編集を禁止する
-			var checked = exportForFlatomo.is(':checked');
-			new JQuery('input#item_linkage').enable(checked);
-			new JQuery('select#item_export_class_kind').enable(checked);
+		exportForFlatomo.change(function (event:JqEvent) {
+			itemExportForFlatomoChanged();
 		});
+		itemExportForFlatomoChanged();
 		
 		// セクションの種類を選択するselect要素
 		var sectionKindSelector = new JQuery('.section_kind');
@@ -212,6 +210,14 @@ class Main {
 			// セクションの種類の種類をGotoに変更していたら遷移先を指定するselect要素を有効にする
 			new JQuery('select.goto_section[name=$sectionName]').enable(selectedSectionKind == '4');
 		});
+	}
+	
+	private function itemExportForFlatomoChanged():Void {
+		var item_exportForFlatomo = new JQuery('input#item_export_for_flatomo');
+		// 出力対象でないときはリンケージ設定と出力形式の編集を禁止する
+		var checked = item_exportForFlatomo.is(':checked');
+		new JQuery('input#item_linkage').enable(checked);
+		new JQuery('select#item_export_class_kind').enable(checked);
 	}
 	
 	private function createItemProperty(itemName:String, linkage:String, item:ExtensionItem):Void {
@@ -227,14 +233,15 @@ class Main {
 			</tr>
 			<tr>
 				<td>リンケージ設定</td>
-				<td><input type="text" id="item_linkage" value="" ::if !EXPORT_FOR_FLATOMO::disabled::end:: /></td>
+				<td><input type="text" id="item_linkage" value="" /></td>
 			</tr>
 			<tr>
 				<td>出力形式</td>
 				<td>
-					<select id="item_export_class_kind" ::if !EXPORT_FOR_FLATOMO::disabled::end::>
-						<option value="0" ::if (DO_TYPE == 0)::selected::end::>コンテナ（パーツアニメーション）</option>
+					<select id="item_export_class_kind">
+						<option value="0" ::if (DO_TYPE == 0)::selected::end::>コンテナ</option>
 						<option value="1" ::if (DO_TYPE == 1)::selected::end::>アニメーション</option>
+						<option value="2" ::if (DO_TYPE == 2)::selected::end::>パーツアニメーション</option>
 					</select>
 				</td>
 			</tr>
@@ -255,7 +262,6 @@ class Main {
 		if (item.linkageClassName != null) {
 			new JQuery('input#item_linkage').val(item.linkageClassName);
 		}
-		
 	}
 	
 	private function createSectionProfile(sections:Array<Section>):Void {

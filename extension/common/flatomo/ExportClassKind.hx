@@ -6,4 +6,6 @@ enum ExportClassKind {
 	Container;
 	/** シンボルは'flatomo.display.Animation'として出力される */
 	Animation;
+	/** シンボルは'flatomo.display.PartsAnimation'として出力される */
+	PartsAnimation;
 }
