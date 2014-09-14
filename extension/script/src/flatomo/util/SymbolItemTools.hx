@@ -21,6 +21,7 @@ class SymbolItemTools {
 		if (!symbolItem.hasData(DATA_NAME)) {
 			return {
 				linkageExportForFlatomo : false,
+				areChildrenAccessible   : false,
 				exportClassKind 		: ExportClassKind.Container,
 				sections				: latestSection,
 			};

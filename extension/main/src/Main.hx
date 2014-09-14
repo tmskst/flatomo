@@ -125,6 +125,7 @@ class Main {
 		var itemName:String = new JQuery('div#item_name').text();
 		// 出力対象
 		var linkageExportForFlatomo:Bool = new JQuery('input#item_export_for_flatomo').is(':checked');
+		var areChildrenAccessible:Bool = new JQuery('input#item_areChildrenAccessible').is(':checked');
 		// リンケージ設定
 		var linkageClassName:String = new JQuery('input#item_linkage').val();
 		// 出力形式
@@ -134,6 +135,7 @@ class Main {
 		var item:ExtensionItem = {
 			name: itemName,
 			linkageExportForFlatomo: linkageExportForFlatomo,
+			areChildrenAccessible: areChildrenAccessible,
 			linkageClassName: linkageClassName,
 			exportClassKind: exportClassKind,
 			sections: sections.array(),
@@ -220,6 +222,10 @@ class Main {
 				<td><input type="checkbox" id="item_export_for_flatomo" ::if EXPORT_FOR_FLATOMO::checked::end:: />出力対象</td>
 			</tr>
 			<tr>
+				<td />
+				<td><input type="checkbox" id="item_areChildrenAccessible" ::if ARE_CHILDREN_ACCESSIBLE::checked::end:: />子オブジェクトをアクセス可能にする</td>
+			</tr>
+			<tr>
 				<td>リンケージ設定</td>
 				<td><input type="text" id="item_linkage" value="" ::if !EXPORT_FOR_FLATOMO::disabled::end:: /></td>
 			</tr>
@@ -240,6 +246,8 @@ class Main {
 		content.append(template.execute( {
 			// 出力対象
 			EXPORT_FOR_FLATOMO: item.linkageExportForFlatomo,
+			// 子オブジェクトをアクセス可能にする
+			ARE_CHILDREN_ACCESSIBLE : item.areChildrenAccessible,
 			// 出力形式
 			DO_TYPE: item.exportClassKind.getIndex(),
 		}));

@@ -8,6 +8,8 @@ package flatomo;
 typedef ExtendedItem = {
 	/** 対象のシンボルがFlatomoによって出力されるかどうか */
 	linkageExportForFlatomo:Bool,
+	/** 子にアクセス可能かどうか */
+	areChildrenAccessible:Bool,
 	/** 対象のシンボルの出力形式（コンテナまたはアニメーション） */
 	exportClassKind:ExportClassKind,
 	/** 対象のシンボルのタイムラインに対応するセクション情報 */

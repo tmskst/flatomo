@@ -64,6 +64,7 @@ class Script {
 		return {
 			name: symbolItem.name,
 			linkageClassName: symbolItem.linkageClassName, 
+			areChildrenAccessible: extendedItem.areChildrenAccessible,
 			linkageExportForFlatomo: extendedItem.linkageExportForFlatomo,
 			exportClassKind: extendedItem.exportClassKind,
 			sections: extendedItem.sections,
