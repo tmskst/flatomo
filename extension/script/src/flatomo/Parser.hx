@@ -1,6 +1,7 @@
 package flatomo;
 
 import jsfl.Document;
+import jsfl.Instance;
 import jsfl.Item;
 import jsfl.ItemType;
 import jsfl.SymbolItem;
@@ -12,8 +13,9 @@ using flatomo.util.TimelineTools;
 
 class Parser {
 	
-	public static function parse(document:Document):Void {
-		new Parser(document);
+	public static function parse(document:Document):Map<String, Structure> {
+		var parser = new Parser(document);
+		return parser.structures;
 	}
 	
 	/* --------------------------------------------------------------------- */
@@ -29,7 +31,7 @@ class Parser {
 				translate(symbolItem);
 			}
 		}
-		
+		trace(structures);
 	}
 	
 	private function translate(item:Item):Void {
@@ -73,9 +75,12 @@ class Parser {
 		trace('translateQuaContainer : ${symbolItem.name}');
 		
 		var children = new Map<InstanceName, ItemPath>();
-		for (instance in symbolItem.timeline.instances()) {
+		
+		var instances:Array<Instance> = symbolItem.timeline.instances();
+		for (i in 0...instances.length) {
+			var instance:Instance = instances[i];
 			translate(cast instance.libraryItem);
-			children.set(symbolItem.name + '###' + instance.name, instance.libraryItem.name);
+			children.set(symbolItem.name + '#' + i + '#' + instance.name, instance.libraryItem.name);
 		}
 		structures.set(symbolItem.name, Structure.Container(children));
 	}
