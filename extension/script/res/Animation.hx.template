@@ -13,12 +13,12 @@ abstract ::CLASS_NAME::(Animation) to Animation {
 	
 	public static inline var Key:String = '::KEY::';
 	
-	public function new(content:Container) {
+	public function new(content:Animation) {
 		this = content;
 	}
 	
-	public var api(get, never):Container;
-	private function get_api():Container {
+	public var api(get, never):Animation;
+	private function get_api():Animation {
 		return cast this;
 	}
 	
