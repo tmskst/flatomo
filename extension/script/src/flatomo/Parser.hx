@@ -1,5 +1,6 @@
 package flatomo;
 
+import flatomo.Structure;
 import jsfl.Document;
 import jsfl.Instance;
 import jsfl.Item;
@@ -74,7 +75,7 @@ class Parser {
 	private function translateQuaContainer(symbolItem:SymbolItem):Void {
 		trace('translateQuaContainer : ${symbolItem.name}');
 		
-		var children = new Array<Child>();
+		var children = new Array<ContainerComponent>();
 		
 		var instances:Array<Instance> = symbolItem.timeline.instances();
 		for (i in 0...instances.length) {
