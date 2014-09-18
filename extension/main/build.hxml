@@ -1,5 +1,5 @@
 -cp src
--cp ../common
+-cp ../common/src
 -cp ../../common/src
 -cp ../../lib/haxe-cep/haxe-cep
 -main Main
