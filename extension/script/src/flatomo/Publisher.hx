@@ -18,7 +18,21 @@ class Publisher {
 	
 	public static function publish(library:Library, structures:Map<String, Structure>, publishProfile:PublishProfile):Void {
 		
-		// Structure
+		// Section
+		// ////////////////////////////////////////////////////////////////////
+		var sections = new Map<String, Array<Section>>();
+		
+		for (item in library.items) {
+			switch (item.itemType) {
+				case ItemType.MOVIE_CLIP, ItemType.GRAPHIC :
+					var symbolItem:SymbolItem = cast item;
+					var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
+					sections.set(item.name, extendedItem.sections);
+			}
+		}
+		FLfile.write(publishProfile.publishPath + '/' + publishProfile.fileName + '.' + 'tim', Serializer.run(sections));
+		
+		// Section
 		// ////////////////////////////////////////////////////////////////////
 		FLfile.write(publishProfile.publishPath + '/' + publishProfile.fileName + '.' + 'pos', Serializer.run(structures));
 		
