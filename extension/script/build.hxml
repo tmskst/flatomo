@@ -1,6 +1,6 @@
 -cp src
 -cp ../common
--cp ../../common
+-cp ../../common/src
 -cp ../../lib/haxe-jsfl/haxe-jsfl/jsfl/hxclasses
 -main Script
 -D js-classic
