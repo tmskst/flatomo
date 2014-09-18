@@ -1,0 +1,32 @@
+package ::PACKAGE::;
+
+import flatomo.display.Container;
+
+@:enum abstract ::CLASS_NAME::SectionName(String) to String {
+	::foreach SECTIONS::
+	var ::NAME:: = "::NAME::";
+	::end::
+}
+
+@:access(flatomo.display.Container)
+abstract ::CLASS_NAME::(Container) to Container {
+	
+	public static inline var Key:String = '::KEY::';
+	
+	public function new(content:Container) {
+		this = content;
+	}
+	
+	public var api(get, never):Container;
+	private function get_api():Container {
+		return cast this;
+	}
+	
+	::foreach FIELDS::
+	public var ::FIELD_NAME::(get, never):::CLASS_NAME::;
+	private function get_::FIELD_NAME::():::CLASS_NAME:: {
+		return untyped this.getChildByName('::FIELD_NAME::');
+	}
+	::end::
+	
+}

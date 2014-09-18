@@ -1,15 +1,61 @@
 package flatomo;
 
+import haxe.Resource;
+import haxe.Template;
+import jsfl.FLfile;
 import jsfl.Item;
 import jsfl.ItemType;
 import jsfl.Library;
 import jsfl.SpriteSheetExporter;
+import jsfl.SymbolItem;
 
+using Lambda;
 using flatomo.util.LibraryTools;
+using flatomo.util.SymbolItemTools;
 
 class Publisher {
 	
 	public static function publish(library:Library, structures:Map<String, Structure>, publishProfile:PublishProfile):Void {
+		// HxClasses
+		// ////////////////////////////////////////////////////////////////////
+		var getClassName = function (path:String):String {
+			return path.substring(path.lastIndexOf('.') + 1);
+		}
+		
+		var templateAnimation = new Template(Resource.getString('animation'));
+		var templateContainer = new Template(Resource.getString('container'));
+		
+		for (key in structures.keys()) {
+			var structure:Structure = structures.get(key);
+			switch (structure) {
+				case Structure.Animation :
+					var symbolItem:SymbolItem = cast library.getItem(key);
+					var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
+					var context = {
+						KEY        : key,
+						CLASS_NAME : getClassName(symbolItem.name),
+						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
+						SECTIONS   : extendedItem.sections.map(function (s) return { NAME: s.name }),
+					};
+					
+					var contents = templateAnimation.execute(context);
+					
+					var path:String = if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
+					FLfile.createFolder(publishProfile.publishPath + '/' + path);
+					FLfile.write(publishProfile.publishPath + '/' + path + '/' + context.CLASS_NAME + ".hx", contents);
+					
+				case Structure.Container :
+				case Structure.PartsAnimation :
+				case Structure.Image :
+					
+			}
+		}
+		
+		
+		
+		// Textures
+		// ////////////////////////////////////////////////////////////////////
+		
 		var textures = new Array<Item>();
 		for (key in structures.keys()) {
 			var structure:Structure = structures.get(key);
