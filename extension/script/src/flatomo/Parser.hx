@@ -48,7 +48,7 @@ class Parser {
 					switch (extendedItem.exportClassKind) {
 						case ExportClassKind.Container      : translateQuaContainer(symbolItem);
 						case ExportClassKind.Animation      : translateQuaAnimation(symbolItem);
-						case ExportClassKind.PartsAnimation : // 未実装
+						case ExportClassKind.PartsAnimation : translateQuaPartsAnimation(symbolItem);
 					}
 				}
 				// 出力対象ではない
@@ -93,7 +93,12 @@ class Parser {
 	
 	/** パーツアニメーションとして解析する */
 	private function translateQuaPartsAnimation(symbolItem:SymbolItem):Void {
-		// 未実装
+		var pap = PartsAnimationParser.parse(symbolItem);
+		// FIXME BEGIN
+		for (part in pap.parts) {
+			structures.set(part.path, Structure.Image);
+		}
+		// FIXME END
 	}
 	
 	/** テクスチャとして解析する */
