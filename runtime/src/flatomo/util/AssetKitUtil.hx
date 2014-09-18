@@ -9,7 +9,7 @@ import haxe.Unserializer;
 
 private typedef EmbedAssetKit = {
 	atlases:Array<EmbedTextureAtlas>,
-	postures:Array<Class<ByteArray>>
+	structures:Array<Class<ByteArray>>
 };
 
 class AssetKitUtil {
@@ -32,14 +32,14 @@ class AssetKitUtil {
 			rawTextureAtlases.push(rawTextureAtlas);
 		}
 		
-		var postures = new Array<StringMap<Posture>>();
-		for (lowPosture in assets.postures) {
-			postures.push(Unserializer.run(Type.createInstance(lowPosture, []).toString()));
+		var structures = new Array<StringMap<Structure>>();
+		for (lowPosture in assets.structures) {
+			structures.push(Unserializer.run(Type.createInstance(lowPosture, []).toString()));
 		}
 		
 		return {
 			atlases: rawTextureAtlases,
-			postures: StringMapUtil.unite(postures),
+			structures: StringMapUtil.unite(structures),
 		};
 	}
 	

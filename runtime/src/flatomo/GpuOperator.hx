@@ -8,7 +8,6 @@ import flatomo.display.Animation;
 import flatomo.display.Container;
 import flatomo.display.FlatomoImage;
 import flatomo.display.FlatomoTextField;
-import flatomo.Posture;
 import haxe.ds.Vector;
 import starling.display.DisplayObject;
 import starling.display.Image;
@@ -27,7 +26,7 @@ class GpuOperator {
 	 */
 	
 	public function new(assetKit:AssetKit) {
-		this.postures = assetKit.postures;
+		this.structures = assetKit.structures;
 		this.manager = new AssetManager();
 		
 		// テクスチャアトラスの生成
@@ -69,7 +68,7 @@ class GpuOperator {
 	}
 	
 	private var manager:AssetManager;
-	private var postures:Map<ItemPath, Posture>;
+	private var structures:Map<ItemPath, Structure>;
 	private var pivots:Map<ItemPath, Point>;
 	
 	
@@ -90,10 +89,10 @@ class GpuOperator {
 	public function create(key:String, layouts:Array<Layout> = null):DisplayObject {
 		if (layouts == null) { layouts = new Array<Layout>(); }
 		
-		var type = postures.get(key);
+		var type = structures.get(key);
 		switch (type) {
 			/* Animation */
-			case Posture.Animation(_) :
+			case Structure.Animation :
 				var textures = manager.getTextures(key);
 				var animation = new Animation(layouts, textures);
 				var pivot = pivots.get(key);
@@ -101,7 +100,8 @@ class GpuOperator {
 				animation.pivotY = pivot.y;
 				return animation;
 			/* Container */
-			case Posture.Container(children, sections) :
+			case Structure.Container :
+				/*
 				var objects = new Array<DisplayObject>();
 				for (instanceName in children.keys()) {
 					var child = children.get(instanceName);
@@ -110,7 +110,10 @@ class GpuOperator {
 					objects.push(object);
 				}
 				return new Container(layouts, objects, sections);
+				*/
+				return null;
 			/* TextField */
+			/*
 			case Posture.TextField(width, height, text, textFormat) : 
 				var textField = new FlatomoTextField(layouts, width, height, text, textFormat.font, textFormat.size, textFormat.color, textFormat.bold);
 				textField.vAlign = VAlign.TOP;
@@ -120,13 +123,16 @@ class GpuOperator {
 					case TextFormatAlign.RIGHT	: HAlign.RIGHT;
 				};
 				return textField;
+			*/
 			/* Image */
-			case Posture.Image :
+			case Structure.Image :
 				var image = new FlatomoImage(layouts, manager.getTexture(key));
 				var pivot = pivots.get(key);
 				image.pivotX = pivot.x;
 				image.pivotY = pivot.y;
 				return image;
+			case Structure.PartsAnimation :
+				return null;
 		}
 	}
 	

@@ -1,6 +1,7 @@
 package flatomo;
 
 import haxe.Resource;
+import haxe.Serializer;
 import haxe.Template;
 import jsfl.FLfile;
 import jsfl.Item;
@@ -16,6 +17,12 @@ using flatomo.util.SymbolItemTools;
 class Publisher {
 	
 	public static function publish(library:Library, structures:Map<String, Structure>, publishProfile:PublishProfile):Void {
+		
+		// Structure
+		// ////////////////////////////////////////////////////////////////////
+		FLfile.write(publishProfile.publishPath + '/' + publishProfile.fileName + '.' + 'pos', Serializer.run(structures));
+		
+		
 		// HxClasses
 		// ////////////////////////////////////////////////////////////////////
 		var getClassName = function (path:String):String {
