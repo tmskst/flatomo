@@ -2,7 +2,6 @@ package ;
 
 import flatomo.DocumentStatus;
 import flatomo.ExtendedItem;
-import flatomo.exporter.Exporter;
 import flatomo.ExtensionItem;
 import flatomo.ExtensionLibrary;
 import flatomo.Publisher;
