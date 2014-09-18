@@ -21,13 +21,20 @@ class Parser {
 	
 	/* --------------------------------------------------------------------- */
 	
+	/** 解析結果
+	 * @key ライブラリアイテムのパス
+	 * @value アイテムを再構築するために必要な情報
+	 */
 	private var structures:Map<String, Structure>;
 	
 	private function new(library:Library) {
 		this.structures = new Map<String, Structure>();
 		
+		// 出力対象になり得るアイテムはシンボルアイテムのみだから
+		// ライブラリのすべてのシンボルアイテムをルートに走査する
 		for (symbolItem in library.symbolItems()) {
 			var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
+			// 出力対象ならば解析を開始する
 			if (symbolItem.linkageExportForAS && extendedItem.linkageExportForFlatomo) {
 				translate(symbolItem);
 			}
@@ -35,7 +42,9 @@ class Parser {
 		trace(structures);
 	}
 	
+	// 解析する対象はコンテナの子も含むので必ずしもシンボルアイテムという訳ではない
 	private function translate(item:Item):Void {
+		// 解析済みの場合はすぐに中止する
 		if (structures.exists(item.name)) { trace('変換済み : ${item.name}'); return; }
 		
 		switch (item.itemType) {
