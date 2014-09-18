@@ -1,8 +1,8 @@
 package flatomo;
 
 enum Structure {
-	Container(children:Map<InstanceName, ItemPath>);
+	Container(children:Array<Child>);
 	Animation;
-	PartsAnimation(parts:Map<InstanceName, ItemPath>);
+	PartsAnimation(parts:Array<Child>);
 	Image;
 }

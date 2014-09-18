@@ -74,13 +74,16 @@ class Parser {
 	private function translateQuaContainer(symbolItem:SymbolItem):Void {
 		trace('translateQuaContainer : ${symbolItem.name}');
 		
-		var children = new Map<InstanceName, ItemPath>();
+		var children = new Array<Child>();
 		
 		var instances:Array<Instance> = symbolItem.timeline.instances();
 		for (i in 0...instances.length) {
 			var instance:Instance = instances[i];
 			translate(cast instance.libraryItem);
-			children.set(symbolItem.name + '#' + i + '#' + instance.name, instance.libraryItem.name);
+			children.push( {
+				name: symbolItem.name + '#' + i + '#' + instance.name,
+				path: instance.libraryItem.name,
+			});
 		}
 		structures.set(symbolItem.name, Structure.Container(children));
 	}
