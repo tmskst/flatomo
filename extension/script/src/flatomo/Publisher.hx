@@ -16,7 +16,8 @@ using flatomo.util.SymbolItemTools;
 
 class Publisher {
 	
-	public static function publish(library:Library, structures:Map<String, Structure>, publishProfile:PublishProfile):Void {
+	public static function publish(library:Library, publishProfile:PublishProfile):Void {
+		var structures:Map<String, Structure> = Parser.parse(library);
 		
 		// Section
 		// ////////////////////////////////////////////////////////////////////

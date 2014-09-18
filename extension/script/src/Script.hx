@@ -1,21 +1,15 @@
 package ;
 
-import flatomo.DocumentStatus;
 import flatomo.ExtendedItem;
 import flatomo.ExtensionItem;
-import flatomo.ExtensionLibrary;
+import flatomo.Parser;
 import flatomo.Publisher;
-import flatomo.util.DocumentTools;
 import haxe.Serializer;
 import haxe.Unserializer;
-import js.Lib;
 import jsfl.Document;
-import jsfl.Item;
-import jsfl.ItemType;
 import jsfl.Lib.fl;
 import jsfl.Library;
 import jsfl.SymbolItem;
-import flatomo.Parser;
 
 using Lambda;
 using flatomo.util.DocumentTools;
@@ -54,9 +48,7 @@ class Script {
 			case ScriptApi.SetPublishProfile(publishProfile) :
 				document.setPublishProfile(publishProfile);
 			case ScriptApi.Export :
-				var ss = Parser.parse(document);
-				Publisher.publish(document.library, ss, document.getPublishProfile());
-				//Exporter.export(document);
+				Publisher.publish(document.library, document.getPublishProfile());
 		}
 		return 0;
 	}

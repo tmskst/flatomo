@@ -1,10 +1,10 @@
 package flatomo;
 
 import flatomo.Structure;
-import jsfl.Document;
 import jsfl.Instance;
 import jsfl.Item;
 import jsfl.ItemType;
+import jsfl.Library;
 import jsfl.SymbolItem;
 
 using Lambda;
@@ -14,8 +14,8 @@ using flatomo.util.TimelineTools;
 
 class Parser {
 	
-	public static function parse(document:Document):Map<String, Structure> {
-		var parser = new Parser(document);
+	public static function parse(library:Library):Map<String, Structure> {
+		var parser = new Parser(library);
 		return parser.structures;
 	}
 	
@@ -23,10 +23,10 @@ class Parser {
 	
 	private var structures:Map<String, Structure>;
 	
-	private function new(document:Document) {
+	private function new(library:Library) {
 		this.structures = new Map<String, Structure>();
 		
-		for (symbolItem in document.library.symbolItems()) {
+		for (symbolItem in library.symbolItems()) {
 			var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
 			if (symbolItem.linkageExportForAS && extendedItem.linkageExportForFlatomo) {
 				translate(symbolItem);
