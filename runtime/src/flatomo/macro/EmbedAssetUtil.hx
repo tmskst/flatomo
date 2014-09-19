@@ -2,30 +2,34 @@ package flatomo.macro;
 
 import haxe.macro.Compiler;
 import haxe.macro.Context;
-import haxe.macro.Expr.Access;
-import haxe.macro.Expr.ComplexType;
-import haxe.macro.Expr.Field;
-import haxe.macro.Expr.FieldType;
+import haxe.macro.Expr;
 import haxe.macro.Expr.TypeDefinition;
 import haxe.macro.Expr.TypeDefKind;
 import haxe.macro.ExprTools;
 import haxe.macro.MacroStringTools;
+import haxe.macro.Printer;
+import haxe.macro.Type;
+import haxe.macro.TypeTools;
 import sys.io.File;
 
-private typedef Asset = {
-	name:String,
-	texture:String,
-	xml:String,
-	posture:String,
-}
+using Lambda;
 
 class EmbedAssetUtil {
 	
+	private static function getStaticFields():Array<ClassField> {
+		var classPath:String = Context.definedValue('path');
+		var type:Type = Context.getType(classPath);
+		return TypeTools.getClass(type).statics.get();
+	}
+	
 	#if neko
 	public static function run() {
-		var assets:String = File.getContent(Context.definedValue('path'));
-		var values:Array<Asset> = ExprTools.getValue(Context.parseInlineString(assets, Context.currentPos()));
+		var staticFields:Array<ClassField> = getStaticFields();
+		var getAsset:ClassField -> { name:String, asset:Asset } = function (field) {
+			return { name: field.name, asset: ExprTools.getValue(Context.getTypedExpr(field.expr())) };
+		};
 		
+		var values = staticFields.map(getAsset);
 		var buildType = function (name:String, pack:Array<String>, classPack:Array<String>, className:String):TypeDefinition {
 			return {
 				pack   : pack,
@@ -49,39 +53,50 @@ class EmbedAssetUtil {
 			// Texture
 			var textureClassName:String = EmbedAsset.getTextureClassName(value.name);
 			Context.defineType(buildBitmapData(textureClassName));
-			addMetadataBitmap(value.texture, textureClassName);
+			addMetadataBitmap(value.asset.texture, textureClassName);
 			
 			// Xml
 			var xmlClassName:String = EmbedAsset.getXmlClassName(value.name);
 			Context.defineType(buildByteArray(xmlClassName));
-			addMetadataFile(value.xml, xmlClassName);
+			addMetadataFile(value.asset.xml, xmlClassName);
 			
 			// Pos
 			var posClassName:String = EmbedAsset.getPostureClassName(value.name);
 			Context.defineType(buildByteArray(posClassName));
-			addMetadataFile(value.posture, posClassName);
+			addMetadataFile(value.asset.posture, posClassName);
 		}
-	}
-	#end
-	
-	private static function buildEmbedAssetKey():Array<Field> {
-		/*Context.definedValue('path')*/
-		var file = File.getContent('assets.hx');
-		var assets:Array<Asset> = ExprTools.getValue(Context.parseInlineString(file, Context.currentPos()));
 		
-		var buildField = function (name:String, value:String):Field {
-			return {
-				name     : name,
-				access   : [Access.APublic, Access.AStatic],
-				kind     : FieldType.FVar(
-					ComplexType.TPath( { name : 'String', pack: [] } ),
-					Context.parse('"' + value + '"', Context.currentPos())
-				),
-				pos      : Context.currentPos(),
-			};
+	}
+	
+	public static function buildResolver():Array<Field> {
+		var getAssetName:ClassField -> String = function (field) {
+			return field.name;
 		};
 		
-		return [ for (asset in assets) buildField(asset.name, asset.name) ];
+		var assets = getStaticFields().map(getAssetName);
+		
+		var context = new StringBuf();
+		{
+			context.add("[");
+			for (asset in assets) {
+				context.add(Context.definedValue('path') + "." + asset + "=>" + "'" + asset + "',");
+			}
+			context.add("]");
+		}
+		
+		var resolver = Context.parseInlineString(context.toString(), Context.currentPos());
+		
+		var fields = Context.getBuildFields();
+		for (field in fields) {
+			switch (field) {
+				case { meta : [ { name: ':resolver' } ], kind : FieldType.FVar(t, e) } :
+					field.kind = FVar(t, resolver);
+				case _ :
+			}
+		}
+		return fields;
 	}
+	
+	#end
 	
 }
