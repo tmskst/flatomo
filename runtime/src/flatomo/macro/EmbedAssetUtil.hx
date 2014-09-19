@@ -9,6 +9,7 @@ import haxe.macro.Expr.FieldType;
 import haxe.macro.Expr.TypeDefinition;
 import haxe.macro.Expr.TypeDefKind;
 import haxe.macro.ExprTools;
+import haxe.macro.MacroStringTools;
 import sys.io.File;
 
 private typedef Asset = {
@@ -25,44 +26,41 @@ class EmbedAssetUtil {
 		var assets:String = File.getContent(Context.definedValue('path'));
 		var values:Array<Asset> = ExprTools.getValue(Context.parseInlineString(assets, Context.currentPos()));
 		
-		var buildType = function (name:String, classPack:Array<String>, className:String):TypeDefinition {
+		var buildType = function (name:String, pack:Array<String>, classPack:Array<String>, className:String):TypeDefinition {
 			return {
-				pack   : [],
+				pack   : pack,
 				fields : [],
 				name   : name,
 				kind   : TypeDefKind.TDClass({ pack: classPack, name: className }),
 				pos    : Context.currentPos(),
 			};
 		};
-		var buildBitmapData = buildType.bind(_, ['flash', 'display'], 'BitmapData');
-		var buildByteArray  = buildType.bind(_, ['flash', 'utils'], 'ByteArray');
 		
-		var addMetadata = function (metadata:String, path:String, className:String) {
-			Compiler.addMetadata(metadata + '("' + path + '")', className);
+		var buildBitmapData = buildType.bind(_, EmbedAsset.EMBED_ASSET_PACKAGE, ['flash', 'display'], 'BitmapData');
+		var buildByteArray  = buildType.bind(_, EmbedAsset.EMBED_ASSET_PACKAGE, ['flash', 'utils'], 'ByteArray');
+		
+		var addMetadata = function (metadata:String, path:String, pack:Array<String>, className:String) {
+			Compiler.addMetadata(metadata + '("' + path + '")', MacroStringTools.toDotPath(pack, className));
 		};
-		var addMetadataBitmap = addMetadata.bind('@:bitmap', _, _);
-		var addMetadataFile   = addMetadata.bind('@:file', _, _);
+		var addMetadataBitmap = addMetadata.bind('@:bitmap', _, EmbedAsset.EMBED_ASSET_PACKAGE, _);
+		var addMetadataFile   = addMetadata.bind('@:file', _, EmbedAsset.EMBED_ASSET_PACKAGE, _);
 		
-		
-		var types:Array<TypeDefinition> = [];
 		for (value in values) {
 			// Texture
-			var textureClassName:String = value.name + 'Texture';
-			types.push(buildBitmapData(textureClassName));
+			var textureClassName:String = EmbedAsset.getTextureClassName(value.name);
+			Context.defineType(buildBitmapData(textureClassName));
 			addMetadataBitmap(value.texture, textureClassName);
 			
 			// Xml
-			var xmlClassName:String = value.name + 'Xml';
-			types.push(buildByteArray(xmlClassName));
+			var xmlClassName:String = EmbedAsset.getXmlClassName(value.name);
+			Context.defineType(buildByteArray(xmlClassName));
 			addMetadataFile(value.xml, xmlClassName);
 			
 			// Pos
-			var posClassName:String = value.name + 'Posture';
-			types.push(buildByteArray(posClassName));
+			var posClassName:String = EmbedAsset.getPostureClassName(value.name);
+			Context.defineType(buildByteArray(posClassName));
 			addMetadataFile(value.posture, posClassName);
 		}
-		
-		Context.defineModule('EmbedAsset', types);
 	}
 	#end
 	
