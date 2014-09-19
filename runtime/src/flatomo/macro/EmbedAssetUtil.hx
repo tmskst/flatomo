@@ -1,13 +1,24 @@
 package flatomo.macro;
 
 import haxe.macro.Compiler;
-import haxe.macro.ComplexTypeTools;
 import haxe.macro.Context;
-import haxe.macro.Expr;
+import haxe.macro.Expr.Access;
+import haxe.macro.Expr.ComplexType;
+import haxe.macro.Expr.Field;
+import haxe.macro.Expr.FieldType;
+import haxe.macro.Expr.TypeDefinition;
+import haxe.macro.Expr.TypeDefKind;
 import haxe.macro.ExprTools;
 import sys.io.File;
 
-class Run {
+private typedef Asset = {
+	name:String,
+	texture:String,
+	xml:String,
+	posture:String,
+}
+
+class EmbedAssetUtil {
 	
 	#if neko
 	public static function run() {
@@ -54,4 +65,25 @@ class Run {
 		Context.defineModule('EmbedAsset', types);
 	}
 	#end
+	
+	private static function buildEmbedAssetKey():Array<Field> {
+		/*Context.definedValue('path')*/
+		var file = File.getContent('assets.hx');
+		var assets:Array<Asset> = ExprTools.getValue(Context.parseInlineString(file, Context.currentPos()));
+		
+		var buildField = function (name:String, value:String):Field {
+			return {
+				name     : name,
+				access   : [Access.APublic, Access.AStatic],
+				kind     : FieldType.FVar(
+					ComplexType.TPath( { name : 'String', pack: [] } ),
+					Context.parse('"' + value + '"', Context.currentPos())
+				),
+				pos      : Context.currentPos(),
+			};
+		};
+		
+		return [ for (asset in assets) buildField(asset.name, asset.name) ];
+	}
+	
 }

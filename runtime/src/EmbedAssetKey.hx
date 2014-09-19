@@ -1,5 +1,6 @@
 package ;
 
-@:build(flatomo.macro.Builder.build())
-class EmbedAssetKey{
+@:build(flatomo.macro.EmbedAssetUtil.buildEmbedAssetKey())
+class EmbedAssetKey {
+	
 }
