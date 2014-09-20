@@ -19,7 +19,16 @@ class EmbedAssetUtil {
 	private static function getStaticFields():Array<ClassField> {
 		var classPath:String = Context.definedValue('path');
 		var type:Type = Context.getType(classPath);
-		return TypeTools.getClass(type).statics.get();
+		var staticFields:Array<ClassField> = TypeTools.getClass(type).statics.get();
+		
+		var assetFields = staticFields.filter(function (field) {
+			return switch (field.meta.get()) {
+				case [ { name: ':asset' } ] : true;
+				case _ : false;
+			}
+		});
+		
+		return assetFields;
 	}
 	
 	#if neko
