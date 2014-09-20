@@ -8,6 +8,7 @@ import flatomo.display.Animation;
 import flatomo.display.Container;
 import flatomo.display.FlatomoImage;
 import flatomo.display.FlatomoTextField;
+import flatomo.util.StringMapUtil;
 import haxe.ds.Vector;
 import starling.display.DisplayObject;
 import starling.display.Image;
@@ -20,51 +21,34 @@ import starling.utils.VAlign;
 
 class GpuOperator {
 	
-	/**
-	 * AssetKitを元にGpuOperatorを初期化する。
-	 * @param	assetKit 
-	 */
-	
-	public function new(assetKit:AssetKit) {
-		this.structures = assetKit.structures;
+	public function new() {
 		this.manager = new AssetManager();
+		this.pivots = new Map<ItemPath, Point>();
+		this.structures = new Map<ItemPath, Structure>();
+	}
+	
+	public function addEmbedAsset(asset:Asset):Void {
+		var texture = EmbedAsset.getTexture(asset);
+		var xml = EmbedAsset.getXml(asset);
 		
-		// テクスチャアトラスの生成
-		for (index in 0...assetKit.atlases.length) {
-			var rawTextureAtlas:RawTextureAtlas = assetKit.atlases[index];
-			var textureAtlas:TextureAtlas = switch (rawTextureAtlas) {
-				case RawTextureAtlas.BitmapData(image, layout) :
-					new TextureAtlas(Texture.fromBitmapData(image), layout);
-				case RawTextureAtlas.Atf(image, layout) : 
-					new TextureAtlas(Texture.fromAtfData(image), layout);
-			};
-			
-			manager.addTextureAtlas('ATLAS' + index, textureAtlas);
-		}
+		manager.addTextureAtlas("0", new TextureAtlas(Texture.fromBitmapData(texture), xml));
 		
-		
-		this.pivots = new Map<String, Point>();
-		// スプライトシートからpivotに関する情報を抜き出す
-		for (rawTextureAtlas in assetKit.atlases) {
-			switch(rawTextureAtlas) {
-				case RawTextureAtlas.BitmapData(_, layout)
-				|	 RawTextureAtlas.Atf(_, layout) :
-					var subTextures:XMLList = layout.elements("SubTexture");
-					for (index in 0...subTextures.length()) {
-						var subTexture:XML = subTextures[index];
-						var pivotX:Float = Std.parseFloat(subTexture.attribute("pivotX").toString());
-						var pivotY:Float = Std.parseFloat(subTexture.attribute("pivotY").toString());
-						if (!Math.isNaN(pivotX) && !Math.isNaN(pivotY)) {
-							var key:String = subTexture.attribute("name").toString();
-							// FIXME : 本来は Animation, Image関係なくサフィックス`0000`は付く
-							if (StringTools.endsWith(key, "0000")) {
-								key = key.substr(0, -4);
-							}
-							pivots.set(key, new Point(pivotX, pivotY));
-						}
-					}
+		var subTextures:XMLList = xml.elements("SubTexture");
+		for (index in 0...subTextures.length()) {
+			var subTexture:XML = subTextures[index];
+			var pivotX:Float = Std.parseFloat(subTexture.attribute("pivotX").toString());
+			var pivotY:Float = Std.parseFloat(subTexture.attribute("pivotY").toString());
+			if (!Math.isNaN(pivotX) && !Math.isNaN(pivotY)) {
+				var key:String = subTexture.attribute("name").toString();
+				// FIXME : 本来は Animation, Image関係なくサフィックス`0000`は付く
+				if (StringTools.endsWith(key, "0000")) {
+					key = key.substr(0, -4);
+				}
+				pivots.set(key, new Point(pivotX, pivotY));
 			}
 		}
+		
+		structures = StringMapUtil.unite([structures, EmbedAsset.getPosture(asset)]);
 	}
 	
 	private var manager:AssetManager;
