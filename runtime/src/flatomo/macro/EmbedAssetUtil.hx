@@ -10,6 +10,7 @@ import haxe.macro.MacroStringTools;
 import haxe.macro.Printer;
 import haxe.macro.Type;
 import haxe.macro.TypeTools;
+import sys.FileSystem;
 import sys.io.File;
 
 using Lambda;
@@ -32,10 +33,11 @@ class EmbedAssetUtil {
 	}
 	
 	#if neko
+	
 	public static function run() {
 		var staticFields:Array<ClassField> = getStaticFields();
-		var getAsset:ClassField -> { name:String, asset:Asset } = function (field) {
-			return { name: field.name, asset: ExprTools.getValue(Context.getTypedExpr(field.expr())) };
+		var getAsset:ClassField -> { name:String, asset:Asset, pos:Position } = function (field) {
+			return { name: field.name, asset: ExprTools.getValue(Context.getTypedExpr(field.expr())), pos: field.pos };
 		};
 		
 		var values = staticFields.map(getAsset);
@@ -52,13 +54,20 @@ class EmbedAssetUtil {
 		var buildBitmapData = buildType.bind(_, EmbedAsset.EMBED_ASSET_PACKAGE, ['flash', 'display'], 'BitmapData');
 		var buildByteArray  = buildType.bind(_, EmbedAsset.EMBED_ASSET_PACKAGE, ['flash', 'utils'], 'ByteArray');
 		
-		var addMetadata = function (metadata:String, path:String, pack:Array<String>, className:String) {
-			Compiler.addMetadata(metadata + '("' + path + '")', MacroStringTools.toDotPath(pack, className));
+		var addMetadata = function (metadata:String, path:String, className:String, pos:Position) {
+			if (!FileSystem.exists(path) || FileSystem.isDirectory(path)) {
+				Context.error('File not found : ${path}', pos);
+			}
+			Compiler.addMetadata(
+				metadata + '("' + path + '")',
+				MacroStringTools.toDotPath(EmbedAsset.EMBED_ASSET_PACKAGE, className)
+			);
 		};
-		var addMetadataBitmap = addMetadata.bind('@:bitmap', _, EmbedAsset.EMBED_ASSET_PACKAGE, _);
-		var addMetadataFile   = addMetadata.bind('@:file', _, EmbedAsset.EMBED_ASSET_PACKAGE, _);
 		
 		for (value in values) {
+			var addMetadataBitmap = addMetadata.bind('@:bitmap', _, _, value.pos);
+			var addMetadataFile   = addMetadata.bind('@:file', _, _, value.pos);
+			
 			// Texture
 			var textureClassName:String = EmbedAsset.getTextureClassName(value.name);
 			Context.defineType(buildBitmapData(textureClassName));
