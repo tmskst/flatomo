@@ -8,22 +8,25 @@ import haxe.io.BytesData;
 #if !macro
 @:build(flatomo.macro.EmbedAssetUtil.buildResolver())
 #end
-@:allow(flatomo.macro.EmbedAssetUtil)
 class EmbedAsset {
 	
 	@:resolver
 	public static var resolver:Map<Asset, String>;
 	
+	@:allow(flatomo.macro.EmbedAssetUtil)
 	private static var EMBED_ASSET_PACKAGE:Array<String> = ['flatomo', 'macro', 'embedAsset'];
 	
+	@:allow(flatomo.macro.EmbedAssetUtil)
 	private static function getTextureClassName(className:String):String {
 		return className + 'Texture';
 	}
 	
+	@:allow(flatomo.macro.EmbedAssetUtil)
 	private static function getXmlClassName(className:String):String {
 		return className + 'Xml';
 	}
 	
+	@:allow(flatomo.macro.EmbedAssetUtil)
 	private static function getPostureClassName(className:String):String {
 		return className + 'Posture';
 	}
