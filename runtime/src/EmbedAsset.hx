@@ -2,6 +2,7 @@ package ;
 import flatomo.ItemPath;
 import flatomo.Section;
 import flatomo.Structure;
+import flatomo.Timeline;
 import haxe.Unserializer;
 
 #if flash
@@ -75,7 +76,7 @@ class EmbedAsset {
 		return haxe.Unserializer.run(create(getClassPath(getStructureClassName(resolver.get(key)))));
 	}
 	
-	public static function getTimeline(key:Asset):Map<ItemPath, Array<Section>> {
+	public static function getTimeline(key:Asset):Map<String, Timeline> {
 		return haxe.Unserializer.run(create(getClassPath(getTimelineClassName(resolver.get(key)))));
 	}
 	

@@ -4,14 +4,15 @@ import flatomo.display.Playhead;
 
 class LogicClip {
 	
-	public function new(sections:Array<Section>, markers:Map<LayerName, Map<Int, Marker>>) {
-		this.playhead = new Playhead(sections);
-		this.markers = markers;
+	public var playhead:Playhead;
+	private var markers:Map<String, Array<Marker>>;
+	
+	public function new(timeline:Timeline) {
+		this.playhead = new Playhead(timeline.sections);
+		this.markers = timeline.markers;
 	}
 	
-	public var playhead(default, null):Playhead;
-	private var markers:Map<LayerName, Map<Int, Marker>>;
-	
+	/*
 	public function getCurrentMarker(layerName:LayerName):Marker {
 		if (markers.exists(layerName)) {
 			var layerMarkers:Map<Int, Marker> = markers.get(layerName);
@@ -21,5 +22,5 @@ class LogicClip {
 		}
 		throw '存在しないレイヤー${layerName}, ${markers}';
 	}
-
+	*/
 }

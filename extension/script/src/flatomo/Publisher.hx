@@ -13,6 +13,7 @@ import jsfl.SymbolItem;
 using Lambda;
 using flatomo.util.LibraryTools;
 using flatomo.util.SymbolItemTools;
+using flatomo.util.TimelineTools;
 
 class Publisher {
 	
@@ -21,17 +22,18 @@ class Publisher {
 		
 		// Section
 		// ////////////////////////////////////////////////////////////////////
-		var sections = new Map<String, Array<Section>>();
+		var timelines = new Map<String, Timeline>();
 		
-		for (item in library.items) {
-			switch (item.itemType) {
-				case ItemType.MOVIE_CLIP, ItemType.GRAPHIC :
-					var symbolItem:SymbolItem = cast item;
-					var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
-					sections.set(item.name, extendedItem.sections);
-			}
+		var symbolItems = library.symbolItems();
+		for (symbolItem in symbolItems) {
+			var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
+			var sections:Array<Section> = extendedItem.sections;
+			var markers:Map<String, Array<Marker>> = symbolItem.timeline.getMarkers();
+			timelines.set(symbolItem.name, { sections: sections, markers: markers } );
 		}
-		FLfile.write(publishProfile.publishPath + '/' + publishProfile.fileName + '.' + 'tim', Serializer.run(sections));
+		
+		FLfile.write(publishProfile.publishPath + '/' + publishProfile.fileName + '.' + 'tim', Serializer.run(timelines));
+		
 		
 		// Section
 		// ////////////////////////////////////////////////////////////////////
