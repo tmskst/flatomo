@@ -89,6 +89,11 @@ class EmbedAssetUtil {
 			var structureClassName:String = EmbedAsset.getStructureClassName(value.name);
 			Context.defineType(buildByteArray(structureClassName));
 			addMetadataFile(value.asset.structure, structureClassName);
+			
+			// Timeline
+			var timelineClassName:String = EmbedAsset.getTimelineClassName(value.name);
+			Context.defineType(buildByteArray(timelineClassName));
+			addMetadataFile(value.asset.timeline, timelineClassName);
 		}
 		
 	}

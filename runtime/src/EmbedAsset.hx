@@ -1,5 +1,6 @@
 package ;
 import flatomo.ItemPath;
+import flatomo.Section;
 import flatomo.Structure;
 import haxe.Unserializer;
 
@@ -39,6 +40,12 @@ class EmbedAsset {
 		return assetName + 'Structure';
 	}
 	
+	/* アセット名から埋め込みタイムラインのクラス名を取得する */
+	@:allow(flatomo.macro.EmbedAssetUtil)
+	private static inline function getTimelineClassName(assetName:String):String {
+		return assetName + 'Timeline';
+	}
+	
 	/* 埋め込みアセットのクラスの完全修飾名を取得する */
 	private static function getClassPath(className:String):String { 
 		return EMBED_ASSET_PACKAGE.join('.') + '.' + className;
@@ -66,6 +73,10 @@ class EmbedAsset {
 	
 	public static function getStructure(key:Asset):Map<ItemPath, Structure> {
 		return haxe.Unserializer.run(create(getClassPath(getStructureClassName(resolver.get(key)))));
+	}
+	
+	public static function getTimeline(key:Asset):Map<ItemPath, Array<Section>> {
+		return haxe.Unserializer.run(create(getClassPath(getTimelineClassName(resolver.get(key)))));
 	}
 	
 	#end
