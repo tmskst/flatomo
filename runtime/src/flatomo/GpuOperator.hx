@@ -70,7 +70,7 @@ class GpuOperator {
 	 * @return 生成（構築）された表示オブジェクト
 	 */
 	// TODO : private
-	public function create(key:String, layouts:Array<Layout> = null):DisplayObject {
+	public function create(key:String, layouts:Array<Layout> = null):Dynamic {
 		if (layouts == null) { layouts = new Array<Layout>(); }
 		
 		var type = structures.get(key);
