@@ -93,6 +93,7 @@ class Parser {
 			children.push( {
 				name: symbolItem.name + '#' + i + '#' + instance.name,
 				path: instance.libraryItem.name,
+				layouts: [],
 			});
 		}
 		structures.set(symbolItem.name, Structure.Container(children));
@@ -112,6 +113,7 @@ class Parser {
 			structures.set(part.path, Structure.Image);
 		}
 		// FIXME END
+		structures.set(symbolItem.name, Structure.PartsAnimation(pap.parts));
 	}
 	
 	/** テクスチャとして解析する */

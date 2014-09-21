@@ -115,8 +115,14 @@ class GpuOperator {
 				image.pivotX = pivot.x;
 				image.pivotY = pivot.y;
 				return image;
-			case Structure.PartsAnimation :
-				return null;
+			case Structure.PartsAnimation(parts) :
+				var objects = new Array<DisplayObject>();
+				for (child in parts) {
+					var object = create(child.path, child.layouts);
+					object.name = child.name;
+					objects.push(untyped object);
+				}
+				return new Container(layouts, objects);
 		}
 	}
 	
