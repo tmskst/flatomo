@@ -26,7 +26,7 @@ class EmbedAssetUtil {
 			return switch (field.meta.get()) {
 				case [ { name: ':asset' } ] : 
 					switch (field.type) {
-						case TType(t, _) if (t.get().name == "Asset") : 
+						case TType(_.get().name => "Asset", _) : 
 							true;
 						case _ :
 							Context.fatalError(TypeTools.toString(field.type) + " should be Asset", field.pos);
