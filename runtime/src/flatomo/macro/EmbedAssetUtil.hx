@@ -24,8 +24,15 @@ class EmbedAssetUtil {
 		
 		var assetFields = staticFields.filter(function (field) {
 			return switch (field.meta.get()) {
-				case [ { name: ':asset' } ] : true;
-				case _ : false;
+				case [ { name: ':asset' } ] : 
+					switch (field.type) {
+						case TType(t, _) if (t.get().name == "Asset") : 
+							true;
+						case _ :
+							Context.fatalError(TypeTools.toString(field.type) + " should be Asset", field.pos);
+					}
+				case _ :
+					false;
 			}
 		});
 		
