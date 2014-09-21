@@ -85,10 +85,10 @@ class EmbedAssetUtil {
 			Context.defineType(buildByteArray(xmlClassName));
 			addMetadataFile(value.asset.xml, xmlClassName);
 			
-			// Pos
-			var posClassName:String = EmbedAsset.getPostureClassName(value.name);
-			Context.defineType(buildByteArray(posClassName));
-			addMetadataFile(value.asset.posture, posClassName);
+			// Structure
+			var structureClassName:String = EmbedAsset.getStructureClassName(value.name);
+			Context.defineType(buildByteArray(structureClassName));
+			addMetadataFile(value.asset.structure, structureClassName);
 		}
 		
 	}

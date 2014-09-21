@@ -48,7 +48,7 @@ class GpuOperator {
 			}
 		}
 		
-		structures = StringMapUtil.unite([structures, EmbedAsset.getPosture(asset)]);
+		structures = StringMapUtil.unite([structures, EmbedAsset.getStructure(asset)]);
 	}
 	
 	private var manager:AssetManager;

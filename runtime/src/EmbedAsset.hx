@@ -35,8 +35,8 @@ class EmbedAsset {
 	
 	/* アセット名から埋め込みストラクチャのクラス名を取得する */
 	@:allow(flatomo.macro.EmbedAssetUtil)
-	private static inline function getPostureClassName(assetName:String):String {
-		return assetName + 'Posture';
+	private static inline function getStructureClassName(assetName:String):String {
+		return assetName + 'Structure';
 	}
 	
 	/* 埋め込みアセットのクラスの完全修飾名を取得する */
@@ -64,8 +64,8 @@ class EmbedAsset {
 		return new XML(create(getClassPath(getXmlClassName(resolver.get(key)))));
 	}
 	
-	public static function getPosture(key:Asset):Map<ItemPath, Structure> {
-		return haxe.Unserializer.run(create(getClassPath(getPostureClassName(resolver.get(key)))));
+	public static function getStructure(key:Asset):Map<ItemPath, Structure> {
+		return haxe.Unserializer.run(create(getClassPath(getStructureClassName(resolver.get(key)))));
 	}
 	
 	#end
