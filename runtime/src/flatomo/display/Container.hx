@@ -25,7 +25,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	 * @param	sections セクション情報。
 	 */
 	@:allow(flatomo.GpuOperator)
-	private function new(layouts:Array<Layout>, displayObjects:Array<DisplayObject>, sections:Array<Section>) {
+	private function new(layouts:Array<Layout>, displayObjects:Array<DisplayObject>) {
 		super();
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
