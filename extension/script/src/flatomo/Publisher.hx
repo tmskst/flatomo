@@ -28,7 +28,7 @@ class Publisher {
 		for (symbolItem in symbolItems) {
 			var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
 			var sections:Array<Section> = extendedItem.sections;
-			var markers:Map<String, Array<Marker>> = symbolItem.timeline.getMarkers();
+			var markers:Map<String, Array<GeometricTransform>> = symbolItem.timeline.getMarkers();
 			timelines.set(symbolItem.name, { sections: sections, markers: markers } );
 		}
 		

@@ -5,7 +5,7 @@ import flatomo.display.Playhead;
 class LogicClip {
 	
 	public var playhead:Playhead;
-	private var markers:Map<String, Array<Marker>>;
+	private var markers:Map<String, Array<GeometricTransform>>;
 	
 	public function new(timeline:Timeline) {
 		this.playhead = new Playhead(timeline.sections);
