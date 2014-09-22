@@ -6,7 +6,7 @@ package flatomo;
  */
 typedef ContainerComponent = {
 	/** インスタンス名 */
-	name:InstanceName,
+	instanceName:String,
 	/** インスタンス化するために使用されるライブラリアイテムのパス */
 	path:ItemPath,
 	layouts:Array<Layout>,

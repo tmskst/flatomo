@@ -91,7 +91,7 @@ class Parser {
 			var instance:Instance = instances[i];
 			translate(cast instance.libraryItem);
 			children.push( {
-				name: symbolItem.name + '#' + i + '#' + instance.name,
+				instanceName: symbolItem.name + '#' + i + '#' + instance.name,
 				path: instance.libraryItem.name,
 				layouts: [],
 			});

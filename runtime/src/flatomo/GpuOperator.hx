@@ -119,7 +119,7 @@ class GpuOperator {
 				var objects = new Array<DisplayObject>();
 				for (child in parts) {
 					var object = create(child.path, child.layouts);
-					object.name = child.name;
+					object.name = child.instanceName;
 					objects.push(untyped object);
 				}
 				return new Container(layouts, objects);

@@ -20,9 +20,9 @@ using flatomo.util.SymbolItemTools;
 
 class PartsAnimationParser {
 	
-	public static function parse(rootSymbolItem:SymbolItem):{ parts:Array<{ name:InstanceName, path:ItemPath, layouts:Array<Layout> }>, items:Array<Item> } {
+	public static function parse(rootSymbolItem:SymbolItem):{ parts:Array<{ instanceName:String, path:ItemPath, layouts:Array<Layout> }>, items:Array<Item> } {
 		var parser:PartsAnimationParser = new PartsAnimationParser(rootSymbolItem);
-		var result = new Array<{ name:String, path:String, layouts:Array<Layout> }>();
+		var result = new Array<{ instanceName:String, path:String, layouts:Array<Layout> }>();
 		
 		for (name in parser.matrixes.keys()) {
 			var timeline:Array<Array<Layout>> = parser.matrixes.get(name);
@@ -34,7 +34,7 @@ class PartsAnimationParser {
 						matrixes[frameIndex] = frame.pop();
 					}
 				}
-				result.push({ name: 'A' + Std.random(100), path: name, layouts: matrixes });
+				result.push({ instanceName: 'A' + Std.random(100), path: name, layouts: matrixes });
 			}
 		}
 		return { parts: result, items: parser.items };
