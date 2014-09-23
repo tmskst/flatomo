@@ -18,26 +18,11 @@ using flatomo.util.TimelineTools;
 class Publisher {
 	
 	public static function publish(library:Library, publishProfile:PublishProfile):Void {
+		var filePath:String = publishProfile.publishPath + '/' + publishProfile.fileName;
 		var structures:Map<String, Structure> = Parser.parse(library);
 		
-		// Section
-		// ////////////////////////////////////////////////////////////////////
-		var timelines = new Map<String, Timeline>();
-		
-		var symbolItems = library.symbolItems();
-		for (symbolItem in symbolItems) {
-			var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
-			var sections:Array<Section> = extendedItem.sections;
-			var markers:Map<String, Array<GeometricTransform>> = symbolItem.timeline.getMarkers();
-			timelines.set(symbolItem.name, { sections: sections, markers: markers } );
-		}
-		
-		FLfile.write(publishProfile.publishPath + '/' + publishProfile.fileName + '.' + 'tim', Serializer.run(timelines));
-		
-		
-		// Section
-		// ////////////////////////////////////////////////////////////////////
-		FLfile.write(publishProfile.publishPath + '/' + publishProfile.fileName + '.' + 'pos', Serializer.run(structures));
+		publishTimeline(library, filePath);
+		publishStructure(structures, filePath);
 		
 		
 		// HxClasses
@@ -49,25 +34,25 @@ class Publisher {
 		var templateAnimation = new Template(Resource.getString('animation'));
 		var templateContainer = new Template(Resource.getString('container'));
 		
+		var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context){
+			var contents = template.execute(context);
+			var path:String = publishProfile.publishPath + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
+			FLfile.createFolder(path);
+			FLfile.write(path + '/' + context.CLASS_NAME + '.hx', contents);
+		};
+		
 		for (key in structures.keys()) {
 			var structure:Structure = structures.get(key);
 			switch (structure) {
 				case Structure.Animation :
 					var symbolItem:SymbolItem = cast library.getItem(key);
-					var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
-					var context = {
+					var context:Dynamic = {
 						KEY        : key,
 						CLASS_NAME : getClassName(symbolItem.name),
 						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
-						SECTIONS   : extendedItem.sections.map(function (s) return { NAME: s.name }),
+						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name }),
 					};
-					
-					var contents = templateAnimation.execute(context);
-					
-					var path:String = if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
-					FLfile.createFolder(publishProfile.publishPath + '/' + path);
-					FLfile.write(publishProfile.publishPath + '/' + path + '/' + context.CLASS_NAME + ".hx", contents);
-					
+					execute(templateAnimation, context);
 				case Structure.Container :
 				case Structure.PartsAnimation :
 				case Structure.Image :
@@ -114,6 +99,21 @@ class Publisher {
 		
 		var imageFormat = { format: "png", bitDepth: 32, backgroundColor: "#00000000" };
 		spriteSheetExporter.exportSpriteSheet(publishProfile.publishPath + '/' + publishProfile.fileName, imageFormat, true);
+	}
+	
+	private static function publishTimeline(library:Library, filePath:String):Void {
+		var timelines = new Map<String, Timeline>();
+		for (symbolItem in library.symbolItems()) {
+			timelines.set(symbolItem.name, {
+				sections: symbolItem.getExtendedItem().sections,
+				markers : symbolItem.timeline.getMarkers(),
+			});
+		}
+		FLfile.write(filePath + '.' + 'timeline', Serializer.run(timelines));
+	}
+	
+	private static function publishStructure(structures:Map<String, Structure>, filePath:String):Void {
+		FLfile.write(filePath + '.' + 'structure', Serializer.run(structures));
 	}
 	
 }
