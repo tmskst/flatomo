@@ -8,3 +8,4 @@
 --macro haxe.macro.Compiler.keep("jsfl.Boot")
 -resource ./res/Container.hx.template@container
 -resource ./res/Animation.hx.template@animation
+-resource ./res/PartsAnimation.hx.template@partsAnimation

@@ -31,9 +31,6 @@ class Publisher {
 			return path.substring(path.lastIndexOf('.') + 1);
 		}
 		
-		var templateAnimation = new Template(Resource.getString('animation'));
-		var templateContainer = new Template(Resource.getString('container'));
-		
 		var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context){
 			var contents = template.execute(context);
 			var path:String = publishProfile.publishPath + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
@@ -41,20 +38,31 @@ class Publisher {
 			FLfile.write(path + '/' + context.CLASS_NAME + '.hx', contents);
 		};
 		
+		var publishAnimationHxClass = execute.bind(new Template(Resource.getString('animation')), _);
+		var publishContainerHxClass = execute.bind(new Template(Resource.getString('container')), _);
+		var publishPartsAnimationHxClass = execute.bind(new Template(Resource.getString('partsAnimation')), _);
+		
 		for (key in structures.keys()) {
 			var structure:Structure = structures.get(key);
+			var symbolItem:SymbolItem = cast library.getItem(key);
 			switch (structure) {
 				case Structure.Animation :
-					var symbolItem:SymbolItem = cast library.getItem(key);
 					var context:Dynamic = {
 						KEY        : key,
 						CLASS_NAME : getClassName(symbolItem.name),
 						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
 						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name }),
 					};
-					execute(templateAnimation, context);
+					publishAnimationHxClass(context);
 				case Structure.Container :
 				case Structure.PartsAnimation :
+					var context:Dynamic = {
+						KEY        : key,
+						CLASS_NAME : getClassName(symbolItem.name),
+						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
+						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name }),
+					};
+					publishPartsAnimationHxClass(context);
 				case Structure.Image :
 					
 			}
