@@ -54,7 +54,15 @@ class Publisher {
 						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name }),
 					};
 					publishAnimationHxClass(context);
-				case Structure.Container :
+				case Structure.Container(children) :
+					var context:Dynamic = {
+						KEY        : key,
+						CLASS_NAME : getClassName(symbolItem.name),
+						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
+						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name } ),
+						FIELDS     : children.map(function (c) return { NAME : c.instanceName } ),
+					};
+					publishContainerHxClass(context);
 				case Structure.PartsAnimation :
 					var context:Dynamic = {
 						KEY        : key,

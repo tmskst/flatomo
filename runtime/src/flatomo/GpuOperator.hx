@@ -84,18 +84,14 @@ class GpuOperator {
 				animation.pivotY = pivot.y;
 				return animation;
 			/* Container */
-			case Structure.Container :
-				/*
+			case Structure.Container(children) :
 				var objects = new Array<DisplayObject>();
-				for (instanceName in children.keys()) {
-					var child = children.get(instanceName);
+				for (child in children) {
 					var object = create(child.path, child.layouts);
-					object.name = instanceName;
-					objects.push(object);
+					object.name = child.instanceName;
+					objects.push(untyped object);
 				}
-				return new Container(layouts, objects, sections);
-				*/
-				return null;
+				return new Container(layouts, objects);
 			/* TextField */
 			/*
 			case Posture.TextField(width, height, text, textFormat) : 

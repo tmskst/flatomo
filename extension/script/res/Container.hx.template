@@ -23,9 +23,9 @@ abstract ::CLASS_NAME::(Container) to Container {
 	}
 	
 	::foreach FIELDS::
-	public var ::FIELD_NAME::(get, never):::CLASS_NAME::;
-	private function get_::FIELD_NAME::():::CLASS_NAME:: {
-		return untyped this.getChildByName('::FIELD_NAME::');
+	public var ::NAME::(get, never):::CLASS_NAME::;
+	private function get_::NAME::():::CLASS_NAME:: {
+		return untyped this.getChildByName('::NAME::');
 	}
 	::end::
 	

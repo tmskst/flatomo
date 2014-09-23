@@ -92,9 +92,10 @@ class Parser {
 			var instance:Instance = instances[i];
 			translate(cast instance.libraryItem);
 			children.push( {
-				instanceName: symbolItem.name + '#' + i + '#' + instance.name,
+				instanceName: if (instance.name == null || instance.name == '') 'anonymous' + i else instance.name,
 				path: instance.libraryItem.name,
-				layouts: [],
+				// FIXME : 
+				layouts: [{ depth: 0, transform: { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0}}],
 			});
 		}
 		structures.set(symbolItem.name, Structure.Container(children));
