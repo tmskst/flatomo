@@ -9,6 +9,7 @@ typedef ContainerComponent = {
 	instanceName:String,
 	/** インスタンス化するために使用されるライブラリアイテムのパス */
 	path:ItemPath,
+	/** 配置情報 */
 	layouts:Array<Layout>,
 }
 

@@ -110,11 +110,11 @@ class Parser {
 	private function translateQuaPartsAnimation(symbolItem:SymbolItem):Void {
 		var pap = PartsAnimationParser.parse(symbolItem);
 		// FIXME BEGIN
-		for (part in pap.parts) {
+		for (part in pap) {
 			structures.set(part.path, Structure.Image);
 		}
 		// FIXME END
-		structures.set(symbolItem.name, Structure.PartsAnimation(pap.parts));
+		structures.set(symbolItem.name, Structure.PartsAnimation(pap));
 	}
 	
 	/** テクスチャとして解析する */

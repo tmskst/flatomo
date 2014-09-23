@@ -1,5 +1,6 @@
 package flatomo;
 
+import flatomo.Structure;
 import jsfl.ElementType;
 import jsfl.Frame;
 import jsfl.Instance;
@@ -20,9 +21,9 @@ using flatomo.util.SymbolItemTools;
 
 class PartsAnimationParser {
 	
-	public static function parse(rootSymbolItem:SymbolItem):{ parts:Array<{ instanceName:String, path:ItemPath, layouts:Array<Layout> }>, items:Array<Item> } {
+	public static function parse(rootSymbolItem:SymbolItem):Array<ContainerComponent> {
 		var parser:PartsAnimationParser = new PartsAnimationParser(rootSymbolItem);
-		var result = new Array<{ instanceName:String, path:String, layouts:Array<Layout> }>();
+		var result = new Array<ContainerComponent>();
 		
 		for (name in parser.matrixes.keys()) {
 			var timeline:Array<Array<Layout>> = parser.matrixes.get(name);
@@ -37,7 +38,7 @@ class PartsAnimationParser {
 				result.push({ instanceName: 'A' + Std.random(100), path: name, layouts: matrixes });
 			}
 		}
-		return { parts: result, items: parser.items };
+		return result;
 	}
 	
 	public function new(rootSymbolItem:SymbolItem):Void {
