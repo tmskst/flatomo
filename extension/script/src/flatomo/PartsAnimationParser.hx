@@ -41,11 +41,10 @@ class PartsAnimationParser {
 		return result;
 	}
 	
-	public function new(rootSymbolItem:SymbolItem):Void {
+	private function new(rootSymbolItem:SymbolItem):Void {
 		this.currentFrame = 0;
 		this.frameCount = rootSymbolItem.timeline.frameCount;
 		this.matrixes = new Map<String, Array<Array<Layout>>>();
-		this.items = new Array<Item>();
 		
 		for (frameIndex in 0...frameCount) {
 			currentFrame = frameIndex;
@@ -58,12 +57,9 @@ class PartsAnimationParser {
 	private var currentFrame:Int;
 	private var frameCount:Int;
 	private var matrixes:Map<String, Array<Array<Layout>>>;
-	/** パーツアニメーションを構成する最小単位の集合 */
-	private var items:Array<Item>;
 	
-	private function addMatrix(name:String, matrix:Matrix, frameIndex:Int, item:Item):Void {
+	private function addMatrix(name:String, matrix:Matrix, frameIndex:Int):Void {
 		if (!matrixes.exists(name)) {
-			items.push(item);
 			matrixes.set(name, [for (i in 0...frameCount) []]);
 		}
 		var container:Array<Array<Layout>> = matrixes.get(name);
@@ -109,7 +105,7 @@ class PartsAnimationParser {
 					// 変換行列をすべて合成
 					var result:Matrix = stack.fold(function (matrix1, matrix2) { return matrix1.concatMatrix(matrix2); }, MatrixTools.createIdentityMatrix());
 					
-					addMatrix(instance.libraryItem.name, result, currentFrame, instance.libraryItem);
+					addMatrix(instance.libraryItem.name, result, currentFrame);
 					stack.pop();
 				}
 				
