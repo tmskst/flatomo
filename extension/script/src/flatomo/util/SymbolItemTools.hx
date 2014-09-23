@@ -3,7 +3,6 @@ package flatomo.util;
 import flatomo.ExtendedItem;
 import haxe.Serializer;
 import haxe.Unserializer;
-import jsfl.Item;
 import jsfl.PersistentDataType;
 import jsfl.SymbolItem;
 

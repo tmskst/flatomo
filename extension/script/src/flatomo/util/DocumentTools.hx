@@ -9,8 +9,8 @@ import jsfl.PersistentDataType;
 
 class DocumentTools {
 	
-	public static inline var FLATOMO_ENABLED:String = "FLATOMO_ENABLED";
-	public static inline var FLATOMO_PUBLISH_PROFILE:String = "FLATOMO_PUBLISH_PROFILE";
+	private static inline var FLATOMO_ENABLED:String = "FLATOMO_ENABLED";
+	private static inline var FLATOMO_PUBLISH_PROFILE:String = "FLATOMO_PUBLISH_PROFILE";
 	
 	/** 作業中のドキュメントでFlatomoが動作するかどうか */
 	public static function isFlatomo(document:Document):Bool {

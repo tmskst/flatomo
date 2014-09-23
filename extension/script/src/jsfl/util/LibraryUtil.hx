@@ -1,10 +1,10 @@
-package flatomo.util;
+package jsfl.util;
 
 import jsfl.Item;
 import jsfl.Library;
 import jsfl.SymbolItem;
 
-class LibraryTools {
+class LibraryUtil {
 	
 	/** ライブラリのうちシンボルアイテムのみの列挙 */
 	public static function symbolItems(library:Library):Array<SymbolItem> {

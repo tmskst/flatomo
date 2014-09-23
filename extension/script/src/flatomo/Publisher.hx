@@ -11,7 +11,7 @@ import jsfl.SpriteSheetExporter;
 import jsfl.SymbolItem;
 
 using Lambda;
-using flatomo.util.LibraryTools;
+using jsfl.util.LibraryUtil;
 using flatomo.util.SymbolItemTools;
 using flatomo.util.TimelineTools;
 

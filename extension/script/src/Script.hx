@@ -13,7 +13,7 @@ import jsfl.SymbolItem;
 
 using Lambda;
 using flatomo.util.DocumentTools;
-using flatomo.util.LibraryTools;
+using jsfl.util.LibraryUtil;
 using flatomo.util.SymbolItemTools;
 
 class Script {

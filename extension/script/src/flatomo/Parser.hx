@@ -8,7 +8,8 @@ import jsfl.Library;
 import jsfl.SymbolItem;
 
 using Lambda;
-using flatomo.util.LibraryTools;
+using jsfl.util.TimelineUtil;
+using jsfl.util.LibraryUtil;
 using flatomo.util.SymbolItemTools;
 using flatomo.util.TimelineTools;
 

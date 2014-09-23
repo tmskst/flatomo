@@ -9,7 +9,7 @@ import jsfl.Timeline;
 class SectionCreator {
 	
 	/** 制御レイヤー名 */
-	public static inline var CONTROL_LAYER_NAME:String = "label";
+	private static inline var CONTROL_LAYER_NAME:String = "label";
 	
 	/**
 	 * ライムラインを元にセクション情報を抽出します
