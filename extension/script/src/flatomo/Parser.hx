@@ -1,6 +1,8 @@
 package flatomo;
 
 import flatomo.Structure;
+import jsfl.Element;
+import jsfl.Frame;
 import jsfl.Instance;
 import jsfl.Item;
 import jsfl.ItemType;
@@ -8,6 +10,7 @@ import jsfl.Library;
 import jsfl.SymbolItem;
 
 using Lambda;
+using flatomo.Parser;
 using jsfl.util.TimelineUtil;
 using jsfl.util.LibraryUtil;
 using flatomo.util.SymbolItemTools;
@@ -15,10 +18,43 @@ using flatomo.util.TimelineTools;
 
 class Parser {
 	
+	@:noUsing
 	public static function parse(library:Library):Map<String, Structure> {
 		var parser = new Parser(library);
 		return parser.structures;
 	}
+	
+	/* --------------------------------------------------------------------- */
+	
+	private static function uniq<T>(xs:Array<T>):Iterable<T> {
+		return [for (i in 0...xs.length) if (xs.indexOf(xs[i], i + 1) == -1) xs[i]];
+	}
+	
+	private static function flatten(xs:Iterable<Dynamic>):Array<Dynamic> {
+		var rs = [];
+		var f:Iterable<Dynamic> -> Void = null;
+		f = function (es) {
+			for (e in es) {
+				if (Std.is(e, Array)) f(cast e) else rs.push(e);
+			}
+		};
+		f(xs);
+		return rs;
+	}
+	
+	private static function findi<T>(it:Iterable<T>, f:T -> Bool):Null<Int> {
+		var i:Int = 0;
+		
+		for (v in it) {
+			if (f(v)) return i;
+			i++;
+		}
+		return null;
+	}
+	
+	private static function fromInstance(instance:Null<Instance>, depth:Int):Layout {
+		return if (instance == null) null else { depth: depth, transform: instance.matrix };
+	};
 	
 	/* --------------------------------------------------------------------- */
 	
@@ -85,19 +121,93 @@ class Parser {
 	private function translateQuaContainer(symbolItem:SymbolItem):Void {
 		trace('translateQuaContainer : ${symbolItem.name}');
 		
+		var totalFrames:Int = symbolItem.timeline.frameCount;
+		
+		var getInstances:Int -> Array<Instance> = function (frameIndex) {
+			return untyped symbolItem.timeline.layers
+				.filter (function (layer) return layer.layerType.equals(NORMAL))
+				.map    (function (layer) return layer.frames[frameIndex])
+				.filter (function (frame) return frame != null)
+				.map    (function (frame) return frame.elements)
+				.flatten();
+		};
+		
 		var children = new Array<ContainerComponent>();
 		
-		var instances:Array<Instance> = symbolItem.timeline.instances();
-		for (i in 0...instances.length) {
-			var instance:Instance = instances[i];
-			translate(cast instance.libraryItem);
-			children.push( {
-				instanceName: if (instance.name == null || instance.name == '') 'anonymous' + i else instance.name,
-				path: instance.libraryItem.name,
-				// FIXME : 
-				layouts: [{ depth: 0, transform: { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0}}],
-			});
+		{ // ONYMOUS INSTANCES
+			var onymousInstanceNames:Iterable<String> = symbolItem.timeline.instances()
+				.filter(function (i) return i.name != "")
+				.map   (function (i) return i.name)
+				.uniq  ();
+			
+			for (onymousInstanceName in onymousInstanceNames) {
+				
+				var itemPath:String = null;
+				var layouts = new Array<Layout>();
+				
+				for (frameIndex in 0...totalFrames) {
+					
+					var instances:Array<Instance> = getInstances(frameIndex);
+					
+					var onymousInstanceIndex:Null<Int> = instances
+						.findi(function (instance) return instance.name == onymousInstanceName);
+					
+					if (onymousInstanceIndex != null) {
+						var instance:Instance = instances[onymousInstanceIndex];
+						layouts.push(fromInstance(instance, onymousInstanceIndex));
+						itemPath = instance.libraryItem.name;
+					} else {
+						layouts.push(null);
+					}
+				}
+				
+				children.push( { instanceName: onymousInstanceName, path: itemPath, layouts: layouts } );
+			}
 		}
+		
+		{ // ANONYMOUS INSTANCES
+			var isAnonymousInstance:Instance -> Bool = function (instance) {
+				return instance.name == "";
+			};
+			
+			var layouts = new Map<String, Array<Array<Layout>>>();
+			var addLayout:String -> Layout -> Int -> Void = function (name, layout, frameIndex) {
+				if (!layouts.exists(name)) {
+					layouts.set(name, [for (i in 0...totalFrames) []]);
+				}
+				layouts.get(name)[frameIndex].push(layout);
+			}
+			
+			for (frameIndex in 0...totalFrames) {
+				var instances:Array<Instance> = getInstances(frameIndex);
+				for (instanceDepth in 0...instances.length) {
+					var instance:Instance = cast instances[instanceDepth];
+					if (isAnonymousInstance(instance)) {
+						addLayout(instance.libraryItem.name, { depth: instance.depth, transform: instance.matrix }, frameIndex);
+					}
+				}
+			}
+			
+			for (name in layouts.keys()) {
+				var line:Array<Array<Layout>> = layouts.get(name);
+				while (line.exists(function (frame) return frame.length != 0)) {
+					var ls:Array<Layout> = [for (i in 0...totalFrames) null];
+					for (frameIndex in 0...totalFrames) {
+						var frame:Array<Layout> = line[frameIndex];
+						if (!frame.empty()) {
+							ls[frameIndex] = frame.pop();
+						}
+					}
+					children.push( { instanceName: "X", path: name, layouts: ls } );
+				}
+			}
+			
+		}
+		
+		for (child in children) {
+			translate(jsfl.Lib.fl.getDocumentDOM().library.getItem(child.path));
+		}
+		
 		structures.set(symbolItem.name, Structure.Container(children));
 	}
 	
