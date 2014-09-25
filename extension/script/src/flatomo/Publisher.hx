@@ -3,6 +3,7 @@ package flatomo;
 import haxe.Resource;
 import haxe.Serializer;
 import haxe.Template;
+import jsfl.BitmapItem;
 import jsfl.FLfile;
 import jsfl.Item;
 import jsfl.ItemType;
@@ -96,25 +97,15 @@ class Publisher {
 		// Publish
 		// ////////////////////////////////////////////////////////////////////
 		
-		var spriteSheetExporter = new SpriteSheetExporter();
-		{ // initialize
-			spriteSheetExporter.stackDuplicateFrames = true;
-			spriteSheetExporter.allowTrimming = true;
-			spriteSheetExporter.layoutFormat = SpriteSheetExporterLayoutFormat.STARLING;
-			spriteSheetExporter.borderPadding = 0;
-		}
-		
-		for (texture in textures) {
+		for (index in 0...textures.length) {
+			var texture = textures[index];
 			switch (texture.itemType) {
-				case ItemType.BITMAP : 
-					spriteSheetExporter.addBitmap(cast texture);
-				case ItemType.MOVIE_CLIP, ItemType.GRAPHIC : 
-					spriteSheetExporter.addSymbol(cast texture);
+				case BITMAP :
+					cast(texture, BitmapItem).exportToFile(filePath + '@' + texture.name + ".png", 100);
+				case MOVIE_CLIP, GRAPHIC :
+					cast(texture, SymbolItem).exportToPNGSequence(filePath + '@' + texture.name);
 			}
 		}
-		
-		var imageFormat = { format: "png", bitDepth: 32, backgroundColor: "#00000000" };
-		spriteSheetExporter.exportSpriteSheet(publishProfile.publishPath + '/' + publishProfile.fileName, imageFormat, true);
 	}
 	
 	private static function publishTimeline(library:Library, filePath:String):Void {
