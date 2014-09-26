@@ -6,9 +6,7 @@ import haxe.Template;
 import jsfl.BitmapItem;
 import jsfl.FLfile;
 import jsfl.Item;
-import jsfl.ItemType;
 import jsfl.Library;
-import jsfl.SpriteSheetExporter;
 import jsfl.SymbolItem;
 
 using Lambda;
@@ -94,50 +92,61 @@ class Publisher {
 	// ////////////////////////////////////////////////////////////////////
 	
 	private static function publishAbstractDefinition(library:Library, structures:Map<String, Structure>, fileUri:String):Void {
-		var getClassName = function (path:String):String {
+		// アイテムパスからクラス名を抽出
+		var getClassName = function (path:String) {
 			return path.substring(path.lastIndexOf('.') + 1);
-		}
-		
-		var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context){
-			var contents = template.execute(context);
-			var path:String = fileUri + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
-			FLfile.createFolder(path);
-			FLfile.write(path + '/' + context.CLASS_NAME + '.hx', contents);
+		};
+		// ライブラリアイテムからパッケージ名を抽出
+		var getPackage = function (item:Item) {
+			return item.linkageClassName.substring(0, item.linkageClassName.lastIndexOf("."));
+		};
+		// シンボルアイテムからセクション名の列挙を抽出
+		var getSections = function (symbolItem:SymbolItem) {
+			return symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name } );
 		};
 		
-		var publishAnimationHxClass = execute.bind(new Template(Resource.getString('animation')), _);
-		var publishContainerHxClass = execute.bind(new Template(Resource.getString('container')), _);
-		var publishPartsAnimationHxClass = execute.bind(new Template(Resource.getString('partsAnimation')), _);
+		var publishAnimationHxClass:Dynamic -> Void = null;
+		var publishContainerHxClass:Dynamic -> Void = null;
+		var publishPartsAnimationHxClass:Dynamic -> Void = null;
+		{ // initialize templates
+			var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context){
+				var contents = template.execute(context);
+				var path:String = fileUri + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
+				FLfile.createFolder(path);
+				FLfile.write(path + '/' + context.CLASS_NAME + '.hx', contents);
+			};
+			
+			publishAnimationHxClass = execute.bind(new Template(Resource.getString('animation')), _);
+			publishContainerHxClass = execute.bind(new Template(Resource.getString('container')), _);
+			publishPartsAnimationHxClass = execute.bind(new Template(Resource.getString('partsAnimation')), _);
+		}
 		
 		for (key in structures.keys()) {
 			var structure:Structure = structures.get(key);
 			var symbolItem:SymbolItem = cast library.getItem(key);
 			switch (structure) {
 				case Structure.Animation :
-					var context:Dynamic = {
+					publishAnimationHxClass(cast {
 						KEY        : key,
 						CLASS_NAME : getClassName(symbolItem.name),
-						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
-						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name }),
-					};
-					publishAnimationHxClass(context);
+						PACKAGE    : getPackage(symbolItem),
+						SECTIONS   : getSections(symbolItem),
+					});
 				case Structure.Container(children) :
-					var context:Dynamic = {
+					publishContainerHxClass(cast {
 						KEY        : key,
 						CLASS_NAME : getClassName(symbolItem.name),
 						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
-						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name } ),
+						SECTIONS   : getSections(symbolItem),
 						FIELDS     : children.map(function (c) return { NAME : c.instanceName } ),
-					};
-					publishContainerHxClass(context);
+					});
 				case Structure.PartsAnimation :
-					var context:Dynamic = {
+					publishPartsAnimationHxClass(cast {
 						KEY        : key,
 						CLASS_NAME : getClassName(symbolItem.name),
 						PACKAGE    : symbolItem.linkageClassName.substring(0, symbolItem.linkageClassName.lastIndexOf(".")),
-						SECTIONS   : symbolItem.getExtendedItem().sections.map(function (s) return { NAME: s.name }),
-					};
-					publishPartsAnimationHxClass(context);
+						SECTIONS   : getSections(symbolItem),
+					});
 				case Structure.Image :
 					
 			}
