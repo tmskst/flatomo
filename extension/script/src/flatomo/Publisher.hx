@@ -24,17 +24,83 @@ class Publisher {
 		
 		publishTimeline(library, filePath);
 		publishStructure(structures, filePath);
+		publishAbstractDefinition(library, structures, publishProfile.publishPath);
+		publishTexture(library, structures, filePath);
+	}
+	
+	// タイムライン
+	// ////////////////////////////////////////////////////////////////////
+	
+	private static inline var TIMELINE_EXTENSION:String = 'timeline';
+	
+	private static function publishTimeline(library:Library, filePath:String):Void {
+		var timelines = new Map<String, Timeline>();
+		for (symbolItem in library.symbolItems()) {
+			timelines.set(symbolItem.name, {
+				sections: symbolItem.getExtendedItem().sections,
+				markers : symbolItem.timeline.getMarkers(),
+			});
+		}
+		FLfile.write(filePath + '.' + TIMELINE_EXTENSION, Serializer.run(timelines));
+	}
+	
+	
+	// ストラクチャ
+	// ////////////////////////////////////////////////////////////////////
+	
+	private static inline var STRUCTURE_EXTENSION:String = 'structure';
+	
+	private static function publishStructure(structures:Map<String, Structure>, filePath:String):Void {
+		FLfile.write(filePath + '.' + STRUCTURE_EXTENSION, Serializer.run(structures));
+	}
+	
+	
+	// テクスチャ
+	// ////////////////////////////////////////////////////////////////////
+	
+	private static inline var TEXTURE_DIRECTORY_NAME:String = 'texture';
+	
+	/**
+	 * 出力対象に指定されたすべての表示オブジェクトを再構築するために必要なテクスチャを出力する
+	 * テクスチャは `publishPath/flaFileName/texture` に出力される
+	 * @param fileUri `publishPath/flaFileName`
+	 */
+	private static function publishTexture(library:Library, structures:Map<String, Structure>, fileUri:String):Void {
+		var items = new Array<Item>();
+		for (key in structures.keys()) {
+			var structure:Structure = structures.get(key);
+			if (structure.match(Animation | Image)) {
+				items.push(library.getItem(key));
+			}
+		}
 		
+		var textureDirectoryPath:String = fileUri + '/' + TEXTURE_DIRECTORY_NAME + '/';
+		FLfile.createFolder(textureDirectoryPath);
 		
-		// HxClasses
-		// ////////////////////////////////////////////////////////////////////
+		for (item in items) {
+			switch (item.itemType) {
+				case BITMAP :
+					var bitmapItem:BitmapItem = cast item;
+					bitmapItem.exportToFile(textureDirectoryPath + item.name + ".png", 1);
+				case MOVIE_CLIP, GRAPHIC :
+					var symbolItem:SymbolItem = cast item;
+					symbolItem.exportToPNGSequence(textureDirectoryPath + item.name);
+			}
+		}
+	}
+	
+	
+	// abstract 定義
+	// ////////////////////////////////////////////////////////////////////
+	
+	private static function publishAbstractDefinition(library:Library, structures:Map<String, Structure>, fileUri:String):Void {
 		var getClassName = function (path:String):String {
 			return path.substring(path.lastIndexOf('.') + 1);
 		}
 		
 		var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context){
 			var contents = template.execute(context);
-			var path:String = publishProfile.publishPath + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
+			var path:String = fileUri + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
 			FLfile.createFolder(path);
 			FLfile.write(path + '/' + context.CLASS_NAME + '.hx', contents);
 		};
@@ -76,51 +142,5 @@ class Publisher {
 					
 			}
 		}
-		
-		
-		
-		// Textures
-		// ////////////////////////////////////////////////////////////////////
-		
-		var textures = new Array<Item>();
-		for (key in structures.keys()) {
-			var structure:Structure = structures.get(key);
-			switch (structure) {
-				case Structure.Container(_) :
-				case Structure.PartsAnimation(_) :
-				// アニメーションかテクスチャ
-				case Structure.Animation, Structure.Image :
-					textures.push(library.getItem(key));
-			}
-		}
-		
-		// Publish
-		// ////////////////////////////////////////////////////////////////////
-		
-		for (index in 0...textures.length) {
-			var texture = textures[index];
-			switch (texture.itemType) {
-				case BITMAP :
-					cast(texture, BitmapItem).exportToFile(filePath + '@' + texture.name + ".png", 100);
-				case MOVIE_CLIP, GRAPHIC :
-					cast(texture, SymbolItem).exportToPNGSequence(filePath + '@' + texture.name);
-			}
-		}
 	}
-	
-	private static function publishTimeline(library:Library, filePath:String):Void {
-		var timelines = new Map<String, Timeline>();
-		for (symbolItem in library.symbolItems()) {
-			timelines.set(symbolItem.name, {
-				sections: symbolItem.getExtendedItem().sections,
-				markers : symbolItem.timeline.getMarkers(),
-			});
-		}
-		FLfile.write(filePath + '.' + 'timeline', Serializer.run(timelines));
-	}
-	
-	private static function publishStructure(structures:Map<String, Structure>, filePath:String):Void {
-		FLfile.write(filePath + '.' + 'structure', Serializer.run(structures));
-	}
-	
 }
