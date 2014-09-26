@@ -50,7 +50,7 @@ class DocumentTools {
 	public static function getPublishProfile(document:Document):PublishProfile {
 		return { 
 			publishPath : getPublishPath(document),
-			fileName    : document.name,
+			fileName    : document.name.substring(0, document.name.lastIndexOf('.')),
 		};
 	}
 	
