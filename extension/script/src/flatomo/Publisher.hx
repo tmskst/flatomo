@@ -20,10 +20,11 @@ class Publisher {
 		var filePath:String = publishProfile.publishPath + '/' + publishProfile.fileName;
 		var structures:Map<String, Structure> = Parser.parse(library);
 		
-		publishTimeline(library, filePath);
-		publishStructure(structures, filePath);
-		publishAbstractDefinition(library, structures, publishProfile.publishPath);
-		publishTexture(library, structures, filePath);
+		FLfile.createFolder(publishProfile.publishPath + '/' + publishProfile.fileName);
+		publishTimeline(library, publishProfile);
+		publishStructure(structures, publishProfile);
+		publishAbstractDefinition(library, structures, publishProfile);
+		publishTexture(library, structures, publishProfile);
 	}
 	
 	// タイムライン
@@ -31,7 +32,7 @@ class Publisher {
 	
 	private static inline var TIMELINE_EXTENSION:String = 'timeline';
 	
-	private static function publishTimeline(library:Library, filePath:String):Void {
+	private static function publishTimeline(library:Library, profile:PublishProfile):Void {
 		var timelines = new Map<String, Timeline>();
 		for (symbolItem in library.symbolItems()) {
 			timelines.set(symbolItem.name, {
@@ -39,7 +40,7 @@ class Publisher {
 				markers : symbolItem.timeline.getMarkers(),
 			});
 		}
-		FLfile.write(filePath + '.' + TIMELINE_EXTENSION, Serializer.run(timelines));
+		FLfile.write(profile.publishPath + '/' + profile.fileName + '/' + profile.fileName + '.' + TIMELINE_EXTENSION, Serializer.run(timelines));
 	}
 	
 	
@@ -48,8 +49,8 @@ class Publisher {
 	
 	private static inline var STRUCTURE_EXTENSION:String = 'structure';
 	
-	private static function publishStructure(structures:Map<String, Structure>, filePath:String):Void {
-		FLfile.write(filePath + '.' + STRUCTURE_EXTENSION, Serializer.run(structures));
+	private static function publishStructure(structures:Map<String, Structure>, profile:PublishProfile):Void {
+		FLfile.write(profile.publishPath + '/' + profile.fileName + '/' + profile.fileName + '.' + STRUCTURE_EXTENSION, Serializer.run(structures));
 	}
 	
 	
@@ -63,7 +64,7 @@ class Publisher {
 	 * テクスチャは `publishPath/flaFileName/texture` に出力される
 	 * @param fileUri `publishPath/flaFileName`
 	 */
-	private static function publishTexture(library:Library, structures:Map<String, Structure>, fileUri:String):Void {
+	private static function publishTexture(library:Library, structures:Map<String, Structure>, profile:PublishProfile):Void {
 		var items = new Array<Item>();
 		for (key in structures.keys()) {
 			var structure:Structure = structures.get(key);
@@ -72,7 +73,7 @@ class Publisher {
 			}
 		}
 		
-		var textureDirectoryPath:String = fileUri + '/' + TEXTURE_DIRECTORY_NAME + '/';
+		var textureDirectoryPath:String = profile.publishPath + '/' + profile.fileName + '/' + TEXTURE_DIRECTORY_NAME + '/';
 		FLfile.createFolder(textureDirectoryPath);
 		
 		for (item in items) {
@@ -91,7 +92,7 @@ class Publisher {
 	// abstract 定義
 	// ////////////////////////////////////////////////////////////////////
 	
-	private static function publishAbstractDefinition(library:Library, structures:Map<String, Structure>, fileUri:String):Void {
+	private static function publishAbstractDefinition(library:Library, structures:Map<String, Structure>, profile:PublishProfile):Void {
 		// アイテムパスからクラス名を抽出
 		var getClassName = function (path:String) {
 			return path.substring(path.lastIndexOf('.') + 1);
@@ -111,7 +112,7 @@ class Publisher {
 		{ // initialize templates
 			var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context){
 				var contents = template.execute(context);
-				var path:String = fileUri + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
+				var path:String = profile.publishPath + '/' + profile.fileName + '/' + 'src' + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
 				FLfile.createFolder(path);
 				FLfile.write(path + '/' + context.CLASS_NAME + '.hx', contents);
 			};
