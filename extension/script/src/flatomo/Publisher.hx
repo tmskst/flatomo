@@ -30,6 +30,7 @@ class Publisher {
 	// タイムライン
 	// ////////////////////////////////////////////////////////////////////
 	
+	private static inline var TIMELINE_FILE_NAME:String = 'a';
 	private static inline var TIMELINE_EXTENSION:String = 'timeline';
 	
 	private static function publishTimeline(library:Library, profile:PublishProfile):Void {
@@ -40,17 +41,18 @@ class Publisher {
 				markers : symbolItem.timeline.getMarkers(),
 			});
 		}
-		FLfile.write(profile.publishPath + '/' + profile.fileName + '/' + profile.fileName + '.' + TIMELINE_EXTENSION, Serializer.run(timelines));
+		FLfile.write(profile.publishPath + '/' + profile.fileName + '/' + TIMELINE_FILE_NAME + '.' + TIMELINE_EXTENSION, Serializer.run(timelines));
 	}
 	
 	
 	// ストラクチャ
 	// ////////////////////////////////////////////////////////////////////
 	
+	private static inline var STRUCTURE_FILE_NAME:String = 'a';
 	private static inline var STRUCTURE_EXTENSION:String = 'structure';
 	
 	private static function publishStructure(structures:Map<String, Structure>, profile:PublishProfile):Void {
-		FLfile.write(profile.publishPath + '/' + profile.fileName + '/' + profile.fileName + '.' + STRUCTURE_EXTENSION, Serializer.run(structures));
+		FLfile.write(profile.publishPath + '/' + profile.fileName + '/' + STRUCTURE_FILE_NAME + '.' + STRUCTURE_EXTENSION, Serializer.run(structures));
 	}
 	
 	
