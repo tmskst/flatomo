@@ -79,13 +79,17 @@ class Publisher {
 		FLfile.createFolder(textureDirectoryPath);
 		
 		for (item in items) {
+			var fileUri:String = textureDirectoryPath + item.name;
+			var folderUri:String = fileUri.substring(0, fileUri.lastIndexOf('/'));
 			switch (item.itemType) {
 				case BITMAP :
 					var bitmapItem:BitmapItem = cast item;
-					bitmapItem.exportToFile(textureDirectoryPath + item.name + ".png", 1);
+					FLfile.createFolder(folderUri);
+					bitmapItem.exportToFile(fileUri + ".png", 1);
 				case MOVIE_CLIP, GRAPHIC :
 					var symbolItem:SymbolItem = cast item;
-					symbolItem.exportToPNGSequence(textureDirectoryPath + item.name);
+					FLfile.createFolder(folderUri);
+					symbolItem.exportToPNGSequence(fileUri);
 			}
 		}
 	}
