@@ -1,0 +1,3 @@
+-cp src
+-main Boot
+-neko bin/run.n
