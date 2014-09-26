@@ -43,10 +43,10 @@ class Script {
 				return getExtensionItem(name);
 			case ScriptApi.SetExtensionItem(item) :
 				setExtensionItem(item);
-			case ScriptApi.GetPublishProfile :
-				return document.getPublishProfile();
-			case ScriptApi.SetPublishProfile(publishProfile) :
-				document.setPublishProfile(publishProfile);
+			case ScriptApi.GetPublishPath :
+				return document.getPublishPath();
+			case ScriptApi.SetPublishPath(publishPath) :
+				document.setPublishPath(publishPath);
 			case ScriptApi.Export :
 				Publisher.publish(document.library, document.getPublishProfile());
 		}

@@ -35,7 +35,7 @@ class Main {
 			switch (status) {
 				// 書き込みを許可されたドキュメント
 				case Enabled:
-					invoke(ScriptApi.GetPublishProfile, initialize);
+					invoke(ScriptApi.GetPublishPath, initialize);
 				// 書き込みが禁止されたドキュメント
 				case Disabled: 
 					warning.text('ドキュメントを操作する権限がありません');
@@ -43,8 +43,8 @@ class Main {
 					enableButton.click(function (event:JqEvent) {
 						// ドキュメントを書き込み可能な状態にし初期化する
 						invoke(ScriptApi.Enable);
-						invoke(ScriptApi.SetPublishProfile( { publishPath: '', fileName: '' } ));
-						invoke(ScriptApi.GetPublishProfile, initialize);
+						invoke(ScriptApi.SetPublishPath(''));
+						invoke(ScriptApi.GetPublishPath, initialize);
 					});
 				// 対応していないドキュメントかドキュメントが開かれていない
 				case Invalid:
@@ -55,8 +55,8 @@ class Main {
 		});
 	}
 	
-	private function initialize(publishProfile_raw:Serialization):Void {
-		var publishProfile:PublishProfile = Unserializer.run(publishProfile_raw);
+	private function initialize(publishPath_raw:String):Void {
+		var publishPath:String = Unserializer.run(publishPath_raw);
 		
 		// 警告オーバーレイを削除
 		new JQuery('div#warning').css('display', 'none');
@@ -71,7 +71,7 @@ class Main {
 		
 		// 出力先
 		var input_publishPath = new JQuery('input#publishPath');
-		input_publishPath.val(publishProfile.publishPath);
+		input_publishPath.val(publishPath);
 		input_publishPath.change(publishProfileModified);
 		
 		// 出力先選択ボタン
@@ -86,11 +86,6 @@ class Main {
 				}
 			});
 		});
-		
-		// 出力ファイル名
-		var input_publishFileName = new JQuery('input#publishFileName');
-		input_publishFileName.val(publishProfile.fileName);
-		input_publishFileName.change(publishProfileModified);
 		
 		// アイテムの編集領域
 		var div_main = new JQuery('div#main');
@@ -162,15 +157,8 @@ class Main {
 	private function publishProfileModified(event:JqEvent):Void {
 		// 出力先
 		var input_publishPath = new JQuery('input#publishPath');
-		// 出力ファイル名
-		var input_publishFileName = new JQuery('input#publishFileName');
-		
-		// パブリッシュプロファイル
-		var publishProfile:PublishProfile = {
-			publishPath: input_publishPath.val(),
-			fileName   : input_publishFileName.val(),
-		};
-		invoke(ScriptApi.SetPublishProfile(publishProfile));
+		var publishPath:String = input_publishPath.val();
+		invoke(ScriptApi.SetPublishPath(publishPath));
 	}
 	
 	private function libraryItemClicked(event:JqEvent):Void {

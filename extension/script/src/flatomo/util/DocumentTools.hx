@@ -2,8 +2,6 @@ package flatomo.util;
 
 import flatomo.DocumentStatus;
 import flatomo.PublishProfile;
-import haxe.Serializer;
-import haxe.Unserializer;
 import jsfl.Document;
 import jsfl.PersistentDataType;
 
@@ -30,13 +28,17 @@ class DocumentTools {
 	}
 	
 	/** パブリッシュプロファイルを作業中のドキュメントに保存します */
-	public static function setPublishProfile(document:Document, publishProfile:PublishProfile):Void {
+	public static function setPublishPath(document:Document, publishPath:String):Void {
 		if (isFlatomo(document)) {
 			if (document.documentHasData(FLATOMO_PUBLISH_PROFILE)) {
 				document.removeDataFromDocument(FLATOMO_PUBLISH_PROFILE);
 			}
-			document.addDataToDocument(FLATOMO_PUBLISH_PROFILE, PersistentDataType.STRING, Serializer.run(publishProfile));
+			document.addDataToDocument(FLATOMO_PUBLISH_PROFILE, PersistentDataType.STRING, publishPath);
 		}
+	}
+	
+	public static function getPublishPath(document:Document):String {
+		return document.getDataFromDocument(FLATOMO_PUBLISH_PROFILE);
 	}
 	
 	/** 作業中のドキュメントの状態を取得します */
@@ -46,7 +48,10 @@ class DocumentTools {
 	
 	/** 作業中のドキュメントからパブリッシュプロファイルを取得します */
 	public static function getPublishProfile(document:Document):PublishProfile {
-		return Unserializer.run(document.getDataFromDocument(FLATOMO_PUBLISH_PROFILE));
+		return { 
+			publishPath : getPublishPath(document),
+			fileName    : document.name,
+		};
 	}
 	
 }

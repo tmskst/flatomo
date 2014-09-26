@@ -25,10 +25,10 @@ enum ScriptApi {
 	 * @param name 保存するExtensionItem
 	 */
 	SetExtensionItem(item:ExtensionItem);
-	/** 作業中のドキュメントからパブリッシュプロファイルを取得します */
-	GetPublishProfile;
-	/** 作業中のドキュメントにパブリッシュプロファイルを設定します */
-	SetPublishProfile(publishProfile:PublishProfile);
+	/** 作業中のドキュメントから出力先のパスを取得します */
+	GetPublishPath;
+	/** 作業中のドキュメントに出力先のパスを設定します */
+	SetPublishPath(publishPath:String);
 	/** 出力する */
 	Export;
 }
