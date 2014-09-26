@@ -1,8 +1,6 @@
 package flatomo;
 
 import flatomo.Structure;
-import jsfl.Element;
-import jsfl.Frame;
 import jsfl.Instance;
 import jsfl.Item;
 import jsfl.ItemType;
@@ -64,6 +62,11 @@ class Parser {
 	 */
 	private var structures:Map<String, Structure>;
 	
+	/**
+	 * 解析開始
+	 * ライブラリを元に`structures:Map<String, Structure>`を作成する
+	 * @param	library
+	 */
 	private function new(library:Library) {
 		this.structures = new Map<String, Structure>();
 		
@@ -72,6 +75,8 @@ class Parser {
 		for (symbolItem in library.symbolItems()) {
 			var extendedItem:ExtendedItem = symbolItem.getExtendedItem();
 			// 出力対象ならば解析を開始する
+			// リンケージ設定が有効でかつパネルで出力対象としたものが対象
+			// TODO : リンケージ設定は必要ないかもしれない
 			if (symbolItem.linkageExportForAS && extendedItem.linkageExportForFlatomo) {
 				translate(symbolItem);
 			}
