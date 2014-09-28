@@ -30,7 +30,7 @@ class Boot {
 						trace(key);
 					}
 				case Image(_) :
-					trace(key + '.png');
+					trace(key);
 				case Animation :
 					
 			}
@@ -72,7 +72,7 @@ class Boot {
 		for (directory in directories) {
 			var timelines:Map<String, Timeline> = getTimelines(directory);
 			for (key in timelines.keys()) {
-				unifiedTimelines.set(directory + '/' + key, timelines.get(key));
+				unifiedTimelines.set(directory + '/texture/' + key, timelines.get(key));
 			}
 		}
 		return unifiedTimelines;

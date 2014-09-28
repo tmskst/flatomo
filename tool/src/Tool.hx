@@ -23,6 +23,7 @@ import flatomo.Structure;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
+import haxe.Serializer;
 import haxe.Unserializer;
 
 using Lambda;
@@ -42,9 +43,10 @@ class Tool {
 	private static var resolver:String -> UniquelyTexture;
 	private static var uniquelyData:Map<UniquelyTexture, Bitmap>;
 	private static var root:File;
+	private static var config:Config;
 	
 	private static function initialize(event:InvokeEvent):Void {
-		var config:Config = Unserializer.run(event.arguments[0]);
+		config = Unserializer.run(event.arguments[0]);
 		root = new File(config.root);
 		
 		uniquelyData = new Map<UniquelyTexture, Bitmap>();
@@ -70,7 +72,7 @@ class Tool {
 							transform : { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
 						});
 					}
-					nonDuplicated.set(filePath, anyTextureFromHash.get(hash));
+					nonDuplicated.set(filePath.substring(0, filePath.lastIndexOf('.')), anyTextureFromHash.get(hash));
 					
 					fileStream.close();
 				}
@@ -91,7 +93,7 @@ class Tool {
 							var mat = layout.transform;
 							var scaleX:Float = Math.sqrt(mat.a * mat.a + mat.b * mat.b);
 							var scaleY:Float = Math.sqrt(mat.c * mat.c + mat.d * mat.d);
-							var uniquelyTexture = resolver(child.path + '.png');
+							var uniquelyTexture = resolver(child.path);
 							uniquelyTexture.transform.a = Math.max(Math.min(uniquelyTexture.transform.a, scaleX), 0.0);
 							uniquelyTexture.transform.d = Math.max(Math.min(uniquelyTexture.transform.d, scaleY), 0.0);
 						}
@@ -149,6 +151,15 @@ class Tool {
 	}
 	
 	private static function loadComplete():Void {
+		var stream = new FileStream();
+		stream.open(root.resolvePath(config.output).resolvePath('./a.structure'), FileMode.WRITE);
+		stream.writeUTFBytes(Serializer.run(config.unifiedStructures));
+		stream.close();
+		
+		stream.open(root.resolvePath(config.output).resolvePath('./a.timeline'), FileMode.WRITE);
+		stream.writeUTFBytes(Serializer.run(config.unifiedTimelines));
+		stream.close();
+		
 		var images:Array<RawTexture> = [];
 		for (uniquelyTexture in uniquelyTextures) {
 			images.push({
@@ -163,7 +174,7 @@ class Tool {
 		var atlases = AtlasGenerator.generate(images);
 		for (atlas in atlases) {
 			var imageStream = new FileStream();
-			imageStream.open(root.resolvePath('./x.png'), FileMode.WRITE);
+			imageStream.open(root.resolvePath(config.output).resolvePath('./x.png'), FileMode.WRITE);
 			var bytes = atlas.image.encode(atlas.image.rect, new PNGEncoderOptions());
 			imageStream.writeBytes(bytes, 0, bytes.length);
 			imageStream.close();
@@ -171,7 +182,8 @@ class Tool {
 			XML.prettyPrinting = true;
 			XML.prettyIndent = 4;
 			var xmlStream = new FileStream();
-			xmlStream.open(root.resolvePath('./x.xml'), FileMode.WRITE);
+			
+			xmlStream.open(root.resolvePath(config.output).resolvePath('./a.xml'), FileMode.WRITE);
 			xmlStream.writeUTFBytes(atlas.layout.toXMLString());
 			xmlStream.close();
 		}

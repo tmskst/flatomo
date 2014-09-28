@@ -72,16 +72,16 @@ class GpuOperator {
 	// TODO : private
 	public function create(key:String, layouts:Array<Layout> = null):Dynamic {
 		if (layouts == null) { layouts = new Array<Layout>(); }
-		
+		trace(key);
 		var type = structures.get(key);
 		switch (type) {
 			/* Animation */
 			case Structure.Animation :
 				var textures = manager.getTextures(key);
 				var animation = new Animation(layouts, textures);
-				var pivot = pivots.get(key);
-				animation.pivotX = pivot.x;
-				animation.pivotY = pivot.y;
+				//var pivot = pivots.get(key);
+				//animation.pivotX = pivot.x;
+				//animation.pivotY = pivot.y;
 				return animation;
 			/* Container */
 			case Structure.Container(children) :
@@ -107,9 +107,9 @@ class GpuOperator {
 			/* Image */
 			case Structure.Image :
 				var image = new FlatomoImage(layouts, manager.getTexture(key));
-				var pivot = pivots.get(key);
-				image.pivotX = pivot.x;
-				image.pivotY = pivot.y;
+				//var pivot = pivots.get(key);
+				//image.pivotX = pivot.x;
+				//image.pivotY = pivot.y;
 				return image;
 			case Structure.PartsAnimation(parts) :
 				var objects = new Array<DisplayObject>();

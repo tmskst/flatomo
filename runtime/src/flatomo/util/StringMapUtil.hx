@@ -8,6 +8,7 @@ class StringMapUtil {
 		var union = new StringMap<V>();
 		for (map in maps) {
 			for (key in map.keys()) {
+				trace(key);
 				if (union.exists(key)) {
 					trace('重複するキー : ${key}');
 				}
