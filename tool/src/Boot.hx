@@ -15,12 +15,12 @@ class Boot {
 		new Dispatch(Sys.args()).dispatch(args);
 		
 		var directories = [for (input in args.inputs.keys()) input];
-		
 		var config:Config = {
+			root  : FileSystem.fullPath('.'),
 			output: args.output,
 			inputs: directories,
-			unifiedStructures: unifyStructures(directories),
-			unifiedTimelines : unifyTimelines(directories),
+			unifiedStructures : unifyStructures(directories),
+			unifiedTimelines  : unifyTimelines(directories),
 		};
 		
 		Sys.command('adl ../application.xml -- ' + Serializer.run(config));
