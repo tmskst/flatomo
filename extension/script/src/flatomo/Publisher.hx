@@ -101,7 +101,7 @@ class Publisher {
 	private static function publishAbstractDefinition(library:Library, structures:Map<String, Structure>, profile:PublishProfile):Void {
 		// アイテムパスからクラス名を抽出
 		var getClassName = function (path:String) {
-			return path.substring(path.lastIndexOf('.') + 1);
+			return path.substring(path.lastIndexOf('/') + 1);
 		};
 		// ライブラリアイテムからパッケージ名を抽出
 		var getPackage = function (item:Item) {
@@ -116,11 +116,11 @@ class Publisher {
 		var publishContainerHxClass:Dynamic -> Void = null;
 		var publishPartsAnimationHxClass:Dynamic -> Void = null;
 		{ // initialize templates
-			var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context){
+			var execute:Template -> { PACKAGE:String, CLASS_NAME:String } -> Void = function (template, context) {
 				var contents = template.execute(context);
-				var path:String = profile.publishPath + '/' + profile.fileName + '/' + 'src' + '/' + if (context.PACKAGE != "") ~/\./g.replace(context.PACKAGE, "/") + "/" else "";
-				FLfile.createFolder(path);
-				FLfile.write(path + '/' + context.CLASS_NAME + '.hx', contents);
+				var directoryPath = profile.publishPath + '/' + profile.fileName + '/' + 'src' + if (context.PACKAGE != '') '/' + ~/\./g.replace(context.PACKAGE, '/') else '';
+				FLfile.createFolder(directoryPath);
+				FLfile.write(directoryPath + '/' + context.CLASS_NAME + '.hx', contents);
 			};
 			
 			publishAnimationHxClass = execute.bind(new Template(Resource.getString('animation')), _);
