@@ -174,7 +174,7 @@ class Tool {
 		var atlases = AtlasGenerator.generate(images);
 		for (atlas in atlases) {
 			var imageStream = new FileStream();
-			imageStream.open(root.resolvePath(config.output).resolvePath('./x.png'), FileMode.WRITE);
+			imageStream.open(root.resolvePath(config.output).resolvePath('./a.png'), FileMode.WRITE);
 			var bytes = atlas.image.encode(atlas.image.rect, new PNGEncoderOptions());
 			imageStream.writeBytes(bytes, 0, bytes.length);
 			imageStream.close();
