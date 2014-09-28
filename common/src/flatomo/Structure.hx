@@ -22,5 +22,5 @@ enum Structure {
 	/** 対象は'flatomo.display.Container'として再構築される */
 	PartsAnimation(parts:Array<ContainerComponent>);
 	/** 対象は'flatomo.display.FlatomoImage'として再構築される */
-	Image;
+	Image(transform:GeometricTransform);
 }
