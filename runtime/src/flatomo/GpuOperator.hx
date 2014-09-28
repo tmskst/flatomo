@@ -1,5 +1,6 @@
 package flatomo;
 
+import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.text.TextFormatAlign;
 import flash.xml.XML;
@@ -105,8 +106,9 @@ class GpuOperator {
 				return textField;
 			*/
 			/* Image */
-			case Structure.Image :
-				var image = new FlatomoImage(layouts, manager.getTexture(key));
+			case Structure.Image(transform) :
+				var image = new FlatomoImage(layouts, manager.getTexture(key), new Matrix(transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty));
+				trace(transform);
 				//var pivot = pivots.get(key);
 				//image.pivotX = pivot.x;
 				//image.pivotY = pivot.y;

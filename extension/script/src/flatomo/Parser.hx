@@ -227,7 +227,7 @@ class Parser {
 		var pap = PartsAnimationParser.parse(symbolItem);
 		// FIXME BEGIN
 		for (part in pap) {
-			structures.set(part.path, Structure.Image({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }));
+			structures.set(part.path, Structure.Image({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }));
 		}
 		// FIXME END
 		structures.set(symbolItem.name, Structure.PartsAnimation(pap));
@@ -236,7 +236,7 @@ class Parser {
 	/** テクスチャとして解析する */
 	private function translateQuaImage(item:Item):Void {
 		trace('translateQuaImage : ${item.name}');
-		structures.set(item.name, Structure.Image({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }));
+		structures.set(item.name, Structure.Image({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }));
 	}
 	
 }

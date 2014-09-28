@@ -5,6 +5,7 @@ import flatomo.Layout;
 
 interface ILayoutAdjusted {
 	/* Layout */
+	private var matrix:Matrix;
 	private var transformationMatrix:Matrix;
 	private var visible:Bool;
 	

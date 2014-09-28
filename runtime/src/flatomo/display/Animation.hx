@@ -1,5 +1,6 @@
 package flatomo.display;
 
+import flash.geom.Matrix;
 import flatomo.display.ILayoutAdjusted;
 import flatomo.Layout;
 import starling.animation.IAnimatable;
@@ -30,12 +31,14 @@ class Animation extends Image implements ILayoutAdjusted {
 		}
 		
 		super(textures[0]);
+		this.matrix = new Matrix();
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
 		this.textures = textures;
 	}
 	
+	private var matrix:Matrix;
 	private var layouts:Array<Layout>;
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;

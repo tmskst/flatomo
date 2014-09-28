@@ -1,5 +1,6 @@
 package flatomo.display;
 
+import flash.geom.Matrix;
 import flatomo.display.ILayoutAdjusted;
 import flatomo.GpuOperator;
 import flatomo.Layout;
@@ -27,9 +28,11 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	@:allow(flatomo.GpuOperator)
 	private function new(layouts:Array<Layout>, displayObjects:Array<DisplayObject>) {
 		super();
+		this.matrix = new Matrix();
 		this.layouts = layouts;
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
+		
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
 		for (object in displayObjects) {
@@ -39,6 +42,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 		update(1);
 	}
 	
+	private var matrix:Matrix;
 	private var layouts:Array<Layout>;
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;
@@ -65,14 +69,15 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 			
 			var depth:Int = this.getChildIndex(cast child);
 			this.swapChildrenAt(depth, layout.depth);
-			child.transformationMatrix.setTo(
-				layout.transform.a,
-				layout.transform.b,
-				layout.transform.c,
-				layout.transform.d,
-				layout.transform.tx,
-				layout.transform.ty
+			var x = new Matrix(
+				layout.transform.a, layout.transform.b,
+				layout.transform.c, layout.transform.d,
+				layout.transform.tx, layout.transform.ty
 			);
+			var m = child.matrix.clone();
+			m.invert();
+			m.concat(x);
+			child.transformationMatrix = m;
 		}
 	}	
 }

@@ -77,14 +77,15 @@ class Tool {
 					
 					var hash:String = Sha1.make(Bytes.ofData(bytesData)).toHex();
 					var filePath:String = root.getRelativePath(file, true);
+					filePath = filePath.substring(0, filePath.lastIndexOf('.'));
 					
 					if (!anyTextureFromHash.exists(hash)) {
 						anyTextureFromHash.set(hash, {
 							filePath  : filePath,
-							transform : { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
+							transform : { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 },
 						});
 					}
-					nonDuplicated.set(filePath.substring(0, filePath.lastIndexOf('.')), anyTextureFromHash.get(hash));
+					nonDuplicated.set(filePath, anyTextureFromHash.get(hash));
 					
 					fileStream.close();
 				}
@@ -96,18 +97,20 @@ class Tool {
 			};
 		}
 		
-		for (key in config.unifiedStructures.keys()) {
-			var structure = config.unifiedStructures.get(key);
+		for (key in unifiedStructures.keys()) {
+			var structure = unifiedStructures.get(key);
 			switch (structure) {
 				case Container(children) | PartsAnimation(children) :
 					for (child in children) {
 						for (layout in child.layouts) {
+							if (layout != null) { 
 							var mat = layout.transform;
 							var scaleX:Float = Math.sqrt(mat.a * mat.a + mat.b * mat.b);
 							var scaleY:Float = Math.sqrt(mat.c * mat.c + mat.d * mat.d);
 							var uniquelyTexture = resolver(child.path);
-							uniquelyTexture.transform.a = Math.max(Math.min(uniquelyTexture.transform.a, scaleX), 0.0);
-							uniquelyTexture.transform.d = Math.max(Math.min(uniquelyTexture.transform.d, scaleY), 0.0);
+							uniquelyTexture.transform.a = Math.min(Math.max(uniquelyTexture.transform.a, scaleX), 1.0);
+							uniquelyTexture.transform.d = Math.min(Math.max(uniquelyTexture.transform.d, scaleY), 1.0);
+							}
 						}
 					}
 				case _ :
@@ -121,7 +124,7 @@ class Tool {
 			var uniquelyTexture = uniquelyTextures[index];
 			
 			var fileStream = new FileStream();
-			fileStream.open(root.resolvePath(uniquelyTexture.filePath), FileMode.READ);
+			fileStream.open(root.resolvePath(uniquelyTexture.filePath + '.png'), FileMode.READ);
 			
 			var bytesData = new BytesData();
 			fileStream.readBytes(bytesData, 0, fileStream.bytesAvailable);
@@ -140,17 +143,25 @@ class Tool {
 				var trimed = new BitmapData(Std.int(bounds.width), Std.int(bounds.height), true, 0x00000000);
 				trimed.copyPixels(bitmapData, bounds, new Point());
 				
-				var bitmap = new Bitmap(trimed);
-				bitmap.transform.matrix = new Matrix(
-					uniquelyTexture.transform.a,
-					uniquelyTexture.transform.b,
-					uniquelyTexture.transform.c,
-					uniquelyTexture.transform.d,
-					uniquelyTexture.transform.tx,
-					uniquelyTexture.transform.ty
-				);
+				var t = new Matrix(1, 0, 0, 1, uniquelyTexture.transform.tx, uniquelyTexture.transform.ty);
+				var s = new Matrix(uniquelyTexture.transform.a, 0, 0, uniquelyTexture.transform.d, 0, 0);
 				
-				uniquelyData.set(uniquelyTexture, bitmap);
+				var bitmap = new Bitmap(trimed);
+				var k = s.clone();
+				k.concat(t);
+				bitmap.transform.matrix = k;
+				
+				uniquelyTexture.transform.a = k.a;
+				uniquelyTexture.transform.b = k.b;
+				uniquelyTexture.transform.c = k.c;
+				uniquelyTexture.transform.d = k.d;
+				uniquelyTexture.transform.tx = k.tx;
+				uniquelyTexture.transform.ty = k.ty;
+				
+				var r = new Bitmap(new BitmapData(Std.int(bitmap.width), Std.int(bitmap.height), true, 0x00000000));
+				r.bitmapData.draw(bitmap, s);
+				
+				uniquelyData.set(uniquelyTexture, r);
 				
 				loaded[index] = true;
 				
