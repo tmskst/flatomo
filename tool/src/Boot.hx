@@ -15,6 +15,7 @@ class Boot {
 		new Dispatch(Sys.args()).dispatch(args);
 		
 		var directories = [for (input in args.inputs.keys()) input];
+		
 		var config:Config = {
 			root  : FileSystem.fullPath('.'),
 			output: args.output,
@@ -22,19 +23,6 @@ class Boot {
 			unifiedStructures : unifyStructures(directories),
 			unifiedTimelines  : unifyTimelines(directories),
 		};
-		for (key in config.unifiedStructures.keys()) {
-			var structure = config.unifiedStructures.get(key);
-			switch (structure) {
-				case PartsAnimation(children) | Container(children) :
-					for (child in children) {
-						trace(key);
-					}
-				case Image(_) :
-					trace(key);
-				case Animation :
-					
-			}
-		}
 		
 		Sys.command('adl ../application.xml -- ' + Serializer.run(config));
 	}
