@@ -20,11 +20,14 @@ class Boot {
 			root  : FileSystem.fullPath('.'),
 			output: args.output,
 			inputs: directories,
-			unifiedStructures : unifyStructures(directories),
-			unifiedTimelines  : unifyTimelines(directories),
+			//unifiedStructures : unifyStructures(directories),
+			//unifiedTimelines  : unifyTimelines(directories),
 		};
-		
-		Sys.command('adl ../application.xml -- ' + Serializer.run(config));
+		File.saveContent('./u.structure', Serializer.run(unifyStructures(directories)));
+		File.saveContent('./u.timeline', Serializer.run(unifyTimelines(directories)));
+		trace('a');
+		trace(Sys.command('adl ../application.xml -- ' + Serializer.run(config)));
+		trace('b');
 	}
 	
 	private static function unifyStructures(directories:Array<String>):Map<String, Structure> {

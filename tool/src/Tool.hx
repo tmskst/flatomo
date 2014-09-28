@@ -45,9 +45,21 @@ class Tool {
 	private static var root:File;
 	private static var config:Config;
 	
+	private static var unifiedStructures:Map<String, Structure>;
+	private static var unifiedTimelines:Map<String, Structure>;
+	
 	private static function initialize(event:InvokeEvent):Void {
 		config = Unserializer.run(event.arguments[0]);
 		root = new File(config.root);
+		
+		var s = new FileStream();
+		s.open(root.resolvePath('./u.structure'), FileMode.READ);
+		unifiedStructures = Unserializer.run(s.readUTFBytes(s.bytesAvailable));
+		s.close();
+		
+		s.open(root.resolvePath('./u.timeline'), FileMode.READ);
+		unifiedTimelines = Unserializer.run(s.readUTFBytes(s.bytesAvailable));
+		s.close();
 		
 		uniquelyData = new Map<UniquelyTexture, Bitmap>();
 		{
@@ -151,13 +163,18 @@ class Tool {
 	}
 	
 	private static function loadComplete():Void {
+		for (uniquelyTexture in uniquelyTextures) {
+			unifiedStructures.set(uniquelyTexture.filePath, Image(uniquelyTexture.transform));
+		}
+		
+		
 		var stream = new FileStream();
 		stream.open(root.resolvePath(config.output).resolvePath('./a.structure'), FileMode.WRITE);
-		stream.writeUTFBytes(Serializer.run(config.unifiedStructures));
+		stream.writeUTFBytes(Serializer.run(unifiedStructures));
 		stream.close();
 		
 		stream.open(root.resolvePath(config.output).resolvePath('./a.timeline'), FileMode.WRITE);
-		stream.writeUTFBytes(Serializer.run(config.unifiedTimelines));
+		stream.writeUTFBytes(Serializer.run(unifiedTimelines));
 		stream.close();
 		
 		var images:Array<RawTexture> = [];
