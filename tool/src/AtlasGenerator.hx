@@ -1,4 +1,4 @@
-package flatomo.translator;
+package ;
 
 import flash.display.BitmapData;
 import flash.geom.Point;
@@ -6,7 +6,7 @@ import flash.geom.Rectangle;
 import flash.xml.XML;
 
 using Lambda;
-using flatomo.translator.AtlasGenerator;
+using AtlasGenerator;
 
 /** テクスチャを敷く領域 */
 private typedef Area = {
@@ -20,6 +20,11 @@ private typedef Layer = {
 	var y:Int;
 	var width:Int;
 	var height:Int;
+};
+
+private typedef RawTextureAtlas = {
+	image:BitmapData,
+	layout:XML,
 };
 
 class AtlasGenerator {
@@ -66,7 +71,7 @@ class AtlasGenerator {
 			layout.addChild(createSubTextureElement(subTexture, area));
 			canvas.blit(subTexture.image, area);
 		}
-		return RawTextureAtlas.BitmapData(canvas, new XML(layout.toString()));
+		return { image: canvas, layout: new XML(layout.toString()) };
 	}
 	
 	/** テクスチャをアトラスに転写する */

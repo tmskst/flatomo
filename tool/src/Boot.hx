@@ -22,6 +22,19 @@ class Boot {
 			unifiedStructures : unifyStructures(directories),
 			unifiedTimelines  : unifyTimelines(directories),
 		};
+		for (key in config.unifiedStructures.keys()) {
+			var structure = config.unifiedStructures.get(key);
+			switch (structure) {
+				case PartsAnimation(children) | Container(children) :
+					for (child in children) {
+						trace(key);
+					}
+				case Image(_) :
+					trace(key + '.png');
+				case Animation :
+					
+			}
+		}
 		
 		Sys.command('adl ../application.xml -- ' + Serializer.run(config));
 	}
@@ -39,12 +52,12 @@ class Boot {
 				switch (structure) {
 					case Container(children) | PartsAnimation(children) : 
 						for (child in children) {
-							child.path = directory + '/' + child.path;
+							child.path = directory + '/texture/' + child.path;
 						}
 					case _ : 
 						
 				}
-				unifiedStructures.set(directory + '/' + key, structure);
+				unifiedStructures.set(directory + '/texture/' + key, structure);
 			}
 		}
 		return unifiedStructures;

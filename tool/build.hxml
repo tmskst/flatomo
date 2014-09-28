@@ -13,3 +13,4 @@
 -main Tool
 -swf bin/Tool.swf
 -lib air3
+-swf-version 12

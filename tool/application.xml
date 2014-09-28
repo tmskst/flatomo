@@ -6,6 +6,6 @@
 	<initialWindow> 
 		<title>Tool</title> 
 		<content>bin/Tool.swf</content> 
-		<visible>false</visible> 
+		<visible>true</visible> 
 	</initialWindow> 
 </application>
