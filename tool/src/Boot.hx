@@ -4,21 +4,26 @@ import flatomo.Structure;
 import flatomo.Timeline;
 import haxe.Serializer;
 import haxe.Unserializer;
+import mcli.Dispatch;
 import sys.FileSystem;
 import sys.io.File;
-
-using Lambda;
 
 class Boot {
 	
 	public static function main() {
-		var directories:Array<String> = ['../lib/foobar', '../lib/baz'];
+		var args:Args = new Args();
+		new Dispatch(Sys.args()).dispatch(args);
 		
-		var unifiedStructures = unifyStructures(directories);
-		File.saveContent('./u.structure', Serializer.run(unifiedStructures));
+		var directories = [for (input in args.inputs.keys()) input];
 		
-		var unifiedTimelines = unifyTimelines(directories);
-		File.saveContent('./u.timeline', Serializer.run(unifiedTimelines));
+		var config:Config = {
+			output: args.output,
+			inputs: directories,
+			unifiedStructures: unifyStructures(directories),
+			unifiedTimelines : unifyTimelines(directories),
+		};
+		
+		Sys.command('adl ../application.xml -- ' + Serializer.run(config));
 	}
 	
 	private static function unifyStructures(directories:Array<String>):Map<String, Structure> {
