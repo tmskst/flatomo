@@ -1,4 +1,5 @@
 -cp src
+-cp ../common
 -cp ../common/src
 -main Boot
 -lib air3

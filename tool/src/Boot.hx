@@ -3,12 +3,20 @@ package ;
 import flash.desktop.NativeApplication;
 import flash.events.InvokeEvent;
 import flash.filesystem.File;
+import flatomo.GeometricTransform;
 import flatomo.Structure;
 import flatomo.Timeline;
+import haxe.crypto.Sha1;
 import haxe.Unserializer;
 import mcli.Dispatch;
 
 using Lambda;
+using flatomo.Collection;
+
+private typedef U = {
+	filePath:String,
+	transform:GeometricTransform,
+}
 
 class Boot {
 	
@@ -52,8 +60,39 @@ class Boot {
 		
 		for (key in unifyStructures(inputs).keys()) { trace(key); }
 		for (key in unifyTimelines(inputs).keys()) { trace(key); }
+		
+		pruneDuplicateTexture(inputs);
+		
 		return ErrorCode.Successful;
 	}
+	
+	private static function pruneDuplicateTexture(inputs:Array<File>) {
+		var files:Array<File> = cast inputs
+			.map(function (f) return f.resolvePath('./texture/'))
+			.map(function (f) return readDirectoryRecursive(f))
+			.flatten();
+		
+		var fromItem = new Map<String, U>();
+		var fromHash = new Map<String, U>();
+		
+		for (file in files) {
+			var hash:String = Sha1.make(FileUtil.getBytes(file)).toHex();
+			if (!fromHash.exists(hash)) {
+				fromHash.set(hash, { 
+					filePath  : file.nativePath,
+					transform : { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 },
+				});
+			}
+			var delegate = fromHash.get(hash);
+			fromItem.set(getNativePathWithoutExtension(file), delegate);
+		}
+		
+		return {
+			resolver : fromItem,
+			required : Lambda.array(fromHash),
+		};
+	}
+	
 	
 	/** 各々のライブラリが出力した構造情報のマップを1つにまとめる */
 	private static function unifyStructures(directories:Array<File>):Map<String, Structure> {
@@ -97,6 +136,13 @@ class Boot {
 		return unifiedTimelines;
 	}
 	
+	// ユーティリティ
+	// //////////////////////////////////////////////////////////////
+	
+	private static function getNativePathWithoutExtension(file:File):String {
+		return file.nativePath.substring(0, file.nativePath.lastIndexOf('.'));
+	}
+	
 	private static function resolvePath(directory:File, key:String):String {
 		return directory.resolvePath('./texture/').resolvePath(key).nativePath;
 	}	
@@ -107,6 +153,18 @@ class Boot {
 		    && directory.resolvePath('a.structure').exists
 		    && directory.resolvePath('src').isDirectory
 		    && directory.resolvePath('texture').isDirectory;
+	}
+	
+	private static function readDirectoryRecursive(root:File):Array<File> {
+		var children:Array<File> = [];
+		for (child in root.getDirectoryListing()) {
+			if (child.isDirectory) {
+				children = children.concat(readDirectoryRecursive(child));
+			} else {
+				children.push(child);
+			}
+		}
+		return children;
 	}
 	
 }
