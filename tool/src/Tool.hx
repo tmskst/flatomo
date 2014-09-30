@@ -113,7 +113,12 @@ class Tool {
 							}
 						}
 					}
-				case _ :
+				case Animation :
+					//var uniquelyTexture = resolver(key);
+					//trace(uniquelyTexture == null, key);
+					//uniquelyTexture.transform.a = Math.min(Math.max(uniquelyTexture.transform.a, 1.0), 1.0);
+					//uniquelyTexture.transform.d = Math.min(Math.max(uniquelyTexture.transform.d, 1.0), 1.0);
+				case Image(_) :
 					
 			}
 		}
@@ -144,6 +149,10 @@ class Tool {
 				trimed.copyPixels(bitmapData, bounds, new Point());
 				
 				var t = new Matrix(1, 0, 0, 1, uniquelyTexture.transform.tx, uniquelyTexture.transform.ty);
+				if (uniquelyTexture.transform.a == 0 || uniquelyTexture.transform.d == 0) {
+					uniquelyTexture.transform.a = 1;
+					uniquelyTexture.transform.d = 1;
+				}
 				var s = new Matrix(uniquelyTexture.transform.a, 0, 0, uniquelyTexture.transform.d, 0, 0);
 				
 				var bitmap = new Bitmap(trimed);
