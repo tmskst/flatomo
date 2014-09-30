@@ -5,7 +5,7 @@
 	<filename>Tool</filename> 
 	<initialWindow> 
 		<title>Tool</title> 
-		<content>bin/Tool.swf</content> 
-		<visible>true</visible> 
+		<content>bin/Run.swf</content> 
+		<visible>false</visible> 
 	</initialWindow> 
 </application>

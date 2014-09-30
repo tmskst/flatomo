@@ -1,43 +1,59 @@
 package ;
 
+import flash.desktop.NativeApplication;
+import flash.events.InvokeEvent;
+import flash.filesystem.File;
 import flatomo.Structure;
 import flatomo.Timeline;
-import haxe.Serializer;
 import haxe.Unserializer;
 import mcli.Dispatch;
-import sys.FileSystem;
-import sys.io.File;
+
+using Lambda;
 
 class Boot {
 	
 	public static function main() {
-		var args:Args = new Args();
-		new Dispatch(Sys.args()).dispatch(args);
-		
-		var directories = [for (input in args.inputs.keys()) input];
-		
-		var config:Config = {
-			root  : FileSystem.fullPath('.'),
-			output: args.output,
-			inputs: directories,
-			//unifiedStructures : unifyStructures(directories),
-			//unifiedTimelines  : unifyTimelines(directories),
-		};
-		File.saveContent('./u.structure', Serializer.run(unifyStructures(directories)));
-		File.saveContent('./u.timeline', Serializer.run(unifyTimelines(directories)));
-		trace('a');
-		trace(Sys.command('adl ../application.xml -- ' + Serializer.run(config)));
-		trace('b');
+		NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, initialize);
 	}
 	
-	private static function unifyStructures(directories:Array<String>):Map<String, Structure> {
-		var getStructures:String -> Map<String, Structure> = function (directoryPath) {
-			return Unserializer.run(File.getContent(directoryPath + '/a.structure'));
+	private static function exit(code:Int):Void {
+		NativeApplication.nativeApplication.exit(code);
+	}
+	
+	private static function initialize(event:InvokeEvent) {
+		var cwd:File = event.currentDirectory;
+		var apd:File = File.applicationDirectory;
+		
+		trace('cwd -> ${cwd.nativePath}');
+		trace('apd -> ${apd.nativePath}');
+		
+		var args:Args = new Args();
+		new Dispatch([for (v in event.arguments) v]).dispatch(args);
+		var inputs = [for (input in args.inputs.keys()) cwd.resolvePath(input)];
+		
+		// TODO : 入力が指定されていないとき　
+		// TODO : 出力が指定されていないとき
+		
+		var fails = inputs.filter(function (f) return !validate(f));
+		if (!fails.empty()) {
+			fails.iter(function (f) trace('invaild source : ' + f.nativePath));
+			exit(1);
+		}
+		else {
+			unifyStructures(inputs);
+			unifyTimelines(inputs);
+			exit(0);
+		}
+	}
+	
+	private static function unifyStructures(directories:Array<File>):Map<String, Structure> {
+		var readStructures:File -> Map<String, Structure> = function (directory:File) {
+			return Unserializer.run(FileUtil.getContent(directory.resolvePath('./a.structure')));
 		};
 		
 		var unifiedStructures = new Map<String, Structure>();
 		for (directory in directories) {
-			var structures:Map<String, Structure> = getStructures(directory);
+			var structures:Map<String, Structure> = readStructures(directory);
 			for (key in structures.keys()) {
 				var structure:Structure = structures.get(key);
 				switch (structure) {
@@ -51,12 +67,13 @@ class Boot {
 				unifiedStructures.set(directory + '/texture/' + key, structure);
 			}
 		}
+		
 		return unifiedStructures;
 	}
 	
-	private static function unifyTimelines(directories:Array<String>):Map<String, Timeline> {
-		var getTimelines:String -> Map<String, Timeline> = function (directoryPath) {
-			return Unserializer.run(File.getContent(directoryPath + '/a.timeline'));
+	private static function unifyTimelines(directories:Array<File>):Map<String, Timeline> {
+		var getTimelines:File -> Map<String, Timeline> = function (directory:File) {
+			return Unserializer.run(FileUtil.getContent(directory.resolvePath('./a.timeline')));
 		};
 		
 		var unifiedTimelines = new Map<String, Timeline>();
@@ -69,25 +86,12 @@ class Boot {
 		return unifiedTimelines;
 	}
 	
-	private static function validate(directoryPath:String):Bool {
-		return FileSystem.exists(directoryPath + 'a.timeline')
-			&& FileSystem.exists(directoryPath + 'a.structure')
-			&& FileSystem.isDirectory(directoryPath + 'src')
-			&& FileSystem.isDirectory(directoryPath + 'texture');
-	}
-	
-	private static function readDirectoryRecursive(basePath:String):Array<String> {
-		var children = FileSystem.readDirectory(basePath);
-		var files:Array<String> = [];
-		for (child in children) {
-			var filePath:String = basePath + '/' + child;
-			if (FileSystem.isDirectory(filePath)) {
-				files = files.concat(readDirectoryRecursive(filePath));
-			} else {
-				files.push(filePath);
-			}
-		}
-		return files;
+	private static function validate(directory:File):Bool {
+		return directory.isDirectory
+		    && directory.resolvePath('a.timeline').exists
+		    && directory.resolvePath('a.structure').exists
+		    && directory.resolvePath('src').isDirectory
+		    && directory.resolvePath('texture').isDirectory;
 	}
 	
 }
