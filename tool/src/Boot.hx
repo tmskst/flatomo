@@ -16,11 +16,11 @@ class Boot {
 		NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, initialize);
 	}
 	
-	private static function exit(code:Int):Void {
-		NativeApplication.nativeApplication.exit(code);
+	private static function initialize(event:InvokeEvent) {
+		NativeApplication.nativeApplication.exit(run(event));
 	}
 	
-	private static function initialize(event:InvokeEvent) {
+	private static function run(event:InvokeEvent):ErrorCode {
 		var cwd:File = event.currentDirectory;
 		var apd:File = File.applicationDirectory;
 		
@@ -29,20 +29,30 @@ class Boot {
 		
 		var args:Args = new Args();
 		new Dispatch([for (v in event.arguments) v]).dispatch(args);
-		var inputs = [for (input in args.inputs.keys()) cwd.resolvePath(input)];
 		
-		// TODO : 入力が指定されていないとき　
-		// TODO : 出力が指定されていないとき
+		// -o <output directory>
+		if (args.output == null) {
+			return ErrorCode.MissingArgumentOuput;
+		}
+		var output:File = cwd.resolvePath(args.output);
+		trace('-o  -> ${output.nativePath}');
+		
+		// -i <input directory>
+		var inputs = [for (input in args.inputs.keys()) cwd.resolvePath(input)];
+		if (inputs.empty()) {
+			return ErrorCode.MissingArgumentInput;
+		}
 		
 		var fails = inputs.filter(function (f) return !validate(f));
 		if (!fails.empty()) {
-			fails.iter(function (f) trace('invaild source : ' + f.nativePath));
-			exit(1);
+			fails.iter(function (f) trace('invaild input : ' + f.nativePath));
+			return ErrorCode.InvaildArgumentInput;
 		}
 		else {
 			unifyStructures(inputs);
 			unifyTimelines(inputs);
-			exit(0);
+			
+			return ErrorCode.Successful;
 		}
 	}
 	
