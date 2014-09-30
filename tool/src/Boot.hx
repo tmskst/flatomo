@@ -42,20 +42,20 @@ class Boot {
 		if (inputs.empty()) {
 			return ErrorCode.MissingArgumentInput;
 		}
+		inputs.iter(function (f) trace('-i  -> ' + f.nativePath));
 		
 		var fails = inputs.filter(function (f) return !validate(f));
 		if (!fails.empty()) {
 			fails.iter(function (f) trace('invaild input : ' + f.nativePath));
 			return ErrorCode.InvaildArgumentInput;
 		}
-		else {
-			unifyStructures(inputs);
-			unifyTimelines(inputs);
-			
-			return ErrorCode.Successful;
-		}
+		
+		for (key in unifyStructures(inputs).keys()) { trace(key); }
+		for (key in unifyTimelines(inputs).keys()) { trace(key); }
+		return ErrorCode.Successful;
 	}
 	
+	/** 各々のライブラリが出力した構造情報のマップを1つにまとめる */
 	private static function unifyStructures(directories:Array<File>):Map<String, Structure> {
 		var readStructures:File -> Map<String, Structure> = function (directory:File) {
 			return Unserializer.run(FileUtil.getContent(directory.resolvePath('./a.structure')));
@@ -69,32 +69,37 @@ class Boot {
 				switch (structure) {
 					case Container(children) | PartsAnimation(children) : 
 						for (child in children) {
-							child.path = directory + '/texture/' + child.path;
+							child.path = resolvePath(directory, child.path);
 						}
 					case _ : 
 						
 				}
-				unifiedStructures.set(directory + '/texture/' + key, structure);
+				unifiedStructures.set(resolvePath(directory, key), structure);
 			}
 		}
 		
 		return unifiedStructures;
 	}
 	
+	/** 各々のライブラリが出力したタイムラインのマップを1つにまとめる */
 	private static function unifyTimelines(directories:Array<File>):Map<String, Timeline> {
-		var getTimelines:File -> Map<String, Timeline> = function (directory:File) {
+		var readTimelines:File -> Map<String, Timeline> = function (directory:File) {
 			return Unserializer.run(FileUtil.getContent(directory.resolvePath('./a.timeline')));
 		};
 		
 		var unifiedTimelines = new Map<String, Timeline>();
 		for (directory in directories) {
-			var timelines:Map<String, Timeline> = getTimelines(directory);
+			var timelines:Map<String, Timeline> = readTimelines(directory);
 			for (key in timelines.keys()) {
-				unifiedTimelines.set(directory + '/texture/' + key, timelines.get(key));
+				unifiedTimelines.set(resolvePath(directory, key), timelines.get(key));
 			}
 		}
 		return unifiedTimelines;
 	}
+	
+	private static function resolvePath(directory:File, key:String):String {
+		return directory.resolvePath('./texture/').resolvePath(key).nativePath;
+	}	
 	
 	private static function validate(directory:File):Bool {
 		return directory.isDirectory
