@@ -18,6 +18,11 @@ private typedef U = {
 	transform:GeometricTransform,
 }
 
+private typedef V = {
+	resolver:Map<String, U>,
+	required:Array<U>,
+}
+
 class Boot {
 	
 	public static function main() {
@@ -72,7 +77,7 @@ class Boot {
 	}
 	
 	/** 重複したテクスチャをそぎ落とす */
-	private static function pruneDuplicateTexture(inputs:Array<File>) {
+	private static function pruneDuplicateTexture(inputs:Array<File>):V {
 		var files:Array<File> = cast inputs
 			.map(function (f) return f.resolvePath('./texture/'))
 			.map(function (f) return readDirectoryRecursive(f))
