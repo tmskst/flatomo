@@ -47,6 +47,7 @@ class Boot {
 		
 	}
 	
+	private static var uniquelyTextures:V;
 	private static var optimizedTextures:Map<U, Bitmap>;
 	
 	private static function run(event:InvokeEvent):ErrorCode {
@@ -89,11 +90,15 @@ class Boot {
 		
 		optimizedTextures = new Map<U, Bitmap>(); 
 		
-		var uniquely = pruneDuplicateTexture(inputs);
-		scaleTexture(unifiedStructures, uniquely);
-		loadRequiredTexture(uniquely);
+		uniquelyTextures = pruneDuplicateTexture(inputs);
+		scaleTexture(unifiedStructures, uniquelyTextures);
+		loadRequiredTexture(uniquelyTextures);
 		
 		return ErrorCode.Successful;
+	}
+	
+	private static function optimizeCompleted():Void {
+		
 	}
 	
 	/** 重複したテクスチャをそぎ落とす */
@@ -177,7 +182,12 @@ class Boot {
 	}
 	
 	private static function loadRequiredTexture(uniquely:V):Void {
-		for (texture in uniquely.required) {
+		var length = uniquely.required.length;
+		var loadCompleted = [for (i in 0...length) false];
+		
+		for (index in 0...length) {
+			var texture = uniquely.required[index];
+			
 			var bytes = FileUtil.getBytes(new File(texture.filePath));
 			var loader = new Loader();
 			loader.loadBytes(bytes.getData());
@@ -186,6 +196,11 @@ class Boot {
 				image.draw(loader);
 				var optimized = trimTransparent(texture, image);
 				optimizedTextures.set(texture, optimized);
+				
+				loadCompleted[index] = true;
+				if (loadCompleted.fold(function (a, b) return a && b, true)) {
+					optimizeCompleted();
+				}
 			});
 		}
 	}
