@@ -30,4 +30,20 @@ class FileUtil {
 		return Bytes.ofData(bytesData);
 	}
 	
+	@:noUsing
+	public static function saveContent(file:File, content:String):Void {
+		var fs = new FileStream();
+		fs.open(file, FileMode.WRITE);
+		fs.writeUTFBytes(content);
+		fs.close();
+	}
+	
+	@:noUsing
+	public static function saveBytes(file:File, bytes:BytesData):Void {
+		var fs = new FileStream();
+		fs.open(file, FileMode.WRITE);
+		fs.writeBytes(bytes, 0, bytes.length);
+		fs.close();
+	}
+	
 }
