@@ -136,7 +136,7 @@ class Boot {
 						case 1 : 
 							var transform = uniquely.resolver.get(key).transform;
 							transform.a = 1.0;
-							transform.c = 1.0;
+							transform.d = 1.0;
 						case _ :
 							for (index in 0...totalFrames) {
 								var path:String = key + StringTools.lpad(Std.string(index + 1), '0', 4);
