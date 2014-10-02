@@ -1,12 +1,21 @@
 package ;
 
 import flash.desktop.NativeApplication;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Loader;
+import flash.display.PixelSnapping;
+import flash.events.Event;
 import flash.events.InvokeEvent;
 import flash.filesystem.File;
+import flash.geom.Matrix;
+import flash.geom.Point;
 import flatomo.GeometricTransform;
 import flatomo.Structure;
 import flatomo.Timeline;
 import haxe.crypto.Sha1;
+import haxe.io.Bytes;
+import haxe.io.BytesData;
 import haxe.Unserializer;
 import mcli.Dispatch;
 
@@ -30,8 +39,15 @@ class Boot {
 	}
 	
 	private static function initialize(event:InvokeEvent) {
-		NativeApplication.nativeApplication.exit(run(event));
+		switch (run(event)) {
+			case Successful :
+			case v :
+				NativeApplication.nativeApplication.exit(v);
+		}
+		
 	}
+	
+	private static var optimizedTextures:Map<U, Bitmap>;
 	
 	private static function run(event:InvokeEvent):ErrorCode {
 		var cwd:File = event.currentDirectory;
@@ -71,8 +87,11 @@ class Boot {
 		for (key in unifiedTimelines.keys()) { trace(key); }
 		#end
 		
+		optimizedTextures = new Map<U, Bitmap>(); 
+		
 		var uniquely = pruneDuplicateTexture(inputs);
 		scaleTexture(unifiedStructures, uniquely);
+		loadRequiredTexture(uniquely);
 		
 		return ErrorCode.Successful;
 	}
@@ -155,6 +174,53 @@ class Boot {
 					
 			}
 		}
+	}
+	
+	private static function loadRequiredTexture(uniquely:V):Void {
+		for (texture in uniquely.required) {
+			var bytes = FileUtil.getBytes(new File(texture.filePath));
+			var loader = new Loader();
+			loader.loadBytes(bytes.getData());
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function (event:Event) {
+				var image = new BitmapData(Std.int(loader.width), Std.int(loader.height), true, 0x00000000);
+				image.draw(loader);
+				var optimized = trimTransparent(texture, image);
+				optimizedTextures.set(texture, optimized);
+			});
+		}
+	}
+	
+	private static function trimTransparent(uniquely:U, image:BitmapData):Bitmap {
+		var bounds = image.getColorBoundsRect(0xFF000000, 0x00000000, false);
+		uniquely.transform.tx = uniquely.transform.tx - bounds.x;
+		uniquely.transform.ty = uniquely.transform.ty - bounds.y;
+		
+		var trimmed = new BitmapData(Std.int(bounds.width), Std.int(bounds.height), true, 0x00000000);
+		trimmed.copyPixels(image, bounds, new Point(0, 0));
+		
+		var u = uniquely.transform;
+		
+		var translation  = new Matrix(1, 0, 0, 1, u.tx, u.ty);
+		var scaling      = new Matrix(u.a, 0, 0, u.d, 0, 0);
+		
+		var concatenated = new Matrix(1, 0, 0, 1, 0, 0);
+		concatenated.concat(scaling);
+		concatenated.concat(translation);
+		
+		var bitmap = new Bitmap(trimmed, PixelSnapping.AUTO, false);
+		bitmap.transform.matrix = concatenated;
+		
+		uniquely.transform.a  = concatenated.a;
+		uniquely.transform.b  = concatenated.b;
+		uniquely.transform.c  = concatenated.c;
+		uniquely.transform.d  = concatenated.d;
+		uniquely.transform.tx = concatenated.tx;
+		uniquely.transform.ty = concatenated.ty;
+		
+		var optimized = new Bitmap(new BitmapData(Std.int(bitmap.width), Std.int(bitmap.height), true, 0x00000000));
+		optimized.bitmapData.draw(bitmap, scaling);
+		
+		return optimized;
 	}
 	
 	/** 各々のライブラリが出力した構造情報のマップを1つにまとめる */
