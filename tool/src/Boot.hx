@@ -130,7 +130,13 @@ class Boot {
 						}
 					}
 				case Container(children) :
-					
+					for (child in children) {
+						var transform = uniquely.resolver.get(child.path).transform;
+						for (layout in child.layouts) {
+							transform.a = 1.0;
+							transform.d = 1.0;
+						}
+					}
 				case Animation(totalFrames) :
 					switch (totalFrames) {
 						case 1 : 
