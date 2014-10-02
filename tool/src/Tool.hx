@@ -113,7 +113,7 @@ class Tool {
 							}
 						}
 					}
-				case Animation :
+				case Animation(_) :
 					//var uniquelyTexture = resolver(key);
 					//trace(uniquelyTexture == null, key);
 					//uniquelyTexture.transform.a = Math.min(Math.max(uniquelyTexture.transform.a, 1.0), 1.0);

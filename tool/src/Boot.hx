@@ -72,6 +72,7 @@ class Boot {
 		#end
 		
 		var uniquely = pruneDuplicateTexture(inputs);
+		scaleTexture(unifiedStructures, uniquely);
 		
 		return ErrorCode.Successful;
 	}
@@ -111,6 +112,44 @@ class Boot {
 		};
 	}
 	
+	/** テクスチャを必要とされている最大の大きさに縮小する */
+	private static function scaleTexture(unifiedStructures:Map<String, Structure>, uniquely:V):Void {
+		// TODO : 改善可能
+		for (key in unifiedStructures.keys()) {
+			switch (unifiedStructures.get(key)) {
+				case PartsAnimation(children) :
+					for (child in children) {
+						var transform = uniquely.resolver.get(child.path).transform;
+						for (layout in child.layouts) {
+							if (layout != null) {
+								var scaleX:Float = Math.sqrt(layout.transform.a * layout.transform.a + layout.transform.b * layout.transform.b);
+								var scaleY:Float = Math.sqrt(layout.transform.c * layout.transform.c + layout.transform.d * layout.transform.d);
+								transform.a = Math.min(Math.max(transform.a, scaleX), 1.0);
+								transform.d = Math.min(Math.max(transform.d, scaleY), 1.0);
+							}
+						}
+					}
+				case Container(children) :
+					
+				case Animation(totalFrames) :
+					switch (totalFrames) {
+						case 1 : 
+							var transform = uniquely.resolver.get(key).transform;
+							transform.a = 1.0;
+							transform.c = 1.0;
+						case _ :
+							for (index in 0...totalFrames) {
+								var path:String = key + StringTools.lpad(Std.string(index + 1), '0', 4);
+								var transform = uniquely.resolver.get(path).transform;
+								transform.a = 1.0;
+								transform.d = 1.0;
+							}
+					}
+				case Image(_) :
+					
+			}
+		}
+	}
 	
 	/** 各々のライブラリが出力した構造情報のマップを1つにまとめる */
 	private static function unifyStructures(inputs:Array<File>):Map<String, Structure> {

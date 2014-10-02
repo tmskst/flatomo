@@ -219,7 +219,7 @@ class Parser {
 	/** アニメーションとして解析する */
 	private function translateQuaAnimation(symbolItem:SymbolItem):Void {
 		trace('translateQuaAnimation : ${symbolItem.name}');
-		structures.set(symbolItem.name, Structure.Animation);
+		structures.set(symbolItem.name, Structure.Animation(symbolItem.timeline.frameCount));
 	}
 	
 	/** パーツアニメーションとして解析する */

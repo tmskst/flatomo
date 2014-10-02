@@ -18,7 +18,7 @@ enum Structure {
 	/** 対象は'flatomo.display.Container'として再構築される */
 	Container(children:Array<ContainerComponent>);
 	/** 対象は'flatomo.display.Animation'として再構築される */
-	Animation;
+	Animation(totalFrames:Int);
 	/** 対象は'flatomo.display.Container'として再構築される */
 	PartsAnimation(parts:Array<ContainerComponent>);
 	/** 対象は'flatomo.display.FlatomoImage'として再構築される */

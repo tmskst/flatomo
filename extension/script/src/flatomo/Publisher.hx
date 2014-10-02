@@ -70,7 +70,7 @@ class Publisher {
 		var items = new Array<Item>();
 		for (key in structures.keys()) {
 			var structure:Structure = structures.get(key);
-			if (structure.match(Animation | Image(_))) {
+			if (structure.match(Animation(_) | Image(_))) {
 				items.push(library.getItem(key));
 			}
 		}
