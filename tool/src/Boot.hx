@@ -5,6 +5,7 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Loader;
 import flash.display.PixelSnapping;
+import flash.display.PNGEncoderOptions;
 import flash.events.Event;
 import flash.events.InvokeEvent;
 import flash.filesystem.File;
@@ -16,6 +17,7 @@ import flatomo.Timeline;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
+import haxe.Serializer;
 import haxe.Unserializer;
 import mcli.Dispatch;
 
@@ -46,9 +48,6 @@ class Boot {
 		}
 		
 	}
-	
-	private static var uniquelyTextures:V;
-	private static var optimizedTextures:Map<U, Bitmap>;
 	
 	private static function run(event:InvokeEvent):ErrorCode {
 		var cwd:File = event.currentDirectory;
@@ -88,17 +87,22 @@ class Boot {
 		for (key in unifiedTimelines.keys()) { trace(key); }
 		#end
 		
-		optimizedTextures = new Map<U, Bitmap>(); 
-		
-		uniquelyTextures = pruneDuplicateTexture(inputs);
-		scaleTexture(unifiedStructures, uniquelyTextures);
-		loadRequiredTexture(uniquelyTextures);
+		var uniquely = pruneDuplicateTexture(inputs);
+		scaleTexture(unifiedStructures, uniquely);
+		loadRequiredTexture(uniquely, function(optimizedTextures) {
+			FileUtil.saveContent(output.resolvePath('./a.structure'), Serializer.run(unifiedStructures));
+			FileUtil.saveContent(output.resolvePath('./a.timeline'), Serializer.run(unifiedTimelines));
+			
+			
+			
+			var a = Lambda.array(optimizedTextures);
+			for (i in 0...a.length) {
+				var texture = a[i];
+				FileUtil.saveBytes(output.resolvePath('./${i}.png'), texture.bitmapData.encode(texture.bitmapData.rect, new PNGEncoderOptions()));
+			}
+		});
 		
 		return ErrorCode.Successful;
-	}
-	
-	private static function optimizeCompleted():Void {
-		
 	}
 	
 	/** 重複したテクスチャをそぎ落とす */
@@ -181,9 +185,11 @@ class Boot {
 		}
 	}
 	
-	private static function loadRequiredTexture(uniquely:V):Void {
+	private static function loadRequiredTexture(uniquely:V, callback:Map<U, Bitmap> -> Void):Void {
 		var length = uniquely.required.length;
 		var loadCompleted = [for (i in 0...length) false];
+		
+		var optimizedTextures = new Map<U, Bitmap>(); 
 		
 		for (index in 0...length) {
 			var texture = uniquely.required[index];
@@ -199,7 +205,7 @@ class Boot {
 				
 				loadCompleted[index] = true;
 				if (loadCompleted.fold(function (a, b) return a && b, true)) {
-					optimizeCompleted();
+					callback(optimizedTextures);
 				}
 			});
 		}
