@@ -18,5 +18,4 @@ class Collection {
 		return rs;
 	}
 	
-	
 }

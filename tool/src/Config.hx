@@ -7,6 +7,4 @@ typedef Config = {
 	root:String,
 	output:String,
 	inputs:Array<String>,
-	//unifiedStructures:Map<String, Structure>,
-	//unifiedTimelines:Map<String, Timeline>,
 }
