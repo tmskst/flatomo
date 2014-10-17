@@ -93,8 +93,6 @@ class Boot {
 			FileUtil.saveContent(output.resolvePath('./a.structure'), Serializer.run(unifiedStructures));
 			FileUtil.saveContent(output.resolvePath('./a.timeline'), Serializer.run(unifiedTimelines));
 			
-			
-			
 			var a = Lambda.array(optimizedTextures);
 			for (i in 0...a.length) {
 				var texture = a[i];
