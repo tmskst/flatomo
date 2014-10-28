@@ -1,6 +1,7 @@
 package flatomo;
 
 import flatomo.Structure;
+import jsfl.BoundingRectangle;
 import jsfl.Instance;
 import jsfl.Item;
 import jsfl.ItemType;
@@ -219,7 +220,8 @@ class Parser {
 	/** アニメーションとして解析する */
 	private function translateQuaAnimation(symbolItem:SymbolItem):Void {
 		trace('translateQuaAnimation : ${symbolItem.name}');
-		structures.set(symbolItem.name, Structure.Animation(symbolItem.timeline.frameCount));
+		var unionBounds = TimelineUtil.getUnionBounds(symbolItem.timeline);
+		structures.set(symbolItem.name, Structure.Animation(symbolItem.timeline.frameCount, unionBounds));
 	}
 	
 	/** パーツアニメーションとして解析する */
@@ -227,7 +229,10 @@ class Parser {
 		var pap = PartsAnimationParser.parse(symbolItem);
 		// FIXME BEGIN
 		for (part in pap) {
-			structures.set(part.path, Structure.Image({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }));
+			structures.set(part.path, Structure.Image(
+				{ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 },
+				{ left: 0, top: 0, right: 0, bottom: 0 }
+			));
 		}
 		// FIXME END
 		structures.set(symbolItem.name, Structure.PartsAnimation(pap));
@@ -236,7 +241,14 @@ class Parser {
 	/** テクスチャとして解析する */
 	private function translateQuaImage(item:Item):Void {
 		trace('translateQuaImage : ${item.name}');
-		structures.set(item.name, Structure.Image({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }));
+		
+		var bounds:Bounds = { left: 0, top: 0, right: 0, bottom: 0 };
+		if (item.itemType.equals(ItemType.MOVIE_CLIP) || item.itemType.equals(ItemType.GRAPHIC)) {
+			var symbolItem:SymbolItem = cast item;
+			bounds = symbolItem.timeline.getBounds(1, false);
+		}
+		
+		structures.set(item.name, Structure.Image({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, bounds));
 	}
 	
 }

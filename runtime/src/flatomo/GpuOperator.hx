@@ -106,7 +106,7 @@ class GpuOperator {
 				return textField;
 			*/
 			/* Image */
-			case Structure.Image(transform) :
+			case Structure.Image(transform, _) :
 				var image = new FlatomoImage(layouts, manager.getTexture(key), new Matrix(transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty));
 				trace(transform);
 				//var pivot = pivots.get(key);

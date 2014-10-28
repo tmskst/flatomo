@@ -11,6 +11,7 @@ import flash.events.InvokeEvent;
 import flash.filesystem.File;
 import flash.geom.Matrix;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.Lib;
 import flash.text.TextField;
 import flatomo.GeometricTransform;
@@ -190,7 +191,7 @@ class Boot {
 							transform.d = 1.0;
 						}
 					}
-				case Animation(totalFrames) :
+				case Animation(totalFrames, _) :
 					switch (totalFrames) {
 						case 1 : 
 							var transform = uniquely.resolver.get(key).transform;
