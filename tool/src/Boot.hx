@@ -76,6 +76,7 @@ class Boot {
 		
 		// -o <output directory>
 		if (args.output == null) {
+			log('出力先が指定されていない');
 			return ErrorCode.MissingArgumentOuput;
 		}
 		var output:File = cwd.resolvePath(args.output);
@@ -83,29 +84,36 @@ class Boot {
 		// -i <input directory>
 		var inputs = [for (input in args.inputs.keys()) cwd.resolvePath(input)];
 		if (inputs.empty()) {
+			log('入力が指定されていない');
 			return ErrorCode.MissingArgumentInput;
 		}
 		
+		// 入力として妥当ではないディレクトリの列挙
 		var fails = inputs.filter(function (f) return !validate(f));
 		if (!fails.empty()) {
-			fails.iter(function (f) trace('invaild input : ' + f.nativePath));
+			fails.iter(function (f) log('不正な入力 : ' + f.nativePath));
 			return ErrorCode.InvaildArgumentInput;
 		}
 		
-		// valid arguments
+		// 引数はすべて妥当
 		var unifiedStructures = unifyStructures(inputs);
 		var unifiedTimelines = unifyTimelines(inputs);
 		
 		#if debug
-		trace('cwd -> ${cwd.nativePath}');
-		trace('apd -> ${apd.nativePath}');
-		trace('-o  -> ${output.nativePath}');
-		inputs.iter(function (f) trace('-i  -> ' + f.nativePath));
-		for (key in unifiedStructures.keys()) { trace(key); }
-		for (key in unifiedTimelines.keys()) { trace(key); }
+		log('cwd -> ${cwd.nativePath}');
+		log('apd -> ${apd.nativePath}');
+		log('-o  -> ${output.nativePath}');
+		inputs.iter(function (f) log('-i  -> ' + f.nativePath));
+		log('- - -');
+		for (key in unifiedStructures.keys()) { log('s -> ${key}, ${unifiedStructures.get(key)}'); }
+		for (key in unifiedTimelines.keys()) { log('t -> ${key}'); }
 		#end
 		
 		var uniquely = pruneDuplicateTexture(inputs);
+		
+		log('- - -');
+		for (key in uniquely.resolver.keys()) { log('uniquely.resolver.key -> ${key}, ' + uniquely.resolver.get(key)); }
+		
 		scaleTexture(unifiedStructures, uniquely);
 		loadRequiredTexture(uniquely, function(optimizedTextures) {
 			FileUtil.saveContent(output.resolvePath('./a.structure'), Serializer.run(unifiedStructures));
@@ -116,6 +124,7 @@ class Boot {
 				var texture = a[i];
 				FileUtil.saveBytes(output.resolvePath('./${i}.png'), texture.bitmapData.encode(texture.bitmapData.rect, new PNGEncoderOptions()));
 			}
+			log("終了");
 		});
 		
 		return ErrorCode.Successful;
@@ -136,7 +145,7 @@ class Boot {
 			
 			#if debug
 			if (fromHash.exists(hash)) {
-				trace('duplicate -> ' + fromHash.get(hash).filePath + ', ' + file.nativePath);
+				log('duplicate -> ' + fromHash.get(hash).filePath + ', ' + file.nativePath);
 			}
 			#end
 			
@@ -254,6 +263,8 @@ class Boot {
 		uniquely.transform.tx = concatenated.tx;
 		uniquely.transform.ty = concatenated.ty;
 		
+		log(Std.string(uniquely.filePath));
+		log('${bitmap.width}, ${bitmap.height}');
 		var optimized = new Bitmap(new BitmapData(Std.int(bitmap.width), Std.int(bitmap.height), true, 0x00000000));
 		optimized.bitmapData.draw(bitmap, scaling);
 		
@@ -314,6 +325,7 @@ class Boot {
 		return directory.resolvePath('./texture/').resolvePath(key).nativePath;
 	}	
 	
+	/** 対象のディレクトリが入力になり得るか */
 	private static function validate(directory:File):Bool {
 		return directory.isDirectory
 		    && directory.resolvePath('a.timeline').exists
