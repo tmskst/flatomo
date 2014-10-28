@@ -11,12 +11,15 @@ import flash.events.InvokeEvent;
 import flash.filesystem.File;
 import flash.geom.Matrix;
 import flash.geom.Point;
+import flash.Lib;
+import flash.text.TextField;
 import flatomo.GeometricTransform;
 import flatomo.Structure;
 import flatomo.Timeline;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
+import haxe.PosInfos;
 import haxe.Serializer;
 import haxe.Unserializer;
 import mcli.Dispatch;
@@ -40,13 +43,28 @@ class Boot {
 		NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, initialize);
 	}
 	
+	private static var logger:TextField;
+	
 	private static function initialize(event:InvokeEvent) {
+		logger = new TextField();
+		logger.width  = Lib.current.stage.stageWidth;
+		logger.height = Lib.current.stage.stageHeight;
+		logger.selectable = true;
+		Lib.current.stage.addChild(logger);
+		
 		switch (run(event)) {
+			/* 入力に問題なし */
 			case Successful :
+				// 処理は非同期に終了する
+			/* 何らかの例外が生じた */
 			case v :
-				NativeApplication.nativeApplication.exit(v);
+				log('例外 : ${v}');
 		}
 		
+	}
+	
+	private static function log(message:String, ?posInfos:PosInfos):Void {
+		logger.appendText('${posInfos.methodName} ${posInfos.lineNumber} : ${message} \n');
 	}
 	
 	private static function run(event:InvokeEvent):ErrorCode {
