@@ -24,6 +24,7 @@ import haxe.PosInfos;
 import haxe.Serializer;
 import haxe.Unserializer;
 import mcli.Dispatch;
+import TextureAtlasGenerator;
 
 using Lambda;
 using flatomo.Collection;
@@ -116,15 +117,80 @@ class Boot {
 		for (key in uniquely.resolver.keys()) { log('uniquely.resolver.key -> ${key}, ' + uniquely.resolver.get(key)); }
 		
 		scaleTexture(unifiedStructures, uniquely);
-		loadRequiredTexture(uniquely, function(optimizedTextures) {
+		loadRequiredTexture(uniquely, function(optimizedTextures:Map<U, Bitmap>) {
+			log('- - -');
+			
+			var result = TextureAtlasGenerator.pack(uniquely.required.length, Lambda.array(optimizedTextures));
+			if (result == null) { log('充填できなかった'); }
+			
+			var rootElement:Xml = Xml.createElement("TextureAtlas");
+			
+			for (key in unifiedStructures.keys()) {
+				switch (unifiedStructures.get(key)) {
+					case Structure.Animation(totalFrame, unionBounds) : 
+						for (frame in 0...totalFrame) {
+							var name:String = key + StringTools.lpad(Std.string(frame + 1), "0", 4);
+							var unique:U = uniquely.resolver.get(name);
+							var subTexture:SubTexture = optimizedTextures.get(unique);
+							var region:Region = result.regions.get(subTexture);
+							
+							var element:Xml = Xml.createElement("SubTexture");
+							element.set("name", name);
+							element.set("x", Std.string(region.x));
+							element.set("y", Std.string(region.y));
+							element.set("width", Std.string(region.width));
+							element.set("height", Std.string(region.height));
+							
+							var transform:GeometricTransform = unique.transform;
+							log(Std.string(unionBounds));
+							
+							element.set("frameX", Std.string((unionBounds.left - transform.tx) * -1));
+							element.set("frameY", Std.string((unionBounds.top - transform.ty) * -1));
+							element.set("frameWidth", Std.string(unionBounds.right - unionBounds.left));
+							element.set("frameHeight", Std.string(unionBounds.bottom - unionBounds.top));
+							rootElement.addChild(element);
+						}
+					case Structure.Image(transform, bounds) :
+						var name:String = key;
+						var unique:U = uniquely.resolver.get(name);
+						var subTexture:SubTexture = optimizedTextures.get(unique);
+						var region:Region = result.regions.get(subTexture);
+						
+						var element:Xml = Xml.createElement("SubTexture");
+						element.set("name", name);
+						element.set("x", Std.string(region.x));
+						element.set("y", Std.string(region.y));
+						element.set("width", Std.string(region.width));
+						element.set("height", Std.string(region.height));
+						
+						transform.a = unique.transform.a;
+						transform.b = unique.transform.b;
+						transform.c = unique.transform.c;
+						transform.d = unique.transform.d;
+						transform.tx = unique.transform.tx;
+						transform.ty = unique.transform.ty;
+						
+						rootElement.addChild(element);
+					case Structure.Container(_) :
+					case Structure.PartsAnimation(_) :
+						
+				}
+			}
+			
+			FileUtil.saveContent(output.resolvePath('./a.xml'), rootElement.toString());
 			FileUtil.saveContent(output.resolvePath('./a.structure'), Serializer.run(unifiedStructures));
 			FileUtil.saveContent(output.resolvePath('./a.timeline'), Serializer.run(unifiedTimelines));
 			
-			var a = Lambda.array(optimizedTextures);
-			for (i in 0...a.length) {
-				var texture = a[i];
-				FileUtil.saveBytes(output.resolvePath('./${i}.png'), texture.bitmapData.encode(texture.bitmapData.rect, new PNGEncoderOptions()));
+			// 充填
+			
+			var texture:BitmapData = new BitmapData(result.size, result.size, true, 0x00000000);
+			for (subTexture in result.regions.keys()) {
+				var region:Region = result.regions.get(subTexture);
+				var bitmap:Bitmap = cast subTexture;
+				texture.copyPixels(bitmap.bitmapData, bitmap.bitmapData.rect, new Point(Math.floor(region.x), Math.floor(region.y)));
 			}
+			FileUtil.saveBytes(output.resolvePath('./a.png'), texture.encode(texture.rect, new PNGEncoderOptions()));
+			
 			log("終了");
 		});
 		
