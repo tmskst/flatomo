@@ -48,7 +48,7 @@ class Animation extends Image implements ILayoutAdjusted {
 	
 	/** 描画処理 */
 	public function draw(frame:Int):Void {
-		texture = textures[frame];
+		texture = textures[frame - 1];
 	}
 	
 }
