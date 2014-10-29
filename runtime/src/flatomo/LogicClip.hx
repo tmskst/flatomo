@@ -4,7 +4,7 @@ import flatomo.display.Playhead;
 
 class LogicClip {
 	
-	public var playhead:Playhead;
+	public var playhead(default, null):Playhead;
 	private var markers:Map<String, Array<GeometricTransform>>;
 	
 	public function new(timeline:Timeline) {
