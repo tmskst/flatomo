@@ -24,7 +24,6 @@ class GpuOperator {
 	
 	public function new() {
 		this.manager = new AssetManager();
-		this.pivots = new Map<ItemPath, Point>();
 		this.structures = new Map<ItemPath, Structure>();
 	}
 	
@@ -35,28 +34,11 @@ class GpuOperator {
 		var name:String = EmbedAsset.resolver.get(asset);
 		manager.addTextureAtlas(name, new TextureAtlas(Texture.fromBitmapData(texture), xml));
 		
-		var subTextures:XMLList = xml.elements("SubTexture");
-		for (index in 0...subTextures.length()) {
-			var subTexture:XML = subTextures[index];
-			var pivotX:Float = Std.parseFloat(subTexture.attribute("pivotX").toString());
-			var pivotY:Float = Std.parseFloat(subTexture.attribute("pivotY").toString());
-			if (!Math.isNaN(pivotX) && !Math.isNaN(pivotY)) {
-				var key:String = subTexture.attribute("name").toString();
-				// FIXME : 本来は Animation, Image関係なくサフィックス`0000`は付く
-				if (StringTools.endsWith(key, "0000")) {
-					key = key.substr(0, -4);
-				}
-				pivots.set(key, new Point(pivotX, pivotY));
-			}
-		}
-		
 		structures = StringMapUtil.unite([structures, EmbedAsset.getStructure(asset)]);
 	}
 	
 	private var manager:AssetManager;
 	private var structures:Map<ItemPath, Structure>;
-	private var pivots:Map<ItemPath, Point>;
-	
 	
 	/**
 	 * クラス（Class<flash.display.DisplayObject>）に対応する
@@ -81,9 +63,6 @@ class GpuOperator {
 			case Structure.Animation :
 				var textures = manager.getTextures(key);
 				var animation = new Animation(layouts, textures);
-				//var pivot = pivots.get(key);
-				//animation.pivotX = pivot.x;
-				//animation.pivotY = pivot.y;
 				return animation;
 			/* Container */
 			case Structure.Container(children) :
@@ -109,10 +88,6 @@ class GpuOperator {
 			/* Image */
 			case Structure.Image(transform, _) :
 				var image = new FlatomoImage(layouts, manager.getTexture(key), new Matrix(transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty));
-				trace(transform);
-				//var pivot = pivots.get(key);
-				//image.pivotX = pivot.x;
-				//image.pivotY = pivot.y;
 				return image;
 			case Structure.PartsAnimation(parts) :
 				var objects = new Array<DisplayObject>();
