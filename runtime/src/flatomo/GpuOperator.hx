@@ -32,7 +32,8 @@ class GpuOperator {
 		var texture = EmbedAsset.getTexture(asset);
 		var xml = EmbedAsset.getXml(asset);
 		
-		manager.addTextureAtlas("0", new TextureAtlas(Texture.fromBitmapData(texture), xml));
+		var name:String = EmbedAsset.resolver.get(asset);
+		manager.addTextureAtlas(name, new TextureAtlas(Texture.fromBitmapData(texture), xml));
 		
 		var subTextures:XMLList = xml.elements("SubTexture");
 		for (index in 0...subTextures.length()) {

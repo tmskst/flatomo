@@ -17,7 +17,7 @@ class EmbedAsset {
 	
 	/* アセットから埋め込みアセットのクラス名を解決するために使われる */
 	@:resolver
-	private static var resolver:Map<Asset, String>;
+	public static var resolver:Map<Asset, String>;
 	
 	/* 埋め込みアセットのクラスの出力先パッケージ */
 	@:allow(flatomo.macro.EmbedAssetUtil)
