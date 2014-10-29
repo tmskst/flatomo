@@ -3,6 +3,8 @@
 -cp ../common/src
 -main Boot
 
+-D swf-script-timeout=180
+
 -lib air3
 -lib mcli
 
