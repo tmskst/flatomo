@@ -21,6 +21,8 @@ using flatomo.util.SymbolItemTools;
 
 class PartsAnimationParser {
 	
+	private static var i:Int = 0;
+	
 	public static function parse(rootSymbolItem:SymbolItem):Array<ContainerComponent> {
 		var parser:PartsAnimationParser = new PartsAnimationParser(rootSymbolItem);
 		var result = new Array<ContainerComponent>();
@@ -35,7 +37,7 @@ class PartsAnimationParser {
 						matrixes[frameIndex] = frame.pop();
 					}
 				}
-				result.push({ instanceName: 'A' + Std.random(100), path: name, layouts: matrixes });
+				result.push({ instanceName: 'anonymous' + Std.string(i++), path: name, layouts: matrixes });
 			}
 		}
 		return result;
