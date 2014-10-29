@@ -317,8 +317,8 @@ class Boot {
 		var scaling      = new Matrix(u.a, 0, 0, u.d, 0, 0);
 		
 		var concatenated = new Matrix(1, 0, 0, 1, 0, 0);
-		concatenated.concat(scaling);
 		concatenated.concat(translation);
+		concatenated.concat(scaling);
 		
 		var bitmap = new Bitmap(trimmed, PixelSnapping.AUTO, false);
 		bitmap.transform.matrix = concatenated;
