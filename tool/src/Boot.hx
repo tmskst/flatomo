@@ -187,7 +187,7 @@ class Boot {
 			for (subTexture in result.regions.keys()) {
 				var region:Region = result.regions.get(subTexture);
 				var bitmap:Bitmap = cast subTexture;
-				texture.copyPixels(bitmap.bitmapData, bitmap.bitmapData.rect, new Point(Math.floor(region.x), Math.floor(region.y)));
+				texture.copyPixels(bitmap.bitmapData, bitmap.bitmapData.rect, new Point(Math.floor(region.x + 1), Math.floor(region.y + 1)));
 			}
 			FileUtil.saveBytes(output.resolvePath('./a.png'), texture.encode(texture.rect, new PNGEncoderOptions()));
 			
