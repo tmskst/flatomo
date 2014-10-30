@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<application xmlns="http://ns.adobe.com/air/application/4.0">
+	<id>Tool</id> 
+	<versionNumber>1.0</versionNumber> 
+	<filename>Tool</filename> 
+	<initialWindow> 
+		<title>Tool</title> 
+		<content>bin/Run.swf</content> 
+		<visible>true</visible> 
+	</initialWindow> 
+</application>

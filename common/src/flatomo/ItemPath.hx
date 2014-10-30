@@ -1,7 +1,4 @@
 package flatomo;
 
-/**
- * インスタンス化するために使用したライブラリアイテムへのパス。
- * Instance#libraryItem#name(JSFL)に相当する。
- */
+/** 'jsfl.Item.name'に等しい */
 typedef ItemPath = String;

@@ -1,0 +1,14 @@
+-cp src
+-cp ../common
+-cp ../common/src
+-main Boot
+
+-D swf-script-timeout=180
+
+-lib air3
+-lib mcli
+
+-D fdb
+-debug
+-swf-version 12.0
+-swf bin/Run.swf

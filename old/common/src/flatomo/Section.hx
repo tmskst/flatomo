@@ -1,6 +1,6 @@
 package flatomo;
 
-/** 再生ヘッドを制御するためのセクション */
+/** 再生ヘッドを制御するためのセクション。 */
 typedef Section = {
 	/** セクション名 */
 	var name:String;

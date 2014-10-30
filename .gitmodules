@@ -1,6 +1,9 @@
-[submodule "extension/script/lib/haxe-jsfl"]
-	path = extension/script/lib/haxe-jsfl
+[submodule "lib/haxe-jsfl/haxe-jsfl"]
+	path = lib/haxe-jsfl/haxe-jsfl
 	url = git@github.com:tmskst/haxe-jsfl.git
-[submodule "manager/lib/starling/starling"]
-	path = manager/lib/starling/starling
+[submodule "lib/haxe-cep/haxe-cep"]
+	path = lib/haxe-cep/haxe-cep
+	url = git@github.com:tmskst/haxe-cep.git
+[submodule "lib/starling/starling"]
+	path = lib/starling/starling
 	url = git@github.com:Gamua/Starling-Framework.git

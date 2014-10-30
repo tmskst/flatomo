@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>MyExtension</title>
+		<link href="./css/main.css" type="text/css" rel="stylesheet">
+	</head>
+	
+	<body>
+		<div id="warning">
+			<div>WARNING</div>
+			<input id="enable_flatomo" type="button" value="Enable Flatomo" />
+		</div>
+		
+		<div>
+			<table>
+				<tr>
+					<td>出力先</td>
+					<td><input id="publishPath" type="text" /><input type="button" value="選択" id="browseExportDirectory" /></td>
+				</tr>
+			</table>
+		</div>
+		
+		<!--
+		<div>
+			<input type="checkbox" />Filter Export Items
+		</div>
+		-->
+		
+		<!-- Symbol Items -->
+		<div id="library">
+			<!-- -->
+		</div>
+		<div id="main">
+			<!-- -->
+		</div>
+		
+		<div id="footer">
+			<hr>
+			<input type="button" value="Publish" id="export" />
+		</div>
+		
+		<script src="./lib/jquery-2.1.1.min.js"></script>
+		<script src="./lib/CSInterface.js"></script>
+		<script src="./js/Main.js"></script>
+	</body>
+</html>
