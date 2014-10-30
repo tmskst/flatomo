@@ -129,7 +129,10 @@ class Boot {
 				switch (unifiedStructures.get(key)) {
 					case Structure.Animation(totalFrame, unionBounds) : 
 						for (frame in 0...totalFrame) {
-							var name:String = key + StringTools.lpad(Std.string(frame + 1), "0", 4);
+							var name:String = key;
+							if (totalFrame != 1) {
+								name = name + StringTools.lpad(Std.string(frame + 1), "0", 4);
+							}
 							var unique:U = uniquely.resolver.get(name);
 							var subTexture:SubTexture = optimizedTextures.get(unique);
 							var region:Region = result.regions.get(subTexture);
@@ -308,8 +311,13 @@ class Boot {
 		uniquely.transform.tx = uniquely.transform.tx - bounds.x;
 		uniquely.transform.ty = uniquely.transform.ty - bounds.y;
 		
-		var trimmed = new BitmapData(Std.int(bounds.width), Std.int(bounds.height), true, 0x00000000);
-		trimmed.copyPixels(image, bounds, new Point(0, 0));
+		var trimmed:BitmapData = null;
+		if (bounds.width != 0 || bounds.height != 0) {
+			trimmed = new BitmapData(Std.int(bounds.width), Std.int(bounds.height), true, 0x00000000);
+			trimmed.copyPixels(image, bounds, new Point(0, 0));
+		} else {
+			trimmed = new BitmapData(1, 1, true, 0x00000000);
+		}
 		
 		var u = uniquely.transform;
 		
