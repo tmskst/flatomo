@@ -12,15 +12,11 @@ class LogicClip {
 		this.markers = timeline.markers;
 	}
 	
-	/*
-	public function getCurrentMarker(layerName:LayerName):Marker {
-		if (markers.exists(layerName)) {
-			var layerMarkers:Map<Int, Marker> = markers.get(layerName);
-			if (layerMarkers.exists(playhead.currentFrame - 1)) {
-				return layerMarkers.get(playhead.currentFrame - 1);
-			}
-		}
-		throw '存在しないレイヤー${layerName}, ${markers}';
+	public function getCurrentMarker(layerName:String):GeometricTransform {
+		if (!markers.exists(layerName)) { throw '存在しないレイヤー'; }
+		
+		var transforms:Array<GeometricTransform> = markers.get(layerName);
+		return transforms[playhead.currentFrame - 1];
 	}
-	*/
+	
 }
