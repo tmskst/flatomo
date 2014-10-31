@@ -1,5 +1,6 @@
 package flatomo;
 
+import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.text.TextFormatAlign;
@@ -28,11 +29,20 @@ class GpuOperator {
 	}
 	
 	public function addEmbedAsset(asset:Asset):Void {
-		var texture = EmbedAsset.getTexture(asset);
+		
+		var clazz = EmbedAsset.getTextureClass(asset);
+		var superClass = Type.getSuperClass(clazz);
+		
+		var texture:Texture = if (superClass == flash.display.BitmapData) {
+			Texture.fromBitmapData(Type.createInstance(clazz, []));
+		} else {
+			Texture.fromAtfData(Type.createEmptyInstance(clazz));
+		}
+		
 		var xml = EmbedAsset.getXml(asset);
 		
 		var name:String = EmbedAsset.resolver.get(asset);
-		manager.addTextureAtlas(name, new TextureAtlas(Texture.fromBitmapData(texture), xml));
+		manager.addTextureAtlas(name, new TextureAtlas(texture, xml));
 		
 		structures = StringMapUtil.unite([structures, EmbedAsset.getStructure(asset)]);
 	}

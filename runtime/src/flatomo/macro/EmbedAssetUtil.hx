@@ -77,8 +77,16 @@ class EmbedAssetUtil {
 			
 			// Texture
 			var textureClassName:String = EmbedAsset.getTextureClassName(value.name);
-			Context.defineType(buildBitmapData(textureClassName));
-			addMetadataBitmap(value.asset.texture, textureClassName);
+			switch (value.asset.texture) {
+				case StringTools.endsWith(_, "atf") => true : 
+					Context.defineType(buildByteArray(textureClassName));
+					addMetadataFile(value.asset.texture, textureClassName);
+				case StringTools.endsWith(_, "png") => true :
+					Context.defineType(buildBitmapData(textureClassName));
+					addMetadataBitmap(value.asset.texture, textureClassName);
+				case _ :
+					throw 'Unkown file type : ${value.asset.texture}';
+			}
 			
 			// Xml
 			var xmlClassName:String = EmbedAsset.getXmlClassName(value.name);

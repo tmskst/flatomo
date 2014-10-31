@@ -55,29 +55,26 @@ class EmbedAsset {
 	#if flash
 	
 	/* クラス名を元にインスタンスを生成するヘルパメソッド */
-	private static inline function create(className:String):Dynamic {
+	private static inline function createInstance(className:String):Dynamic {
 		return Type.createInstance(Type.resolveClass(className), []);
 	}
 	
-	/**
-	 * キーに対応するテクスチャを返します
-	 * ただしテクスチャの型は 'flash.display.BitmapData' または 'haxe.io.BytesData' です
-	 */
-	public static function getTexture(key:Asset):Dynamic {
-		return create(getClassPath(getTextureClassName(resolver.get(key))));
+	/** キーに対応するテクスチャのクラスを返します */
+	public static function getTextureClass(key:Asset):Class<Dynamic> {
+		return Type.resolveClass(getClassPath(getTextureClassName(resolver.get(key))));
 	}
 	
 	/** キーに対応するXMLを返します */
 	public static function getXml(key:Asset):XML {
-		return new XML(create(getClassPath(getXmlClassName(resolver.get(key)))));
+		return new XML(createInstance(getClassPath(getXmlClassName(resolver.get(key)))));
 	}
 	
 	public static function getStructure(key:Asset):Map<ItemPath, Structure> {
-		return haxe.Unserializer.run(create(getClassPath(getStructureClassName(resolver.get(key)))));
+		return haxe.Unserializer.run(createInstance(getClassPath(getStructureClassName(resolver.get(key)))));
 	}
 	
 	public static function getTimeline(key:Asset):Map<String, Timeline> {
-		return haxe.Unserializer.run(create(getClassPath(getTimelineClassName(resolver.get(key)))));
+		return haxe.Unserializer.run(createInstance(getClassPath(getTimelineClassName(resolver.get(key)))));
 	}
 	
 	#end
