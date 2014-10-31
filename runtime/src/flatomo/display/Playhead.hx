@@ -13,7 +13,10 @@ class Playhead {
 	 */
 	public function new(sections:Array<Section>) {
 		this.sections = sections;
-		this.codes = sections.toControlCodes();
+		for (section in sections) {
+			this.totalFrames = Std.int(Math.max(totalFrames, section.end));
+		}
+		this.codes = sections.toControlCodes(totalFrames);
 		this.isPlaying = true;
 		this.currentFrame = 1;
 	}
@@ -30,6 +33,9 @@ class Playhead {
 	
 	/** タイムラインのセクション情報 */
 	private var sections:Array<Section>;
+	
+	/** タイムラインの総フレーム数 */
+	private var totalFrames:Int;
 	
 	/** 再生中かどうか */
 	public var isPlaying(default, null):Bool;
