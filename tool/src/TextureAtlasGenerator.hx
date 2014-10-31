@@ -21,12 +21,12 @@ typedef Region = {
 abstract SubTexture(Bitmap) from Bitmap to Bitmap {
 	public var width(get, never):Int;
 	private function get_width():Int {
-		return this.bitmapData.width + 2;
+		return this.bitmapData.width + 4;
 	}
 	
 	public var height(get, never):Int;
 	private function get_height():Int {
-		return this.bitmapData.height + 2;
+		return this.bitmapData.height + 4;
 	}
 }
 
