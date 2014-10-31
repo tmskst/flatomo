@@ -70,8 +70,8 @@ class TextureAtlasGenerator {
 				
 				// すべての空き領域について
 				for (area in areas) {
-					if (area.height > subTexture.height && area.width > subTexture.width) {
-						if (fit == null || area.height < fit.height) {
+					if (area.height >= subTexture.height && area.width >= subTexture.width) {
+						if (fit == null || area.height <= fit.height) {
 							fit = area;
 						}
 					}
