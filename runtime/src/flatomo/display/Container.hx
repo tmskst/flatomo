@@ -33,6 +33,8 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 		this.layoutPropertiesOverwrited = false;
 		this.visiblePropertyOverwrited = false;
 		
+		this.m0 = new Matrix();
+		this.m1 = new Matrix();
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
 		for (object in displayObjects) {
@@ -46,6 +48,9 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	private var layouts:Array<Layout>;
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;
+	
+	private var m0:Matrix;
+	private var m1:Matrix;
 	
 	/** 自身（表示オブジェクト）の更新 */
 	public function update(currentFrame:Int):Void {
@@ -69,15 +74,25 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 			
 			var depth:Int = this.getChildIndex(cast child);
 			this.swapChildrenAt(depth, layout.depth);
-			var x = new Matrix(
-				layout.transform.a, layout.transform.b,
-				layout.transform.c, layout.transform.d,
-				layout.transform.tx, layout.transform.ty
-			);
-			var m = child.matrix.clone();
-			m.invert();
-			m.concat(x);
-			child.transformationMatrix = m;
+			
+			m1.a = layout.transform.a;
+			m1.b = layout.transform.b;
+			m1.c = layout.transform.c;
+			m1.d = layout.transform.d;
+			m1.tx = layout.transform.tx;
+			m1.ty = layout.transform.ty;
+			
+			m0.a = child.matrix.a;
+			m0.b = child.matrix.b;
+			m0.c = child.matrix.c;
+			m0.d = child.matrix.d;
+			m0.tx = child.matrix.tx;
+			m0.ty = child.matrix.ty;
+			
+			m0.invert();
+			m0.concat(m1);
+			
+			child.transformationMatrix = m0;
 		}
 	}
 	
