@@ -1,6 +1,7 @@
 package flatomo.display;
 
 import flash.geom.Matrix;
+import flash.Vector;
 import flatomo.display.ILayoutAdjusted;
 import flatomo.GpuOperator;
 import flatomo.Layout;
@@ -37,9 +38,11 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 		this.m1 = new Matrix();
 		
 		// すべての表示オブジェクトは、再生ヘッドの位置に関係なく常にコンテナに追加されている。
-		for (object in displayObjects) {
-			object.visible = false;
-			this.addChild(object);
+		this.children = untyped Vector.ofArray(displayObjects);
+		children.fixed = true;
+		for (child in children) {
+			child.visible = false;
+			this.addChild(cast child);
 		}
 		update(1);
 	}
@@ -49,22 +52,15 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;
 	
+	private var children:Vector<ILayoutAdjusted>;
+	
 	private var m0:Matrix;
 	private var m1:Matrix;
 	
 	/** 自身（表示オブジェクト）の更新 */
 	public function update(currentFrame:Int):Void {
-		// 自身の子のうち制御可能な表示オブジェクトのリスト
-		var children = new Array<ILayoutAdjusted>();
-		for (childIndex in 0...numChildren) {
-			var child:DisplayObject = this.getChildAt(childIndex);
-			if (Std.is(child, ILayoutAdjusted)) {
-				child.visible = false;
-				children.push(cast child);
-			}
-		}
-		
 		for (child in children) {
+			child.visible = false;
 			var layout:Layout = child.layouts[currentFrame - 1];
 			if (layout == null || child.visiblePropertyOverwrited && !child.visible) { continue; } 
 			
@@ -99,6 +95,7 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	public override function dispose():Void {
 		this.matrix = null;
 		this.layouts = null;
+		this.children = null;
 		super.dispose();
 	}
 }
