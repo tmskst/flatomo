@@ -23,4 +23,10 @@ class FlatomoImage extends Image implements ILayoutAdjusted {
 	private var layoutPropertiesOverwrited:Bool;
 	private var visiblePropertyOverwrited:Bool;
 	
+	public override function dispose():Void {
+		this.matrix = null;
+		this.layouts = null;
+		super.dispose();
+	}
+	
 }

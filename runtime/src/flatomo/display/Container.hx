@@ -79,5 +79,11 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 			m.concat(x);
 			child.transformationMatrix = m;
 		}
-	}	
+	}
+	
+	public override function dispose():Void {
+		this.matrix = null;
+		this.layouts = null;
+		super.dispose();
+	}
 }
