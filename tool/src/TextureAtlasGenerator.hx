@@ -21,12 +21,12 @@ typedef Region = {
 abstract SubTexture(Bitmap) from Bitmap to Bitmap {
 	public var width(get, never):Int;
 	private function get_width():Int {
-		return this.bitmapData.width + 2;
+		return this.bitmapData.width + 4;
 	}
 	
 	public var height(get, never):Int;
 	private function get_height():Int {
-		return this.bitmapData.height + 2;
+		return this.bitmapData.height + 4;
 	}
 }
 
@@ -70,8 +70,8 @@ class TextureAtlasGenerator {
 				
 				// すべての空き領域について
 				for (area in areas) {
-					if (area.height > subTexture.height && area.width > subTexture.width) {
-						if (fit == null || area.height < fit.height) {
+					if (area.height >= subTexture.height && area.width >= subTexture.width) {
+						if (fit == null || area.height <= fit.height) {
 							fit = area;
 						}
 					}

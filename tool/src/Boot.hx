@@ -107,21 +107,31 @@ class Boot {
 		log('-o  -> ${output.nativePath}');
 		inputs.iter(function (f) log('-i  -> ' + f.nativePath));
 		log('- - -');
-		for (key in unifiedStructures.keys()) { log('s -> ${key}, ${unifiedStructures.get(key)}'); }
-		for (key in unifiedTimelines.keys()) { log('t -> ${key}'); }
+		for (key in unifiedStructures.keys()) {
+			switch (unifiedStructures.get(key)) {
+				case Structure.Image :
+				case Structure.Animation :
+					log('s -> a : ${key}');
+				case Structure.Container : 
+					log('s -> c : ${key}');
+				case Structure.PartsAnimation :
+					log('s -> p : ${key}');
+			}
+		}
+		//for (key in unifiedTimelines.keys()) { log('t -> ${key}'); }
 		#end
 		
 		var uniquely = pruneDuplicateTexture(inputs);
 		
 		log('- - -');
-		for (key in uniquely.resolver.keys()) { log('uniquely.resolver.key -> ${key}, ' + uniquely.resolver.get(key)); }
+		//for (key in uniquely.resolver.keys()) { log('uniquely.resolver.key -> ${key}, ' + uniquely.resolver.get(key)); }
 		
 		scaleTexture(unifiedStructures, uniquely);
 		loadRequiredTexture(uniquely, function(optimizedTextures:Map<U, Bitmap>) {
 			log('- - -');
 			
 			var result = TextureAtlasGenerator.pack(uniquely.required.length, Lambda.array(optimizedTextures));
-			if (result == null) { log('充填できなかった'); }
+			if (result == null) { throw '充填できなかった'; }
 			
 			var rootElement:Xml = Xml.createElement("TextureAtlas");
 			
@@ -145,7 +155,7 @@ class Boot {
 							element.set("height", Std.string(region.height));
 							
 							var transform:GeometricTransform = unique.transform;
-							log(Std.string(unionBounds));
+							//log(Std.string(unionBounds));
 							
 							element.set("frameX", Std.string((unionBounds.left - transform.tx) * -1));
 							element.set("frameY", Std.string((unionBounds.top - transform.ty) * -1));
@@ -190,7 +200,7 @@ class Boot {
 			for (subTexture in result.regions.keys()) {
 				var region:Region = result.regions.get(subTexture);
 				var bitmap:Bitmap = cast subTexture;
-				texture.copyPixels(bitmap.bitmapData, bitmap.bitmapData.rect, new Point(Math.floor(region.x + 1), Math.floor(region.y + 1)));
+				texture.copyPixels(bitmap.bitmapData, bitmap.bitmapData.rect, new Point(Math.floor(region.x + 2), Math.floor(region.y + 2)));
 			}
 			FileUtil.saveBytes(output.resolvePath('./a.png'), texture.encode(texture.rect, new PNGEncoderOptions()));
 			
@@ -215,7 +225,7 @@ class Boot {
 			
 			#if debug
 			if (fromHash.exists(hash)) {
-				log('duplicate -> ' + fromHash.get(hash).filePath + ', ' + file.nativePath);
+				//log('duplicate -> ' + fromHash.get(hash).filePath + ', ' + file.nativePath);
 			}
 			#end
 			
@@ -338,8 +348,8 @@ class Boot {
 		uniquely.transform.tx = concatenated.tx;
 		uniquely.transform.ty = concatenated.ty;
 		
-		log(Std.string(uniquely.filePath));
-		log('${bitmap.width}, ${bitmap.height}');
+		//log(Std.string(uniquely.filePath));
+		//log('${bitmap.width}, ${bitmap.height}');
 		var optimized = new Bitmap(new BitmapData(Std.int(bitmap.width), Std.int(bitmap.height), true, 0x00000000));
 		optimized.bitmapData.draw(bitmap, scaling);
 		

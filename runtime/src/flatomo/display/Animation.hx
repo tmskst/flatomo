@@ -51,4 +51,13 @@ class Animation extends Image implements ILayoutAdjusted {
 		texture = textures[frame - 1];
 	}
 	
+	public override function dispose():Void {
+		this.matrix = null;
+		this.layouts = null;
+		for (texture in textures) {
+			texture.dispose();
+		}
+		super.dispose();
+	}
+	
 }
