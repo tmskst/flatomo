@@ -59,6 +59,8 @@ class Container extends DisplayObjectContainer implements ILayoutAdjusted {
 	
 	/** 自身（表示オブジェクト）の更新 */
 	public function update(currentFrame:Int):Void {
+		if (!visible) { return; }
+		
 		for (child in children) {
 			child.visible = false;
 			var layout:Layout = child.layouts[currentFrame - 1];
