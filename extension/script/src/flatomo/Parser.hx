@@ -51,9 +51,19 @@ class Parser {
 		return null;
 	}
 	
-	private static function fromInstance(instance:Null<Instance>, depth:Int):Layout {
-		return if (instance == null) null else { depth: depth, transform: instance.matrix };
-	};
+	private static function fromInstance(instance:Null<Instance>, depth:Int):Layout 
+	{
+		if (instance == null) {
+			return null;
+		}
+		
+		var transform = new GeometricTransform(
+			instance.matrix.a, instance.matrix.b,
+			instance.matrix.c, instance.matrix.d,
+			instance.matrix.tx, instance.matrix.ty
+		);
+		return new Layout(depth, transform);
+	}
 	
 	/* --------------------------------------------------------------------- */
 	
@@ -167,7 +177,7 @@ class Parser {
 					}
 				}
 				
-				children.push( { instanceName: onymousInstanceName, path: itemPath, layouts: layouts } );
+				children.push(new ContainerComponent(onymousInstanceName, itemPath, layouts));
 			}
 		}
 		
@@ -189,7 +199,12 @@ class Parser {
 				for (instanceDepth in 0...instances.length) {
 					var instance:Instance = cast instances[instanceDepth];
 					if (isAnonymousInstance(instance)) {
-						addLayout(instance.libraryItem.name, { depth: instance.depth, transform: instance.matrix }, frameIndex);
+						var transform = new GeometricTransform(
+							instance.matrix.a, instance.matrix.b,
+							instance.matrix.c, instance.matrix.d,
+							instance.matrix.tx, instance.matrix.ty
+						);
+						addLayout(instance.libraryItem.name, new Layout(instance.depth, transform), frameIndex);
 					}
 				}
 			}
@@ -204,7 +219,7 @@ class Parser {
 							ls[frameIndex] = frame.pop();
 						}
 					}
-					children.push( { instanceName: "X", path: name, layouts: ls } );
+					children.push(new ContainerComponent("X", name, ls));
 				}
 			}
 			
@@ -220,8 +235,9 @@ class Parser {
 	/** アニメーションとして解析する */
 	private function translateQuaAnimation(symbolItem:SymbolItem):Void {
 		trace('translateQuaAnimation : ${symbolItem.name}');
-		var unionBounds = TimelineUtil.getUnionBounds(symbolItem.timeline);
-		structures.set(symbolItem.name, Structure.Animation(symbolItem.timeline.frameCount, unionBounds));
+		var unionBounds:BoundingRectangle = TimelineUtil.getUnionBounds(symbolItem.timeline);
+		var bounds:Bounds = new Bounds(unionBounds.left, unionBounds.top, unionBounds.right, unionBounds.bottom);
+		structures.set(symbolItem.name, Structure.Animation(symbolItem.timeline.frameCount, bounds));
 	}
 	
 	/** パーツアニメーションとして解析する */
@@ -230,8 +246,8 @@ class Parser {
 		// FIXME BEGIN
 		for (part in pap) {
 			structures.set(part.path, Structure.Image(
-				{ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 },
-				{ left: 0, top: 0, right: 0, bottom: 0 }
+				new GeometricTransform(0, 0, 0, 0, 0, 0),
+				new Bounds(0, 0, 0, 0)
 			));
 		}
 		// FIXME END
@@ -242,13 +258,14 @@ class Parser {
 	private function translateQuaImage(item:Item):Void {
 		trace('translateQuaImage : ${item.name}');
 		
-		var bounds:Bounds = { left: 0, top: 0, right: 0, bottom: 0 };
+		var bounds:Bounds = new Bounds(0, 0, 0, 0);
 		if (item.itemType.equals(ItemType.MOVIE_CLIP) || item.itemType.equals(ItemType.GRAPHIC)) {
 			var symbolItem:SymbolItem = cast item;
-			bounds = symbolItem.timeline.getBounds(1, false);
+			var boundingRectangle = symbolItem.timeline.getBounds(1, false);
+			bounds = new Bounds(boundingRectangle.left, boundingRectangle.top, boundingRectangle.right, boundingRectangle.bottom);
 		}
 		
-		structures.set(item.name, Structure.Image({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, bounds));
+		structures.set(item.name, Structure.Image(new GeometricTransform(0, 0, 0, 0, 0, 0), bounds));
 	}
 	
 }

@@ -1,13 +1,21 @@
 package flatomo;
 
 /** 再生ヘッドを制御するためのセクション */
-typedef Section = {
+class Section {
 	/** セクション名 */
-	var name:String;
+	public var name(default, null):String;
 	/** セクションの種類 */
-	var kind:SectionKind;
+	public var kind(default, null):SectionKind;
 	/** 開始フレーム */
-	var begin:Int;
+	public var begin(default, null):Int;
 	/** 終了フレーム */
-	var end:Int;
+	public var end(default, null):Int;
+	
+	public function new(name:String, kind:SectionKind, begin:Int, end:Int) {
+		this.name = name;
+		this.kind = kind;
+		this.begin = begin;
+		this.end = end;
+	}
+	
 }

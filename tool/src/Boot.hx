@@ -39,6 +39,9 @@ private typedef V = {
 	required:Array<U>,
 }
 
+@:access(flatomo.Layout)
+@:access(flatomo.ContainerComponent)
+@:access(flatomo.GeometricTransform)
 class Boot {
 	
 	public static function main() {
@@ -232,7 +235,7 @@ class Boot {
 			if (!fromHash.exists(hash)) {
 				fromHash.set(hash, { 
 					filePath  : file.nativePath,
-					transform : { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 },
+					transform : new GeometricTransform(0, 0, 0, 0, 0, 0),
 				});
 			}
 			var delegate = fromHash.get(hash);

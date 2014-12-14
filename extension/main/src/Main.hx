@@ -108,13 +108,9 @@ class Main {
 				if (sectionKindIndex == 4) [gotoSectionName] else []
 			);
 			
-			return {
-				// セクションの開始フレームと終了フレームは
-				// パブリッシュ時にタイムラインから抽出するのでこの時点では必要ない
-				begin: 0, end: 0,
-				name: sectionName,
-				kind: sectionKind,
-			}
+			// セクションの開始フレームと終了フレームは
+			// パブリッシュ時にタイムラインから抽出するのでこの時点では必要ない
+			return new Section(sectionName, sectionKind, 0, 0);
 		});
 		// 編集中のアイテム名
 		var itemName:String = new JQuery('div#item_name').text();

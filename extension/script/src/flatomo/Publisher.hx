@@ -36,10 +36,9 @@ class Publisher {
 	private static function publishTimeline(library:Library, profile:PublishProfile):Void {
 		var timelines = new Map<String, Timeline>();
 		for (symbolItem in library.symbolItems()) {
-			timelines.set(symbolItem.name, {
-				sections: symbolItem.getExtendedItem().sections,
-				markers : symbolItem.timeline.getMarkers(),
-			});
+			timelines.set(symbolItem.name, 
+				new Timeline(symbolItem.getExtendedItem().sections, symbolItem.timeline.getMarkers())
+			);
 		}
 		FLfile.write(profile.publishPath + '/' + profile.fileName + '/' + TIMELINE_FILE_NAME + '.' + TIMELINE_EXTENSION, Serializer.run(timelines));
 	}
