@@ -1,9 +1,11 @@
 package flatomo.util;
 
+import flatomo.GeometricTransform;
 import jsfl.ElementType;
 import jsfl.Instance;
 import jsfl.Layer;
 import jsfl.LayerType;
+import jsfl.Matrix;
 import jsfl.Timeline;
 
 using Lambda;
@@ -20,7 +22,16 @@ class TimelineTools {
 		var markers = new Map<String, Array<GeometricTransform>>();
 		for (markerLayer in markerLayers) {
 			markers.set(markerLayer.name, markerLayer.frames.map(function (frame) {
-				return untyped if (frame.elements.empty()) null else frame.elements[0].matrix;
+				if (frame.elements.empty()) {
+					return null;
+				}
+				var matrix:Matrix = frame.elements[0].matrix;
+				var transform = new GeometricTransform(
+					matrix.a, matrix.b,
+					matrix.c, matrix.d,
+					matrix.tx, matrix.ty
+				);
+				return transform;
 			}));
 		}
 		
