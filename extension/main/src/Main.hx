@@ -80,7 +80,7 @@ class Main {
 			// フォルダ選択ダイアログを表示
 			browseForFolderURL("出力先", function (url:String) {
 				// 出力先を敵とフィールドに代入し保存（キャンセルが押されたとき戻り値は'null'）
-				if (url != null) {
+				if (url != null && url != "" && url != "null") {
 					input_publishPath.val('${url}');
 					publishProfileModified(event);
 				}
