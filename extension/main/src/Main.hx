@@ -61,10 +61,12 @@ class Main {
 		// 警告オーバーレイを削除
 		new JQuery('div#warning').css('display', 'none');
 		
-		// ライブラリを取得
-		invoke(ScriptApi.GetExtensionLibrary, function(library_raw:Serialization) {
-			createLibraryDiv(Unserializer.run(library_raw));
+		new JQuery('input#filterExportItems').change(function (event:JqEvent) {
+			updateLibrary();
 		});
+		
+		// ライブラリを取得
+		updateLibrary();
 		
 		// 仮
 		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export); } );
@@ -90,6 +92,12 @@ class Main {
 		// アイテムの編集領域
 		var div_main = new JQuery('div#main');
 		div_main.change(save);
+	}
+	
+	private function updateLibrary():Void {
+		invoke(ScriptApi.GetExtensionLibrary(new JQuery('input#filterExportItems').is(':checked')), function(library_raw:Serialization) {
+			createLibraryDiv(Unserializer.run(library_raw));
+		});
 	}
 	
 	private function save(event:JqEvent):Void {
@@ -134,6 +142,11 @@ class Main {
 		
 		// ExtensionItemをItemに保存
 		invoke(ScriptApi.SetExtensionItem(item));
+		
+		var onlyExportItems:Bool = new JQuery('input#filterExportItems').is(':checked');
+		if (onlyExportItems) {
+			updateLibrary();
+		}
 	}
 	
 	private function createLibraryDiv(extensionLibrary:ExtensionLibrary):Void {

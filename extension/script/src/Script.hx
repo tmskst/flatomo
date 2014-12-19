@@ -37,8 +37,12 @@ class Script {
 			case ScriptApi.SelectItem(itemPath) :
 				var library:Library = document.library;
 				library.selectItem(itemPath);
-			case ScriptApi.GetExtensionLibrary :
-				return document.library.symbolItems().map(function (item) return item.name);
+			case ScriptApi.GetExtensionLibrary(onlyExportItem) :
+				var symbolItems = document.library.symbolItems();
+				if (onlyExportItem) {
+					symbolItems = symbolItems.filter(function (item) return item.getExtendedItem().linkageExportForFlatomo);
+				}
+				return symbolItems.map(function (item) return item.name);
 			case ScriptApi.GetExtensionItem(name) :
 				return getExtensionItem(name);
 			case ScriptApi.SetExtensionItem(item) :

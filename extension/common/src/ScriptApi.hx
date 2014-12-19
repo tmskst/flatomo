@@ -14,7 +14,7 @@ enum ScriptApi {
 	/** ライブラリアイテムを選択する */
 	SelectItem(itemPath:String);
 	/** ExtensionLibraryをjsfl.Libraryから取得する */
-	GetExtensionLibrary;
+	GetExtensionLibrary(onlyExportItem:Bool);
 	/**
 	 * ExtensionItemをjsfl.Itemから取得する
 	 * @param name 対象のjsfl.Item.name
