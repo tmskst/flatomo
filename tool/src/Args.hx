@@ -4,6 +4,8 @@ import flash.desktop.NativeApplication;
 import mcli.CommandLine;
 
 class Args extends CommandLine {
+	/** @alias n */
+	public var name:String;
 	/** @alias o */
 	public var output:String;
 	/** @alias i */

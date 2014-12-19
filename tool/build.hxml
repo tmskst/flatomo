@@ -12,3 +12,5 @@
 -debug
 -swf-version 12.0
 -swf bin/Run.swf
+
+-resource res/Resolver.template.hx@Resolver
