@@ -2,9 +2,13 @@ package flatomo;
 
 import flatomo.Structure;
 import jsfl.BoundingRectangle;
+import jsfl.Document;
+import jsfl.ElementType;
+import jsfl.Frame;
 import jsfl.Instance;
 import jsfl.Item;
 import jsfl.ItemType;
+import jsfl.LayerType;
 import jsfl.Library;
 import jsfl.SymbolItem;
 
@@ -81,6 +85,12 @@ class Parser {
 	private function new(library:Library) {
 		this.structures = new Map<String, Structure>();
 		
+		trace('extractShapes');
+		for (symbolItem in library.symbolItems()) {
+			library.editItem(symbolItem.name);
+			extractShapes(symbolItem);
+		}
+		
 		// 出力対象になり得るアイテムはシンボルアイテムのみだから
 		// ライブラリのすべてのシンボルアイテムをルートに走査する
 		for (symbolItem in library.symbolItems()) {
@@ -93,6 +103,41 @@ class Parser {
 			}
 		}
 		trace(structures);
+		
+	}
+	
+	
+	private function extractShapes(symbolItem:SymbolItem):Void {
+		var timeline = symbolItem.timeline;
+		
+		for (layer in timeline.layers) {
+			if (layer.layerType != LayerType.NORMAL) { continue; }
+			
+			for (frameIndex in 0...layer.frameCount) {
+				var frame:Frame = layer.frames[frameIndex];
+				if (frame.startFrame == frameIndex) {
+					timeline.setSelectedFrames(frameIndex, frameIndex);
+					
+					var document:Document = jsfl.Lib.fl.getDocumentDOM();
+					document.selectNone();
+					
+					for (element in frame.elements) {
+						if (element.elementType == ElementType.SHAPE
+						||  element.elementType == ElementType.SHAPE_OBJ) {
+							trace('e -> ${symbolItem.name}');
+							element.selected = true;
+						}
+					}
+					
+					
+					if (document.selection.length != null) {
+						trace('convertSelectionToBitmap');
+						document.convertSelectionToBitmap();
+					}
+					
+				}
+			}
+		}
 	}
 	
 	// 解析する対象はコンテナの子も含むので必ずしもシンボルアイテムという訳ではない
