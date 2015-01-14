@@ -20,6 +20,7 @@ div#warning {
 div#library {
 	float: left;
 	width: 130px;
+	height: 400px;
 	overflow: scroll;
 }
 

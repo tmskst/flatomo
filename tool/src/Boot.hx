@@ -21,7 +21,9 @@ import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.PosInfos;
+import haxe.Resource;
 import haxe.Serializer;
+import haxe.Template;
 import haxe.Unserializer;
 import mcli.Dispatch;
 import TextureAtlasGenerator;
@@ -39,6 +41,9 @@ private typedef V = {
 	required:Array<U>,
 }
 
+@:access(flatomo.Layout)
+@:access(flatomo.ContainerComponent)
+@:access(flatomo.GeometricTransform)
 class Boot {
 	
 	public static function main() {
@@ -75,6 +80,13 @@ class Boot {
 		
 		var args:Args = new Args();
 		new Dispatch([for (v in event.arguments) v]).dispatch(args);
+		
+		// -name <chunk name>
+		if (args.name == null) {
+			log('名前が指定されていない');
+			return ErrorCode.MissingArgumentName;
+		}
+		var chunkName:String = args.name;
 		
 		// -o <output directory>
 		if (args.output == null) {
@@ -190,9 +202,9 @@ class Boot {
 				}
 			}
 			
-			FileUtil.saveContent(output.resolvePath('./a.xml'), rootElement.toString());
-			FileUtil.saveContent(output.resolvePath('./a.structure'), Serializer.run(unifiedStructures));
-			FileUtil.saveContent(output.resolvePath('./a.timeline'), Serializer.run(unifiedTimelines));
+			FileUtil.saveContent(output.resolvePath('./res/a.xml'), rootElement.toString());
+			FileUtil.saveContent(output.resolvePath('./res/a.structure'), Serializer.run(unifiedStructures));
+			FileUtil.saveContent(output.resolvePath('./res/a.timeline'), Serializer.run(unifiedTimelines));
 			
 			// 充填
 			
@@ -202,7 +214,24 @@ class Boot {
 				var bitmap:Bitmap = cast subTexture;
 				texture.copyPixels(bitmap.bitmapData, bitmap.bitmapData.rect, new Point(Math.floor(region.x + 2), Math.floor(region.y + 2)));
 			}
-			FileUtil.saveBytes(output.resolvePath('./a.png'), texture.encode(texture.rect, new PNGEncoderOptions()));
+			FileUtil.saveBytes(output.resolvePath('./res/a.png'), texture.encode(texture.rect, new PNGEncoderOptions()));
+			
+			// リゾルバの生成
+			var resolverGenerator = new Template(Resource.getString("Resolver"));
+			
+			var items:Array<{ name:String, key:String }> = []; 
+			for (key in unifiedStructures.keys()) {
+				switch (unifiedStructures.get(key)) {
+					case Structure.Image :
+						// 生成できないのでリゾルバに登録しない
+					case Structure.Animation
+					|    Structure.Container
+					|    Structure.PartsAnimation :
+						var xs = key.split('\\');
+						items.push({ name: xs[xs.length - 3] + xs[xs.length - 1], key: ~/\\/g.replace(key, "\\\\") });
+				}
+			}
+			FileUtil.saveContent(output.resolvePath('./src/' + chunkName + '.hx'), resolverGenerator.execute({ resolverName: chunkName, items: items }));
 			
 			log("終了");
 		});
@@ -232,7 +261,7 @@ class Boot {
 			if (!fromHash.exists(hash)) {
 				fromHash.set(hash, { 
 					filePath  : file.nativePath,
-					transform : { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 },
+					transform : new GeometricTransform(0, 0, 0, 0, 0, 0),
 				});
 			}
 			var delegate = fromHash.get(hash);

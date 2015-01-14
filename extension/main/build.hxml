@@ -5,3 +5,4 @@
 -main Main
 -D embed-js
 -js ../distribution/content/js/Main.js
+-D cs_interface_version=4.2

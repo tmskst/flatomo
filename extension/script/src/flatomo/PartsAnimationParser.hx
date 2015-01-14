@@ -37,7 +37,8 @@ class PartsAnimationParser {
 						matrixes[frameIndex] = frame.pop();
 					}
 				}
-				result.push({ instanceName: 'anonymous' + Std.string(i++), path: name, layouts: matrixes });
+				
+				result.push(new ContainerComponent('anonymous' + Std.string(i++), name, matrixes));
 			}
 		}
 		return result;
@@ -65,7 +66,12 @@ class PartsAnimationParser {
 			matrixes.set(name, [for (i in 0...frameCount) []]);
 		}
 		var container:Array<Array<Layout>> = matrixes.get(name);
-		container[frameIndex].push({ transform: matrix, depth:childIndex++ });
+		var transform = new GeometricTransform(
+			matrix.a, matrix.b,
+			matrix.c, matrix.d,
+			matrix.tx, matrix.ty
+		);
+		container[frameIndex].push(new Layout(childIndex++, transform));
 	}
 	
 	private function analyze(symbolItem:SymbolItem, frameIndex:Int, stack:Array<Matrix>):Void {

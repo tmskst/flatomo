@@ -3,7 +3,7 @@
 				   ExtensionBundleId="flatomo.extension" 
 				   ExtensionBundleName="Flatomo Extension" 
 				   ExtensionBundleVersion="1.0" 
-				   Version="5.0">
+				   Version="4.0">
 	<ExtensionList>
 		<Extension Id="flatomo.extension.Launcher" Version="0.1"/>
 		<Extension Id="flatomo.extension.Main" Version="0.1"/>
@@ -16,7 +16,7 @@
 			<Locale Code="All"/>
 		</LocaleList>
 		<RequiredRuntimeList>
-			<RequiredRuntime Name="CSXS" Version="5.0"/>
+			<RequiredRuntime Name="CSXS" Version="4.0"/>
 		</RequiredRuntimeList>
 	</ExecutionEnvironment>
 	<DispatchInfoList>

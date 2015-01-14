@@ -16,16 +16,15 @@
 			<table>
 				<tr>
 					<td>出力先</td>
-					<td><input id="publishPath" type="text" /><input type="button" value="選択" id="browseExportDirectory" /></td>
+					<td><input id="publishPath" type="text" readonly="readonly" /><input type="button" value="選択" id="browseExportDirectory" /></td>
 				</tr>
 			</table>
 		</div>
 		
-		<!--
 		<div>
-			<input type="checkbox" />Filter Export Items
+			<input id="filterExportItems" type="checkbox" />出力対象の項目だけ表示する
 		</div>
-		-->
+		
 		
 		<!-- Symbol Items -->
 		<div id="library">
@@ -41,7 +40,7 @@
 		</div>
 		
 		<script src="./lib/jquery-2.1.1.min.js"></script>
-		<script src="./lib/CSInterface.js"></script>
+		<script src="./lib/CSInterface-4.2.0.js"></script>
 		<script src="./js/Main.js"></script>
 	</body>
 </html>

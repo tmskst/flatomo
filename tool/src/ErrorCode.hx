@@ -6,4 +6,5 @@ abstract ErrorCode(Int) to Int {
 	var MissingArgumentOuput = 1;
 	var MissingArgumentInput = 2;
 	var InvaildArgumentInput = 3;
+	var MissingArgumentName  = 4;
 }

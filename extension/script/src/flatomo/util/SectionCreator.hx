@@ -24,7 +24,7 @@ class SectionCreator {
 		
 		// 制御レイヤーが存在しない場合は自動的にセクションが生成される
 		if (layers.length == 0) {
-			return [{ name: "anonymous", kind: SectionKind.Once, begin: 1, end: timeline.frameCount }];
+			return [new Section("anonymous", SectionKind.Once, 1, timeline.frameCount)];
 		}
 		
 		// 制御レイヤーが複数存在する場合はエラーを送出する
@@ -47,7 +47,7 @@ class SectionCreator {
 		for (i in 0...keyFrames.length - 1) {
 			var frame:Frame = frames[keyFrames[i]];
 			// セクションの種類はExtendedItemと比較して差し替えられるので'Once'で良い
-			sections.push({ name: frame.name, kind: SectionKind.Once, begin: keyFrames[i] + 1, end: keyFrames[i + 1] });
+			sections.push(new Section(frame.name, SectionKind.Once, keyFrames[i] + 1, keyFrames[i + 1]));
 		}
 		
 		return sections;

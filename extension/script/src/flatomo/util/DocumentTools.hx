@@ -4,6 +4,7 @@ import flatomo.DocumentStatus;
 import flatomo.PublishProfile;
 import jsfl.Document;
 import jsfl.PersistentDataType;
+import jsfl.util.UriUtil;
 
 class DocumentTools {
 	
@@ -33,12 +34,14 @@ class DocumentTools {
 			if (document.documentHasData(FLATOMO_PUBLISH_PROFILE)) {
 				document.removeDataFromDocument(FLATOMO_PUBLISH_PROFILE);
 			}
+			publishPath = UriUtil.toRelativePath(document.pathURI, publishPath);
 			document.addDataToDocument(FLATOMO_PUBLISH_PROFILE, PersistentDataType.STRING, publishPath);
 		}
 	}
 	
 	public static function getPublishPath(document:Document):String {
-		return document.getDataFromDocument(FLATOMO_PUBLISH_PROFILE);
+		var publishPath:String = document.getDataFromDocument(FLATOMO_PUBLISH_PROFILE);
+		return UriUtil.toAbsolutePath(document.pathURI, publishPath);
 	}
 	
 	/** 作業中のドキュメントの状態を取得します */

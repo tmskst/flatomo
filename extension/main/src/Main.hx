@@ -61,10 +61,12 @@ class Main {
 		// 警告オーバーレイを削除
 		new JQuery('div#warning').css('display', 'none');
 		
-		// ライブラリを取得
-		invoke(ScriptApi.GetExtensionLibrary, function(library_raw:Serialization) {
-			createLibraryDiv(Unserializer.run(library_raw));
+		new JQuery('input#filterExportItems').change(function (event:JqEvent) {
+			updateLibrary();
 		});
+		
+		// ライブラリを取得
+		updateLibrary();
 		
 		// 仮
 		new JQuery('input#export').click(function (event:JqEvent) { invoke(ScriptApi.Export); } );
@@ -80,7 +82,7 @@ class Main {
 			// フォルダ選択ダイアログを表示
 			browseForFolderURL("出力先", function (url:String) {
 				// 出力先を敵とフィールドに代入し保存（キャンセルが押されたとき戻り値は'null'）
-				if (url != null) {
+				if (url != null && url != "" && url != "null") {
 					input_publishPath.val('${url}');
 					publishProfileModified(event);
 				}
@@ -90,6 +92,12 @@ class Main {
 		// アイテムの編集領域
 		var div_main = new JQuery('div#main');
 		div_main.change(save);
+	}
+	
+	private function updateLibrary():Void {
+		invoke(ScriptApi.GetExtensionLibrary(new JQuery('input#filterExportItems').is(':checked')), function(library_raw:Serialization) {
+			createLibraryDiv(Unserializer.run(library_raw));
+		});
 	}
 	
 	private function save(event:JqEvent):Void {
@@ -108,13 +116,9 @@ class Main {
 				if (sectionKindIndex == 4) [gotoSectionName] else []
 			);
 			
-			return {
-				// セクションの開始フレームと終了フレームは
-				// パブリッシュ時にタイムラインから抽出するのでこの時点では必要ない
-				begin: 0, end: 0,
-				name: sectionName,
-				kind: sectionKind,
-			}
+			// セクションの開始フレームと終了フレームは
+			// パブリッシュ時にタイムラインから抽出するのでこの時点では必要ない
+			return new Section(sectionName, sectionKind, 0, 0);
 		});
 		// 編集中のアイテム名
 		var itemName:String = new JQuery('div#item_name').text();
@@ -138,6 +142,11 @@ class Main {
 		
 		// ExtensionItemをItemに保存
 		invoke(ScriptApi.SetExtensionItem(item));
+		
+		var onlyExportItems:Bool = new JQuery('input#filterExportItems').is(':checked');
+		if (onlyExportItems) {
+			updateLibrary();
+		}
 	}
 	
 	private function createLibraryDiv(extensionLibrary:ExtensionLibrary):Void {

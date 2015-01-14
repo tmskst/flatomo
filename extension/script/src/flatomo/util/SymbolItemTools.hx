@@ -1,6 +1,7 @@
 package flatomo.util;
 
 import flatomo.ExtendedItem;
+import flatomo.Section;
 import haxe.Serializer;
 import haxe.Unserializer;
 import jsfl.PersistentDataType;
@@ -15,6 +16,7 @@ class SymbolItemTools {
 	 * @param	symbolItem ライブラリ項目
 	 * @return 取得したExtendedItem
 	 */
+	@:access(flatomo.Section)
 	public static function getExtendedItem(symbolItem:SymbolItem):ExtendedItem {
 		var latestSection:Array<Section> = SectionCreator.fetchSections(symbolItem.timeline);
 		if (!symbolItem.hasData(DATA_NAME)) {
